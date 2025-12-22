@@ -148,6 +148,9 @@ cursor-usage-tracker/
 ├── src/
 │   └── extension.ts    # 主要源码
 ├── out/                # 编译输出
+│   ├── extension.js    # 打包后的扩展代码
+│   └── sql-wasm.wasm   # SQLite WASM 文件
+├── esbuild.mjs         # esbuild 打包配置
 ├── package.json        # 插件配置
 └── README.md
 ```
@@ -158,11 +161,14 @@ cursor-usage-tracker/
 # 安装依赖
 npm install
 
-# 编译
+# 开发编译（使用 esbuild 打包）
 npm run compile
 
 # 监听模式（开发时使用）
 npm run watch
+
+# 生产模式编译（压缩代码）
+npm run package:prod
 
 # 打包 VSIX
 npm run package

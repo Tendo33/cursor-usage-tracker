@@ -328,8 +328,10 @@ async function getAccessToken(): Promise<string | null> {
 	}
 
 	try {
-		// 初始化 sql.js
-		const SQL = await initSqlJs();
+		// 初始化 sql.js，指定 WASM 文件位置（与打包后的 extension.js 同目录）
+		const SQL = await initSqlJs({
+			locateFile: (file: string) => path.join(__dirname, file),
+		});
 
 		// 读取数据库文件
 		const fileBuffer = fs.readFileSync(dbPath);
@@ -395,12 +397,13 @@ async function fetchUsageFromAPI(userId: string): Promise<UsageData | null> {
 				},
 			};
 
-			// 如果有 accessToken，添加 Cookie
+			// 如果有 accessToken，添加认证头
 			if (accessToken) {
-				log(`  - 使用 Cookie 认证`);
+				log(`  - 使用 Cookie 和 Bearer 认证`);
 				options.headers = {
 					...options.headers,
 					Cookie: `WorkosCursorSessionToken=${accessToken}`,
+					Authorization: `Bearer ${accessToken}`,
 				};
 			} else {
 				log(`  - 无认证信息，尝试无认证请求`);
@@ -464,7 +467,7 @@ async function fetchUsageFromAPI(userId: string): Promise<UsageData | null> {
 		});
 	};
 
-	return makeRequest(`https://www.cursor.com/api/usage?user=${userId}`);
+	return makeRequest(`https://cursor.com/api/usage?user=${userId}`);
 }
 
 let lastUsageData: UsageData | null = null;

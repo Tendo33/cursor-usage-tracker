@@ -46,15 +46,18 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "npm run compile",
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
+    "vscode:prepublish": "npm run package:prod",
+    "compile": "npm run esbuild-base",
+    "watch": "npm run esbuild-base -- --watch",
+    "esbuild-base": "node esbuild.mjs",
+    "package:prod": "node esbuild.mjs --production",
     "package": "vsce package --no-dependencies"
   },
   "devDependencies": {
     "@types/node": "^20.10.0",
     "@types/vscode": "^1.85.0",
     "@vscode/vsce": "^2.22.0",
+    "esbuild": "^0.24.0",
     "typescript": "^5.3.0"
   },
   "repository": {
@@ -65,3 +68,4 @@
     "sql.js": "^1.13.0"
   }
 }
+
