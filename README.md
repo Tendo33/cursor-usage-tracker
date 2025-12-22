@@ -122,20 +122,46 @@
 
 ## 🔧 工作原理
 
-1. 插件自动读取本地 Cursor 存储文件，获取用户 ID
-2. 通过 Cursor 官方 API 获取配额数据：
-   ```
-   https://www.cursor.com/api/usage?user={userId}
-   ```
-3. 解析数据并展示在状态栏和仪表盘中
+### 认证流程
 
-**支持的存储路径：**
+1. **获取用户 ID**：自动从 Cursor 本地存储读取用户 ID
+   - 优先从新版 `sentry/scope_v3.json` 或 `sentry/session.json` 读取
+   - 兼容旧版本的 `globalStorage/storage.json` 路径
+   - 支持 OAuth ID 格式解析（如 `google-oauth2|user_xxx`）
+   
+2. **读取访问令牌**：使用 [sql.js](https://github.com/sql-js/sql.js/) 读取 SQLite 数据库
+   - 从 `state.vscdb` 数据库提取 `cursorAuth/accessToken`
+   - 令牌会被自动缓存以减少数据库访问频率
+   
+3. **API 请求**：携带会话 Cookie 调用官方 API
+   ```
+   GET https://cursor.com/api/usage?user={userId}
+   Cookie: WorkosCursorSessionToken={userId}%3A%3A{accessToken}
+   ```
+   
+4. **数据展示**：解析响应数据并实时更新状态栏和仪表盘
+
+### 存储路径说明
+
+**用户 ID 存储位置（按优先级）:**
 
 | 系统 | 路径 |
 |------|------|
-| Windows | `%APPDATA%\Cursor\User\globalStorage\storage.json` |
-| macOS | `~/Library/Application Support/Cursor/User/globalStorage/storage.json` |
-| Linux | `~/.config/Cursor/User/globalStorage/storage.json` |
+| Windows | `%APPDATA%\Cursor\sentry\scope_v3.json` |
+|  | `%APPDATA%\Cursor\sentry\session.json` |
+|  | `%APPDATA%\Cursor\User\globalStorage\storage.json` (旧版) |
+| macOS | `~/Library/Application Support/Cursor/sentry/*.json` |
+|  | `~/Library/Application Support/Cursor/User/globalStorage/storage.json` (旧版) |
+| Linux | `~/.config/Cursor/sentry/*.json` |
+|  | `~/.config/Cursor/User/globalStorage/storage.json` (旧版) |
+
+**访问令牌存储位置（SQLite 数据库）:**
+
+| 系统 | 数据库文件路径 |
+|------|------|
+| Windows | `%APPDATA%\Cursor\User\globalStorage\state.vscdb` |
+| macOS | `~/Library/Application Support/Cursor/User/globalStorage/state.vscdb` |
+| Linux | `~/.config/Cursor/User/globalStorage/state.vscdb` |
 
 ---
 
@@ -174,18 +200,46 @@ npm run package:prod
 npm run package
 ```
 
+### 测试 API 连接
+
+项目包含一个独立的测试脚本 `test-api.js`,可用于验证 Cursor API 连接:
+
+```bash
+# 运行测试脚本
+node test-api.js
+```
+
+测试脚本将:
+1. 自动读取用户 ID 和访问令牌
+2. 构造正确的 API 请求
+3. 显示响应状态和配额信息
+
+适合用于调试认证问题或验证 API 可用性。
+
 ---
 
 ## ❓ 常见问题
 
-### Q: 显示 "无 ID" 怎么办？
-A: 请确保你已登录 Cursor 账号。如果仍有问题，尝试重启 Cursor。
+### Q: 显示 "无 ID" 怎么办?
+A: 请确保你已登录 Cursor 账号。插件会尝试从多个位置读取用户 ID,如果仍有问题:
+1. 检查 `%APPDATA%\Cursor\sentry` 目录是否存在
+2. 运行命令 `查看 Cursor Usage Tracker 日志` 查看详细错误信息
+3. 尝试重启 Cursor
 
-### Q: 数据不准确？
-A: 配额数据来自 Cursor 官方 API，可能有数分钟延迟。可尝试手动刷新。
+### Q: 显示 "失败" 或 401 错误?
+A: 认证失败,可能原因:
+1. `state.vscdb` 数据库中的 `accessToken` 已过期
+2. 插件无法读取数据库文件,请确保 Cursor 已完全关闭其他窗口
+3. 尝试重新登录 Cursor 账号
 
-### Q: 在 VSCode 中能用吗？
-A: 技术上可以安装，但只有使用 Cursor 时才有实际意义。
+### Q: 数据不准确?
+A: 配额数据来自 Cursor 官方 API,可能有数分钟延迟。使用 `刷新 Cursor 配额` 命令手动刷新。
+
+### Q: 在 VSCode 中能用吗?
+A: 技术上可以安装,但只有在 Cursor 客户端中才能正常工作,因为需要读取 Cursor 的本地配置文件。
+
+### Q: macOS 是否支持?
+A: 完全支持!插件会自动检测系统平台并使用对应的存储路径。
 
 ---
 
