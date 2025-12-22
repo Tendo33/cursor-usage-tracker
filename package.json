@@ -1,0 +1,60 @@
+{
+  "name": "cursor-usage-tracker",
+  "displayName": "Cursor Usage Tracker",
+  "description": "在状态栏显示 Cursor 剩余配额",
+  "version": "1.0.0",
+  "publisher": "TuDou",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "cursor-usage-tracker.refresh",
+        "title": "刷新 Cursor 配额"
+      },
+      {
+        "command": "cursor-usage-tracker.showDetails",
+        "title": "显示 Cursor 配额详情"
+      }
+    ],
+    "configuration": {
+      "title": "Cursor Usage Tracker",
+      "properties": {
+        "cursorUsageTracker.refreshInterval": {
+          "type": "number",
+          "default": 300,
+          "description": "自动刷新间隔(秒)，默认 5 分钟"
+        },
+        "cursorUsageTracker.showInStatusBar": {
+          "type": "boolean",
+          "default": true,
+          "description": "是否在状态栏显示配额"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "package": "vsce package --no-dependencies"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/vscode": "^1.85.0",
+    "typescript": "^5.3.0",
+    "@vscode/vsce": "^2.22.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Tendo33/cursor-usage-tracker"
+  }
+}
