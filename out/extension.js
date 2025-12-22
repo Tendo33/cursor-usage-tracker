@@ -1,17 +1,2634 @@
-"use strict";var _n=Object.create;var Xe=Object.defineProperty;var kn=Object.getOwnPropertyDescriptor;var En=Object.getOwnPropertyNames;var qn=Object.getPrototypeOf,xn=Object.prototype.hasOwnProperty;var An=(f,c)=>()=>(c||f((c={exports:{}}).exports,c),c.exports),Sn=(f,c)=>{for(var h in c)Xe(f,h,{get:c[h],enumerable:!0})},br=(f,c,h,b)=>{if(c&&typeof c=="object"||typeof c=="function")for(let y of En(c))!xn.call(f,y)&&y!==h&&Xe(f,y,{get:()=>c[y],enumerable:!(b=kn(c,y))||b.enumerable});return f};var $e=(f,c,h)=>(h=f!=null?_n(qn(f)):{},br(c||!f||!f.__esModule?Xe(h,"default",{value:f,enumerable:!0}):h,f)),Mn=f=>br(Xe({},"__esModule",{value:!0}),f);var wr=An((Je,de)=>{var Ye=void 0,Ge=function(f){return Ye||(Ye=new Promise(function(c,h){var b=typeof f<"u"?f:{},y=b.onAbort;b.onAbort=function(e){h(new Error(e)),y&&y(e)},b.postRun=b.postRun||[],b.postRun.push(function(){c(b)}),de=void 0;var o;o||=typeof b<"u"?b:{};var j=typeof window=="object",C=typeof WorkerGlobalScope<"u",D=typeof process=="object"&&typeof process.versions=="object"&&typeof process.versions.node=="string"&&process.type!="renderer";o.onRuntimeInitialized=function(){function e(s,l){switch(typeof l){case"boolean":gn(s,l?1:0);break;case"number":bn(s,l);break;case"string":wn(s,l,-1,-1);break;case"object":if(l===null)hr(s);else if(l.length!=null){var p=Qe(l,Be);vn(s,p,l.length,-1),He(p)}else Ve(s,"Wrong API use : tried to return a value of an unknown type ("+l+").",-1);break;default:hr(s)}}function t(s,l){for(var p=[],g=0;g<s;g+=1){var _=Z(l+4*g,"i32"),A=fn(_);if(A===1||A===2)_=mn(_);else if(A===3)_=dn(_);else if(A===4){A=_,_=hn(A),A=pn(A);for(var G=new Uint8Array(_),H=0;H<_;H+=1)G[H]=L[A+H];_=G}else _=null;p.push(_)}return p}function r(s,l){this.Qa=s,this.db=l,this.Oa=1,this.lb=[]}function n(s,l){if(this.db=l,l=qe(s)+1,this.eb=qt(l),this.eb===null)throw Error("Unable to allocate memory for the SQL string");ee(s,x,this.eb,l),this.kb=this.eb,this.Za=this.pb=null}function i(s){if(this.filename="dbfile_"+(4294967295*Math.random()>>>0),s!=null){var l=this.filename,p="/",g=l;if(p&&(p=typeof p=="string"?p:ht(p),g=l?lt(p+"/"+l):p),l=Ct(!0,!0),g=Or(g,l),s){if(typeof s=="string"){p=Array(s.length);for(var _=0,A=s.length;_<A;++_)p[_]=s.charCodeAt(_);s=p}Oe(g,l|146),p=ge(g,577),rr(p,s,0,s.length,0),vt(p),Oe(g,l)}}this.handleError(w(this.filename,a)),this.db=Z(a,"i32"),pr(this.db),this.fb={},this.Sa={}}var a=ae(4),u=o.cwrap,w=u("sqlite3_open","number",["string","number"]),q=u("sqlite3_close_v2","number",["number"]),E=u("sqlite3_exec","number",["number","string","number","number","number"]),T=u("sqlite3_changes","number",["number"]),F=u("sqlite3_prepare_v2","number",["number","string","number","number","number"]),ar=u("sqlite3_sql","string",["number"]),Vr=u("sqlite3_normalized_sql","string",["number"]),ur=u("sqlite3_prepare_v2","number",["number","number","number","number","number"]),Xr=u("sqlite3_bind_text","number",["number","number","number","number","number"]),lr=u("sqlite3_bind_blob","number",["number","number","number","number","number"]),Yr=u("sqlite3_bind_double","number",["number","number","number"]),Gr=u("sqlite3_bind_int","number",["number","number","number"]),Jr=u("sqlite3_bind_parameter_index","number",["number","string"]),Kr=u("sqlite3_step","number",["number"]),Zr=u("sqlite3_errmsg","string",["number"]),en=u("sqlite3_column_count","number",["number"]),tn=u("sqlite3_data_count","number",["number"]),rn=u("sqlite3_column_double","number",["number","number"]),cr=u("sqlite3_column_text","string",["number","number"]),nn=u("sqlite3_column_blob","number",["number","number"]),on=u("sqlite3_column_bytes","number",["number","number"]),sn=u("sqlite3_column_type","number",["number","number"]),an=u("sqlite3_column_name","string",["number","number"]),un=u("sqlite3_reset","number",["number"]),ln=u("sqlite3_clear_bindings","number",["number"]),cn=u("sqlite3_finalize","number",["number"]),fr=u("sqlite3_create_function_v2","number","number string number number number number number number number".split(" ")),fn=u("sqlite3_value_type","number",["number"]),hn=u("sqlite3_value_bytes","number",["number"]),dn=u("sqlite3_value_text","string",["number"]),pn=u("sqlite3_value_blob","number",["number"]),mn=u("sqlite3_value_double","number",["number"]),bn=u("sqlite3_result_double","",["number","number"]),hr=u("sqlite3_result_null","",["number"]),wn=u("sqlite3_result_text","",["number","string","number","number"]),vn=u("sqlite3_result_blob","",["number","number","number","number"]),gn=u("sqlite3_result_int","",["number","number"]),Ve=u("sqlite3_result_error","",["number","string","number"]),dr=u("sqlite3_aggregate_context","number",["number","number"]),pr=u("RegisterExtensionFunctions","number",["number"]),mr=u("sqlite3_update_hook","number",["number","number","number"]);r.prototype.bind=function(s){if(!this.Qa)throw"Statement closed";return this.reset(),Array.isArray(s)?this.Cb(s):s!=null&&typeof s=="object"?this.Db(s):!0},r.prototype.step=function(){if(!this.Qa)throw"Statement closed";this.Oa=1;var s=Kr(this.Qa);switch(s){case 100:return!0;case 101:return!1;default:throw this.db.handleError(s)}},r.prototype.wb=function(s){return s==null&&(s=this.Oa,this.Oa+=1),rn(this.Qa,s)},r.prototype.Gb=function(s){if(s==null&&(s=this.Oa,this.Oa+=1),s=cr(this.Qa,s),typeof BigInt!="function")throw Error("BigInt is not supported");return BigInt(s)},r.prototype.Hb=function(s){return s==null&&(s=this.Oa,this.Oa+=1),cr(this.Qa,s)},r.prototype.getBlob=function(s){s==null&&(s=this.Oa,this.Oa+=1);var l=on(this.Qa,s);s=nn(this.Qa,s);for(var p=new Uint8Array(l),g=0;g<l;g+=1)p[g]=L[s+g];return p},r.prototype.get=function(s,l){l=l||{},s!=null&&this.bind(s)&&this.step(),s=[];for(var p=tn(this.Qa),g=0;g<p;g+=1)switch(sn(this.Qa,g)){case 1:var _=l.useBigInt?this.Gb(g):this.wb(g);s.push(_);break;case 2:s.push(this.wb(g));break;case 3:s.push(this.Hb(g));break;case 4:s.push(this.getBlob(g));break;default:s.push(null)}return s},r.prototype.getColumnNames=function(){for(var s=[],l=en(this.Qa),p=0;p<l;p+=1)s.push(an(this.Qa,p));return s},r.prototype.getAsObject=function(s,l){s=this.get(s,l),l=this.getColumnNames();for(var p={},g=0;g<l.length;g+=1)p[l[g]]=s[g];return p},r.prototype.getSQL=function(){return ar(this.Qa)},r.prototype.getNormalizedSQL=function(){return Vr(this.Qa)},r.prototype.run=function(s){return s!=null&&this.bind(s),this.step(),this.reset()},r.prototype.sb=function(s,l){l==null&&(l=this.Oa,this.Oa+=1),s=jt(s);var p=Qe(s,Be);this.lb.push(p),this.db.handleError(Xr(this.Qa,l,p,s.length-1,0))},r.prototype.Bb=function(s,l){l==null&&(l=this.Oa,this.Oa+=1);var p=Qe(s,Be);this.lb.push(p),this.db.handleError(lr(this.Qa,l,p,s.length,0))},r.prototype.rb=function(s,l){l==null&&(l=this.Oa,this.Oa+=1),this.db.handleError((s===(s|0)?Gr:Yr)(this.Qa,l,s))},r.prototype.Eb=function(s){s==null&&(s=this.Oa,this.Oa+=1),lr(this.Qa,s,0,0,0)},r.prototype.tb=function(s,l){switch(l==null&&(l=this.Oa,this.Oa+=1),typeof s){case"string":this.sb(s,l);return;case"number":this.rb(s,l);return;case"bigint":this.sb(s.toString(),l);return;case"boolean":this.rb(s+0,l);return;case"object":if(s===null){this.Eb(l);return}if(s.length!=null){this.Bb(s,l);return}}throw"Wrong API use : tried to bind a value of an unknown type ("+s+")."},r.prototype.Db=function(s){var l=this;return Object.keys(s).forEach(function(p){var g=Jr(l.Qa,p);g!==0&&l.tb(s[p],g)}),!0},r.prototype.Cb=function(s){for(var l=0;l<s.length;l+=1)this.tb(s[l],l+1);return!0},r.prototype.reset=function(){return this.freemem(),ln(this.Qa)===0&&un(this.Qa)===0},r.prototype.freemem=function(){for(var s;(s=this.lb.pop())!==void 0;)He(s)},r.prototype.free=function(){this.freemem();var s=cn(this.Qa)===0;return delete this.db.fb[this.Qa],this.Qa=0,s},n.prototype.next=function(){if(this.eb===null)return{done:!0};if(this.Za!==null&&(this.Za.free(),this.Za=null),!this.db.db)throw this.mb(),Error("Database closed");var s=Ue(),l=ae(4);Ee(a),Ee(l);try{this.db.handleError(ur(this.db.db,this.kb,-1,a,l)),this.kb=Z(l,"i32");var p=Z(a,"i32");return p===0?(this.mb(),{done:!0}):(this.Za=new r(p,this.db),this.db.fb[p]=this.Za,{value:this.Za,done:!1})}catch(g){throw this.pb=ut(this.kb),this.mb(),g}finally{Me(s)}},n.prototype.mb=function(){He(this.eb),this.eb=null},n.prototype.getRemainingSQL=function(){return this.pb!==null?this.pb:ut(this.kb)},typeof Symbol=="function"&&typeof Symbol.iterator=="symbol"&&(n.prototype[Symbol.iterator]=function(){return this}),i.prototype.run=function(s,l){if(!this.db)throw"Database closed";if(l){s=this.prepare(s,l);try{s.step()}finally{s.free()}}else this.handleError(E(this.db,s,0,0,a));return this},i.prototype.exec=function(s,l,p){if(!this.db)throw"Database closed";var g=Ue(),_=null;try{var A=kt(s),G=ae(4);for(s=[];Z(A,"i8")!==0;){Ee(a),Ee(G),this.handleError(ur(this.db,A,-1,a,G));var H=Z(a,"i32");if(A=Z(G,"i32"),H!==0){var B=null;for(_=new r(H,this),l!=null&&_.bind(l);_.step();)B===null&&(B={columns:_.getColumnNames(),values:[]},s.push(B)),B.values.push(_.get(null,p));_.free()}}return s}catch(J){throw _&&_.free(),J}finally{Me(g)}},i.prototype.each=function(s,l,p,g,_){typeof l=="function"&&(g=p,p=l,l=void 0),s=this.prepare(s,l);try{for(;s.step();)p(s.getAsObject(null,_))}finally{s.free()}if(typeof g=="function")return g()},i.prototype.prepare=function(s,l){if(Ee(a),this.handleError(F(this.db,s,-1,a,0)),s=Z(a,"i32"),s===0)throw"Nothing to prepare";var p=new r(s,this);return l!=null&&p.bind(l),this.fb[s]=p},i.prototype.iterateStatements=function(s){return new n(s,this)},i.prototype.export=function(){Object.values(this.fb).forEach(function(l){l.free()}),Object.values(this.Sa).forEach(se),this.Sa={},this.handleError(q(this.db));var s=Wr(this.filename);return this.handleError(w(this.filename,a)),this.db=Z(a,"i32"),pr(this.db),s},i.prototype.close=function(){this.db!==null&&(Object.values(this.fb).forEach(function(s){s.free()}),Object.values(this.Sa).forEach(se),this.Sa={},this.Ya&&(se(this.Ya),this.Ya=void 0),this.handleError(q(this.db)),Jt("/"+this.filename),this.db=null)},i.prototype.handleError=function(s){if(s===0)return null;throw s=Zr(this.db),Error(s)},i.prototype.getRowsModified=function(){return T(this.db)},i.prototype.create_function=function(s,l){Object.prototype.hasOwnProperty.call(this.Sa,s)&&(se(this.Sa[s]),delete this.Sa[s]);var p=Se(function(g,_,A){_=t(_,A);try{var G=l.apply(null,_)}catch(H){Ve(g,H,-1);return}e(g,G)},"viii");return this.Sa[s]=p,this.handleError(fr(this.db,s,l.length,1,0,p,0,0,0)),this},i.prototype.create_aggregate=function(s,l){var p=l.init||function(){return null},g=l.finalize||function(B){return B},_=l.step;if(!_)throw"An aggregate function must have a step function in "+s;var A={};Object.hasOwnProperty.call(this.Sa,s)&&(se(this.Sa[s]),delete this.Sa[s]),l=s+"__finalize",Object.hasOwnProperty.call(this.Sa,l)&&(se(this.Sa[l]),delete this.Sa[l]);var G=Se(function(B,J,At){var he=dr(B,1);Object.hasOwnProperty.call(A,he)||(A[he]=p()),J=t(J,At),J=[A[he]].concat(J);try{A[he]=_.apply(null,J)}catch(yn){delete A[he],Ve(B,yn,-1)}},"viii"),H=Se(function(B){var J=dr(B,1);try{var At=g(A[J])}catch(he){delete A[J],Ve(B,he,-1);return}e(B,At),delete A[J]},"vi");return this.Sa[s]=G,this.Sa[l]=H,this.handleError(fr(this.db,s,_.length-1,1,0,0,G,H,0)),this},i.prototype.updateHook=function(s){this.Ya&&(mr(this.db,0,0),se(this.Ya),this.Ya=void 0),s&&(this.Ya=Se(function(l,p,g,_,A){switch(p){case 18:l="insert";break;case 23:l="update";break;case 9:l="delete";break;default:throw"unknown operationCode in updateHook callback: "+p}if(g=g?R(x,g):"",_=_?R(x,_):"",A>Number.MAX_SAFE_INTEGER)throw"rowId too big to fit inside a Number";s(l,g,_,Number(A))},"viiiij"),mr(this.db,this.Ya,0))},o.Database=i};var X={...o},U="./this.program",re=(e,t)=>{throw t},z="",ne,pe;if(D){var tt=require("fs");require("path"),z=__dirname+"/",pe=e=>(e=Ne(e)?new URL(e):e,tt.readFileSync(e)),ne=async e=>(e=Ne(e)?new URL(e):e,tt.readFileSync(e,void 0)),!o.thisProgram&&1<process.argv.length&&(U=process.argv[1].replace(/\\/g,"/")),process.argv.slice(2),typeof de<"u"&&(de.exports=o),re=(e,t)=>{throw process.exitCode=e,t}}else(j||C)&&(C?z=self.location.href:typeof document<"u"&&document.currentScript&&(z=document.currentScript.src),z=z.startsWith("blob:")?"":z.slice(0,z.replace(/[?#].*/,"").lastIndexOf("/")+1),C&&(pe=e=>{var t=new XMLHttpRequest;return t.open("GET",e,!1),t.responseType="arraybuffer",t.send(null),new Uint8Array(t.response)}),ne=async e=>{if(Ne(e))return new Promise((r,n)=>{var i=new XMLHttpRequest;i.open("GET",e,!0),i.responseType="arraybuffer",i.onload=()=>{i.status==200||i.status==0&&i.response?r(i.response):n(i.status)},i.onerror=n,i.send(null)});var t=await fetch(e,{credentials:"same-origin"});if(t.ok)return t.arrayBuffer();throw Error(t.status+" : "+t.url)});var St=o.print||console.log.bind(console),me=o.printErr||console.error.bind(console);Object.assign(o,X),X=null,o.thisProgram&&(U=o.thisProgram);var De=o.wasmBinary,Te,Pe=!1,rt,L,x,_e,S,I,nt,Y,it,Ne=e=>e.startsWith("file://");function Mt(){var e=Te.buffer;o.HEAP8=L=new Int8Array(e),o.HEAP16=_e=new Int16Array(e),o.HEAPU8=x=new Uint8Array(e),o.HEAPU16=new Uint16Array(e),o.HEAP32=S=new Int32Array(e),o.HEAPU32=I=new Uint32Array(e),o.HEAPF32=nt=new Float32Array(e),o.HEAPF64=it=new Float64Array(e),o.HEAP64=Y=new BigInt64Array(e),o.HEAPU64=new BigUint64Array(e)}var ue=0,ke=null;function be(e){throw o.onAbort?.(e),e="Aborted("+e+")",me(e),Pe=!0,new WebAssembly.RuntimeError(e+". Build with -sASSERTIONS for more info.")}var ot;async function Ar(e){if(!De)try{var t=await ne(e);return new Uint8Array(t)}catch{}if(e==ot&&De)e=new Uint8Array(De);else if(pe)e=pe(e);else throw"both async and sync fetching of the wasm failed";return e}async function Sr(e,t){try{var r=await Ar(e);return await WebAssembly.instantiate(r,t)}catch(n){me(`failed to asynchronously prepare wasm: ${n}`),be(n)}}async function Mr(e){var t=ot;if(!De&&typeof WebAssembly.instantiateStreaming=="function"&&!Ne(t)&&!D)try{var r=fetch(t,{credentials:"same-origin"});return await WebAssembly.instantiateStreaming(r,e)}catch(n){me(`wasm streaming compile failed: ${n}`),me("falling back to ArrayBuffer instantiation")}return Sr(t,e)}class st{name="ExitStatus";constructor(t){this.message=`Program terminated with exit(${t})`,this.status=t}}var Ut=e=>{for(;0<e.length;)e.shift()(o)},$t=[],Rt=[],Ur=()=>{var e=o.preRun.shift();Rt.unshift(e)};function Z(e,t="i8"){switch(t.endsWith("*")&&(t="*"),t){case"i1":return L[e];case"i8":return L[e];case"i16":return _e[e>>1];case"i32":return S[e>>2];case"i64":return Y[e>>3];case"float":return nt[e>>2];case"double":return it[e>>3];case"*":return I[e>>2];default:be(`invalid type for getValue: ${t}`)}}var at=o.noExitRuntime||!0;function Ee(e){var t="i32";switch(t.endsWith("*")&&(t="*"),t){case"i1":L[e]=0;break;case"i8":L[e]=0;break;case"i16":_e[e>>1]=0;break;case"i32":S[e>>2]=0;break;case"i64":Y[e>>3]=BigInt(0);break;case"float":nt[e>>2]=0;break;case"double":it[e>>3]=0;break;case"*":I[e>>2]=0;break;default:be(`invalid type for setValue: ${t}`)}}var Dt=typeof TextDecoder<"u"?new TextDecoder:void 0,R=(e,t=0,r=NaN)=>{var n=t+r;for(r=t;e[r]&&!(r>=n);)++r;if(16<r-t&&e.buffer&&Dt)return Dt.decode(e.subarray(t,r));for(n="";t<r;){var i=e[t++];if(i&128){var a=e[t++]&63;if((i&224)==192)n+=String.fromCharCode((i&31)<<6|a);else{var u=e[t++]&63;i=(i&240)==224?(i&15)<<12|a<<6|u:(i&7)<<18|a<<12|u<<6|e[t++]&63,65536>i?n+=String.fromCharCode(i):(i-=65536,n+=String.fromCharCode(55296|i>>10,56320|i&1023))}}else n+=String.fromCharCode(i)}return n},ut=(e,t)=>e?R(x,e,t):"",Tt=(e,t)=>{for(var r=0,n=e.length-1;0<=n;n--){var i=e[n];i==="."?e.splice(n,1):i===".."?(e.splice(n,1),r++):r&&(e.splice(n,1),r--)}if(t)for(;r;r--)e.unshift("..");return e},lt=e=>{var t=e.charAt(0)==="/",r=e.slice(-1)==="/";return(e=Tt(e.split("/").filter(n=>!!n),!t).join("/"))||t||(e="."),e&&r&&(e+="/"),(t?"/":"")+e},Pt=e=>{var t=/^(\/?|)([\s\S]*?)((?:\.{1,2}|[^\/]+?|)(\.[^.\/]*|))(?:[\/]*)$/.exec(e).slice(1);return e=t[0],t=t[1],!e&&!t?".":(t&&=t.slice(0,-1),e+t)},je=e=>e&&e.match(/([^\/]+|\/)\/*$/)[1],$r=()=>{if(D){var e=require("crypto");return t=>e.randomFillSync(t)}return t=>crypto.getRandomValues(t)},Nt=e=>{(Nt=$r())(e)},Rr=(...e)=>{for(var t="",r=!1,n=e.length-1;-1<=n&&!r;n--){if(r=0<=n?e[n]:"/",typeof r!="string")throw new TypeError("Arguments to path.resolve must be strings");if(!r)return"";t=r+"/"+t,r=r.charAt(0)==="/"}return t=Tt(t.split("/").filter(i=>!!i),!r).join("/"),(r?"/":"")+t||"."},ct=[],qe=e=>{for(var t=0,r=0;r<e.length;++r){var n=e.charCodeAt(r);127>=n?t++:2047>=n?t+=2:55296<=n&&57343>=n?(t+=4,++r):t+=3}return t},ee=(e,t,r,n)=>{if(!(0<n))return 0;var i=r;n=r+n-1;for(var a=0;a<e.length;++a){var u=e.charCodeAt(a);if(55296<=u&&57343>=u){var w=e.charCodeAt(++a);u=65536+((u&1023)<<10)|w&1023}if(127>=u){if(r>=n)break;t[r++]=u}else{if(2047>=u){if(r+1>=n)break;t[r++]=192|u>>6}else{if(65535>=u){if(r+2>=n)break;t[r++]=224|u>>12}else{if(r+3>=n)break;t[r++]=240|u>>18,t[r++]=128|u>>12&63}t[r++]=128|u>>6&63}t[r++]=128|u&63}}return t[r]=0,r-i},jt=(e,t)=>{var r=Array(qe(e)+1);return e=ee(e,r,0,r.length),t&&(r.length=e),r},It=[];function Lt(e,t){It[e]={input:[],output:[],cb:t},bt(e,Dr)}var Dr={open(e){var t=It[e.node.rdev];if(!t)throw new d(43);e.tty=t,e.seekable=!1},close(e){e.tty.cb.fsync(e.tty)},fsync(e){e.tty.cb.fsync(e.tty)},read(e,t,r,n){if(!e.tty||!e.tty.cb.xb)throw new d(60);for(var i=0,a=0;a<n;a++){try{var u=e.tty.cb.xb(e.tty)}catch{throw new d(29)}if(u===void 0&&i===0)throw new d(6);if(u==null)break;i++,t[r+a]=u}return i&&(e.node.atime=Date.now()),i},write(e,t,r,n){if(!e.tty||!e.tty.cb.qb)throw new d(60);try{for(var i=0;i<n;i++)e.tty.cb.qb(e.tty,t[r+i])}catch{throw new d(29)}return n&&(e.node.mtime=e.node.ctime=Date.now()),i}},Tr={xb(){e:{if(!ct.length){var e=null;if(D){var t=Buffer.alloc(256),r=0,n=process.stdin.fd;try{r=tt.readSync(n,t,0,256)}catch(i){if(i.toString().includes("EOF"))r=0;else throw i}0<r&&(e=t.slice(0,r).toString("utf-8"))}else typeof window<"u"&&typeof window.prompt=="function"&&(e=window.prompt("Input: "),e!==null&&(e+=`
-`));if(!e){e=null;break e}ct=jt(e,!0)}e=ct.shift()}return e},qb(e,t){t===null||t===10?(St(R(e.output)),e.output=[]):t!=0&&e.output.push(t)},fsync(e){0<e.output?.length&&(St(R(e.output)),e.output=[])},Tb(){return{Ob:25856,Qb:5,Nb:191,Pb:35387,Mb:[3,28,127,21,4,0,1,0,17,19,26,0,18,15,23,22,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]}},Ub(){return 0},Vb(){return[24,80]}},Pr={qb(e,t){t===null||t===10?(me(R(e.output)),e.output=[]):t!=0&&e.output.push(t)},fsync(e){0<e.output?.length&&(me(R(e.output)),e.output=[])}},k={Wa:null,Xa(){return k.createNode(null,"/",16895,0)},createNode(e,t,r,n){if((r&61440)===24576||(r&61440)===4096)throw new d(63);return k.Wa||(k.Wa={dir:{node:{Ta:k.La.Ta,Ua:k.La.Ua,lookup:k.La.lookup,hb:k.La.hb,rename:k.La.rename,unlink:k.La.unlink,rmdir:k.La.rmdir,readdir:k.La.readdir,symlink:k.La.symlink},stream:{Va:k.Ma.Va}},file:{node:{Ta:k.La.Ta,Ua:k.La.Ua},stream:{Va:k.Ma.Va,read:k.Ma.read,write:k.Ma.write,ib:k.Ma.ib,jb:k.Ma.jb}},link:{node:{Ta:k.La.Ta,Ua:k.La.Ua,readlink:k.La.readlink},stream:{}},ub:{node:{Ta:k.La.Ta,Ua:k.La.Ua},stream:Cr}}),r=Bt(e,t,r,n),W(r.mode)?(r.La=k.Wa.dir.node,r.Ma=k.Wa.dir.stream,r.Na={}):(r.mode&61440)===32768?(r.La=k.Wa.file.node,r.Ma=k.Wa.file.stream,r.Ra=0,r.Na=null):(r.mode&61440)===40960?(r.La=k.Wa.link.node,r.Ma=k.Wa.link.stream):(r.mode&61440)===8192&&(r.La=k.Wa.ub.node,r.Ma=k.Wa.ub.stream),r.atime=r.mtime=r.ctime=Date.now(),e&&(e.Na[t]=r,e.atime=e.mtime=e.ctime=r.atime),r},Sb(e){return e.Na?e.Na.subarray?e.Na.subarray(0,e.Ra):new Uint8Array(e.Na):new Uint8Array(0)},La:{Ta(e){var t={};return t.dev=(e.mode&61440)===8192?e.id:1,t.ino=e.id,t.mode=e.mode,t.nlink=1,t.uid=0,t.gid=0,t.rdev=e.rdev,W(e.mode)?t.size=4096:(e.mode&61440)===32768?t.size=e.Ra:(e.mode&61440)===40960?t.size=e.link.length:t.size=0,t.atime=new Date(e.atime),t.mtime=new Date(e.mtime),t.ctime=new Date(e.ctime),t.blksize=4096,t.blocks=Math.ceil(t.size/t.blksize),t},Ua(e,t){for(var r of["mode","atime","mtime","ctime"])t[r]!=null&&(e[r]=t[r]);t.size!==void 0&&(t=t.size,e.Ra!=t&&(t==0?(e.Na=null,e.Ra=0):(r=e.Na,e.Na=new Uint8Array(t),r&&e.Na.set(r.subarray(0,Math.min(t,e.Ra))),e.Ra=t)))},lookup(){throw k.vb},hb(e,t,r,n){return k.createNode(e,t,r,n)},rename(e,t,r){try{var n=le(t,r)}catch{}if(n){if(W(e.mode))for(var i in n.Na)throw new d(55);pt(n)}delete e.parent.Na[e.name],t.Na[r]=e,e.name=r,t.ctime=t.mtime=e.parent.ctime=e.parent.mtime=Date.now()},unlink(e,t){delete e.Na[t],e.ctime=e.mtime=Date.now()},rmdir(e,t){var r=le(e,t),n;for(n in r.Na)throw new d(55);delete e.Na[t],e.ctime=e.mtime=Date.now()},readdir(e){return[".","..",...Object.keys(e.Na)]},symlink(e,t,r){return e=k.createNode(e,t,41471,0),e.link=r,e},readlink(e){if((e.mode&61440)!==40960)throw new d(28);return e.link}},Ma:{read(e,t,r,n,i){var a=e.node.Na;if(i>=e.node.Ra)return 0;if(e=Math.min(e.node.Ra-i,n),8<e&&a.subarray)t.set(a.subarray(i,i+e),r);else for(n=0;n<e;n++)t[r+n]=a[i+n];return e},write(e,t,r,n,i,a){if(t.buffer===L.buffer&&(a=!1),!n)return 0;if(e=e.node,e.mtime=e.ctime=Date.now(),t.subarray&&(!e.Na||e.Na.subarray)){if(a)return e.Na=t.subarray(r,r+n),e.Ra=n;if(e.Ra===0&&i===0)return e.Na=t.slice(r,r+n),e.Ra=n;if(i+n<=e.Ra)return e.Na.set(t.subarray(r,r+n),i),n}a=i+n;var u=e.Na?e.Na.length:0;if(u>=a||(a=Math.max(a,u*(1048576>u?2:1.125)>>>0),u!=0&&(a=Math.max(a,256)),u=e.Na,e.Na=new Uint8Array(a),0<e.Ra&&e.Na.set(u.subarray(0,e.Ra),0)),e.Na.subarray&&t.subarray)e.Na.set(t.subarray(r,r+n),i);else for(a=0;a<n;a++)e.Na[i+a]=t[r+a];return e.Ra=Math.max(e.Ra,i+n),n},Va(e,t,r){if(r===1?t+=e.position:r===2&&(e.node.mode&61440)===32768&&(t+=e.node.Ra),0>t)throw new d(28);return t},ib(e,t,r,n,i){if((e.node.mode&61440)!==32768)throw new d(43);if(e=e.node.Na,i&2||!e||e.buffer!==L.buffer){i=!0,n=65536*Math.ceil(t/65536);var a=or(65536,n);if(a&&x.fill(0,a,a+n),n=a,!n)throw new d(48);e&&((0<r||r+t<e.length)&&(e.subarray?e=e.subarray(r,r+t):e=Array.prototype.slice.call(e,r,r+t)),L.set(e,n))}else i=!1,n=e.byteOffset;return{Kb:n,Ab:i}},jb(e,t,r,n){return k.Ma.write(e,t,0,n,r,!1),0}}},Ct=(e,t)=>{var r=0;return e&&(r|=365),t&&(r|=146),r},ft=null,Ot={},we=[],Nr=1,ie=null,Wt=!1,Ft=!0,zt={},d=class{name="ErrnoError";constructor(e){this.Pa=e}},jr=class{gb={};node=null;get flags(){return this.gb.flags}set flags(e){this.gb.flags=e}get position(){return this.gb.position}set position(e){this.gb.position=e}},Ir=class{La={};Ma={};ab=null;constructor(e,t,r,n){e||=this,this.parent=e,this.Xa=e.Xa,this.id=Nr++,this.name=t,this.mode=r,this.rdev=n,this.atime=this.mtime=this.ctime=Date.now()}get read(){return(this.mode&365)===365}set read(e){e?this.mode|=365:this.mode&=-366}get write(){return(this.mode&146)===146}set write(e){e?this.mode|=146:this.mode&=-147}};function Q(e,t={}){if(!e)throw new d(44);t.nb??(t.nb=!0),e.charAt(0)==="/"||(e="//"+e);var r=0;e:for(;40>r;r++){e=e.split("/").filter(w=>!!w);for(var n=ft,i="/",a=0;a<e.length;a++){var u=a===e.length-1;if(u&&t.parent)break;if(e[a]!==".")if(e[a]==="..")i=Pt(i),n=n.parent;else{i=lt(i+"/"+e[a]);try{n=le(n,e[a])}catch(w){if(w?.Pa===44&&u&&t.Jb)return{path:i};throw w}if(!n.ab||u&&!t.nb||(n=n.ab.root),(n.mode&61440)===40960&&(!u||t.$a)){if(!n.La.readlink)throw new d(52);n=n.La.readlink(n),n.charAt(0)==="/"||(n=Pt(i)+"/"+n),e=n+"/"+e.slice(a+1).join("/");continue e}}}return{path:i,node:n}}throw new d(32)}function ht(e){for(var t;;){if(e===e.parent)return e=e.Xa.zb,t?e[e.length-1]!=="/"?`${e}/${t}`:e+t:e;t=t?`${e.name}/${t}`:e.name,e=e.parent}}function dt(e,t){for(var r=0,n=0;n<t.length;n++)r=(r<<5)-r+t.charCodeAt(n)|0;return(e+r>>>0)%ie.length}function pt(e){var t=dt(e.parent.id,e.name);if(ie[t]===e)ie[t]=e.bb;else for(t=ie[t];t;){if(t.bb===e){t.bb=e.bb;break}t=t.bb}}function le(e,t){var r=W(e.mode)?(r=ve(e,"x"))?r:e.La.lookup?0:2:54;if(r)throw new d(r);for(r=ie[dt(e.id,t)];r;r=r.bb){var n=r.name;if(r.parent.id===e.id&&n===t)return r}return e.La.lookup(e,t)}function Bt(e,t,r,n){return e=new Ir(e,t,r,n),t=dt(e.parent.id,e.name),e.bb=ie[t],ie[t]=e}function W(e){return(e&61440)===16384}function Qt(e){var t=["r","w","rw"][e&3];return e&512&&(t+="w"),t}function ve(e,t){if(Ft)return 0;if(!t.includes("r")||e.mode&292){if(t.includes("w")&&!(e.mode&146)||t.includes("x")&&!(e.mode&73))return 2}else return 2;return 0}function Ht(e,t){if(!W(e.mode))return 54;try{return le(e,t),20}catch{}return ve(e,"wx")}function Vt(e,t,r){try{var n=le(e,t)}catch(i){return i.Pa}if(e=ve(e,"wx"))return e;if(r){if(!W(n.mode))return 54;if(n===n.parent||ht(n)==="/")return 10}else if(W(n.mode))return 31;return 0}function Ie(e){if(!e)throw new d(63);return e}function O(e){if(e=we[e],!e)throw new d(8);return e}function Xt(e,t=-1){if(e=Object.assign(new jr,e),t==-1)e:{for(t=0;4096>=t;t++)if(!we[t])break e;throw new d(33)}return e.fd=t,we[t]=e}function Lr(e,t=-1){return e=Xt(e,t),e.Ma?.Rb?.(e),e}function mt(e,t,r){var n=e?.Ma.Ua;e=n?e:t,n??=t.La.Ua,Ie(n),n(e,r)}var Cr={open(e){e.Ma=Ot[e.node.rdev].Ma,e.Ma.open?.(e)},Va(){throw new d(70)}};function bt(e,t){Ot[e]={Ma:t}}function Yt(e,t){var r=t==="/";if(r&&ft)throw new d(10);if(!r&&t){var n=Q(t,{nb:!1});if(t=n.path,n=n.node,n.ab)throw new d(10);if(!W(n.mode))throw new d(54)}t={type:e,Wb:{},zb:t,Ib:[]},e=e.Xa(t),e.Xa=t,t.root=e,r?ft=e:n&&(n.ab=t,n.Xa&&n.Xa.Ib.push(t))}function Le(e,t,r){var n=Q(e,{parent:!0}).node;if(e=je(e),!e)throw new d(28);if(e==="."||e==="..")throw new d(20);var i=Ht(n,e);if(i)throw new d(i);if(!n.La.hb)throw new d(63);return n.La.hb(n,e,t,r)}function Or(e,t=438){return Le(e,t&4095|32768,0)}function K(e,t=511){return Le(e,t&1023|16384,0)}function Ce(e,t,r){typeof r>"u"&&(r=t,t=438),Le(e,t|8192,r)}function wt(e,t){if(!Rr(e))throw new d(44);var r=Q(t,{parent:!0}).node;if(!r)throw new d(44);t=je(t);var n=Ht(r,t);if(n)throw new d(n);if(!r.La.symlink)throw new d(63);r.La.symlink(r,t,e)}function Gt(e){var t=Q(e,{parent:!0}).node;e=je(e);var r=le(t,e),n=Vt(t,e,!0);if(n)throw new d(n);if(!t.La.rmdir)throw new d(63);if(r.ab)throw new d(10);t.La.rmdir(t,e),pt(r)}function Jt(e){var t=Q(e,{parent:!0}).node;if(!t)throw new d(44);e=je(e);var r=le(t,e),n=Vt(t,e,!1);if(n)throw new d(n);if(!t.La.unlink)throw new d(63);if(r.ab)throw new d(10);t.La.unlink(t,e),pt(r)}function xe(e,t){return e=Q(e,{$a:!t}).node,Ie(e.La.Ta)(e)}function Kt(e,t,r,n){mt(e,t,{mode:r&4095|t.mode&-4096,ctime:Date.now(),Fb:n})}function Oe(e,t){e=typeof e=="string"?Q(e,{$a:!0}).node:e,Kt(null,e,t)}function Zt(e,t,r){if(W(t.mode))throw new d(31);if((t.mode&61440)!==32768)throw new d(28);var n=ve(t,"w");if(n)throw new d(n);mt(e,t,{size:r,timestamp:Date.now()})}function ge(e,t,r=438){if(e==="")throw new d(44);if(typeof t=="string"){var n={r:0,"r+":2,w:577,"w+":578,a:1089,"a+":1090}[t];if(typeof n>"u")throw Error(`Unknown file open mode: ${t}`);t=n}if(r=t&64?r&4095|32768:0,typeof e=="object")n=e;else{var i=e.endsWith("/");e=Q(e,{$a:!(t&131072),Jb:!0}),n=e.node,e=e.path}var a=!1;if(t&64)if(n){if(t&128)throw new d(20)}else{if(i)throw new d(31);n=Le(e,r|511,0),a=!0}if(!n)throw new d(44);if((n.mode&61440)===8192&&(t&=-513),t&65536&&!W(n.mode))throw new d(54);if(!a&&(i=n?(n.mode&61440)===40960?32:W(n.mode)&&(Qt(t)!=="r"||t&576)?31:ve(n,Qt(t)):44))throw new d(i);return t&512&&!a&&(i=n,i=typeof i=="string"?Q(i,{$a:!0}).node:i,Zt(null,i,0)),t&=-131713,i=Xt({node:n,path:ht(n),flags:t,seekable:!0,position:0,Ma:n.Ma,Lb:[],error:!1}),i.Ma.open&&i.Ma.open(i),a&&Oe(n,r&511),!o.logReadFiles||t&1||e in zt||(zt[e]=1),i}function vt(e){if(e.fd===null)throw new d(8);e.ob&&(e.ob=null);try{e.Ma.close&&e.Ma.close(e)}catch(t){throw t}finally{we[e.fd]=null}e.fd=null}function er(e,t,r){if(e.fd===null)throw new d(8);if(!e.seekable||!e.Ma.Va)throw new d(70);if(r!=0&&r!=1&&r!=2)throw new d(28);e.position=e.Ma.Va(e,t,r),e.Lb=[]}function tr(e,t,r,n,i){if(0>n||0>i)throw new d(28);if(e.fd===null)throw new d(8);if((e.flags&2097155)===1)throw new d(8);if(W(e.node.mode))throw new d(31);if(!e.Ma.read)throw new d(28);var a=typeof i<"u";if(!a)i=e.position;else if(!e.seekable)throw new d(70);return t=e.Ma.read(e,t,r,n,i),a||(e.position+=t),t}function rr(e,t,r,n,i){if(0>n||0>i)throw new d(28);if(e.fd===null)throw new d(8);if(!(e.flags&2097155))throw new d(8);if(W(e.node.mode))throw new d(31);if(!e.Ma.write)throw new d(28);e.seekable&&e.flags&1024&&er(e,0,2);var a=typeof i<"u";if(!a)i=e.position;else if(!e.seekable)throw new d(70);return t=e.Ma.write(e,t,r,n,i,void 0),a||(e.position+=t),t}function Wr(e){var t="binary";if(t!=="utf8"&&t!=="binary")throw Error(`Invalid encoding type "${t}"`);var r,n=ge(e,n||0);e=xe(e).size;var i=new Uint8Array(e);return tr(n,i,0,e,0),t==="utf8"?r=R(i):t==="binary"&&(r=i),vt(n),r}function oe(e,t,r){e=lt("/dev/"+e);var n=Ct(!!t,!!r);oe.yb??(oe.yb=64);var i=oe.yb++<<8|0;bt(i,{open(a){a.seekable=!1},close(){r?.buffer?.length&&r(10)},read(a,u,w,q){for(var E=0,T=0;T<q;T++){try{var F=t()}catch{throw new d(29)}if(F===void 0&&E===0)throw new d(6);if(F==null)break;E++,u[w+T]=F}return E&&(a.node.atime=Date.now()),E},write(a,u,w,q){for(var E=0;E<q;E++)try{r(u[w+E])}catch{throw new d(29)}return q&&(a.node.mtime=a.node.ctime=Date.now()),E}}),Ce(e,n,i)}var $={};function ce(e,t,r){if(t.charAt(0)==="/")return t;if(e=e===-100?"/":O(e).path,t.length==0){if(!r)throw new d(44);return e}return e+"/"+t}function We(e,t){S[e>>2]=t.dev,S[e+4>>2]=t.mode,I[e+8>>2]=t.nlink,S[e+12>>2]=t.uid,S[e+16>>2]=t.gid,S[e+20>>2]=t.rdev,Y[e+24>>3]=BigInt(t.size),S[e+32>>2]=4096,S[e+36>>2]=t.blocks;var r=t.atime.getTime(),n=t.mtime.getTime(),i=t.ctime.getTime();return Y[e+40>>3]=BigInt(Math.floor(r/1e3)),I[e+48>>2]=r%1e3*1e6,Y[e+56>>3]=BigInt(Math.floor(n/1e3)),I[e+64>>2]=n%1e3*1e6,Y[e+72>>3]=BigInt(Math.floor(i/1e3)),I[e+80>>2]=i%1e3*1e6,Y[e+88>>3]=BigInt(t.ino),0}var Fe=void 0,ze=()=>{var e=S[+Fe>>2];return Fe+=4,e},gt=0,Fr=[0,31,60,91,121,152,182,213,244,274,305,335],zr=[0,31,59,90,120,151,181,212,243,273,304,334],Ae={},nr=e=>{rt=e,at||0<gt||(o.onExit?.(e),Pe=!0),re(e,new st(e))},Br=e=>{if(!Pe)try{if(e(),!(at||0<gt))try{rt=e=rt,nr(e)}catch(t){t instanceof st||t=="unwind"||re(1,t)}}catch(t){t instanceof st||t=="unwind"||re(1,t)}},yt={},ir=()=>{if(!_t){var e={USER:"web_user",LOGNAME:"web_user",PATH:"/",PWD:"/",HOME:"/home/web_user",LANG:(typeof navigator=="object"&&navigator.languages&&navigator.languages[0]||"C").replace("-","_")+".UTF-8",_:U||"./this.program"},t;for(t in yt)yt[t]===void 0?delete e[t]:e[t]=yt[t];var r=[];for(t in e)r.push(`${t}=${e[t]}`);_t=r}return _t},_t,kt=e=>{var t=qe(e)+1,r=ae(t);return ee(e,x,r,t),r},Qr=(e,t,r,n)=>{var i={string:E=>{var T=0;return E!=null&&E!==0&&(T=kt(E)),T},array:E=>{var T=ae(E.length);return L.set(E,T),T}};e=o["_"+e];var a=[],u=0;if(n)for(var w=0;w<n.length;w++){var q=i[r[w]];q?(u===0&&(u=Ue()),a[w]=q(n[w])):a[w]=n[w]}return r=e(...a),r=function(E){return u!==0&&Me(u),t==="string"?E?R(x,E):"":t==="boolean"?!!E:E}(r)},Be=0,Qe=(e,t)=>(t=t==1?ae(e.length):qt(e.length),e.subarray||e.slice||(e=new Uint8Array(e)),x.set(e,t),t),fe,Et=[],te,se=e=>{fe.delete(te.get(e)),te.set(e,null),Et.push(e)},Se=(e,t)=>{if(!fe){fe=new WeakMap;var r=te.length;if(fe)for(var n=0;n<0+r;n++){var i=te.get(n);i&&fe.set(i,n)}}if(r=fe.get(e)||0)return r;if(Et.length)r=Et.pop();else{try{te.grow(1)}catch(q){throw q instanceof RangeError?"Unable to grow wasm table. Set ALLOW_TABLE_GROWTH.":q}r=te.length-1}try{te.set(r,e)}catch(q){if(!(q instanceof TypeError))throw q;if(typeof WebAssembly.Function=="function"){var a=WebAssembly.Function;n={i:"i32",j:"i64",f:"f32",d:"f64",e:"externref",p:"i32"},i={parameters:[],results:t[0]=="v"?[]:[n[t[0]]]};for(var u=1;u<t.length;++u)i.parameters.push(n[t[u]]);t=new a(i,e)}else{n=[1],i=t.slice(0,1),t=t.slice(1),u={i:127,p:127,j:126,f:125,d:124,e:111},n.push(96);var w=t.length;128>w?n.push(w):n.push(w%128|128,w>>7);for(a of t)n.push(u[a]);i=="v"?n.push(0):n.push(1,u[i]),t=[0,97,115,109,1,0,0,0,1],a=n.length,128>a?t.push(a):t.push(a%128|128,a>>7),t.push(...n),t.push(2,7,1,1,101,1,102,0,0,7,5,1,1,102,0,0),t=new WebAssembly.Module(new Uint8Array(t)),t=new WebAssembly.Instance(t,{e:{f:e}}).exports.f}te.set(r,t)}return fe.set(e,r),r};ie=Array(4096),Yt(k,"/"),K("/tmp"),K("/home"),K("/home/web_user"),function(){K("/dev"),bt(259,{read:()=>0,write:(n,i,a,u)=>u,Va:()=>0}),Ce("/dev/null",259),Lt(1280,Tr),Lt(1536,Pr),Ce("/dev/tty",1280),Ce("/dev/tty1",1536);var e=new Uint8Array(1024),t=0,r=()=>(t===0&&(Nt(e),t=e.byteLength),e[--t]);oe("random",r),oe("urandom",r),K("/dev/shm"),K("/dev/shm/tmp")}(),function(){K("/proc");var e=K("/proc/self");K("/proc/self/fd"),Yt({Xa(){var t=Bt(e,"fd",16895,73);return t.Ma={Va:k.Ma.Va},t.La={lookup(r,n){r=+n;var i=O(r);return r={parent:null,Xa:{zb:"fake"},La:{readlink:()=>i.path},id:r+1},r.parent=r},readdir(){return Array.from(we.entries()).filter(([,r])=>r).map(([r])=>r.toString())}},t}},"/proc/self/fd")}(),k.vb=new d(44),k.vb.stack="<generic error, no stack>";var Hr={a:(e,t,r,n)=>be(`Assertion failed: ${e?R(x,e):""}, at: `+[t?t?R(x,t):"":"unknown filename",r,n?n?R(x,n):"":"unknown function"]),i:function(e,t){try{return e=e?R(x,e):"",Oe(e,t),0}catch(r){if(typeof $>"u"||r.name!=="ErrnoError")throw r;return-r.Pa}},L:function(e,t,r){try{if(t=t?R(x,t):"",t=ce(e,t),r&-8)return-28;var n=Q(t,{$a:!0}).node;return n?(e="",r&4&&(e+="r"),r&2&&(e+="w"),r&1&&(e+="x"),e&&ve(n,e)?-2:0):-44}catch(i){if(typeof $>"u"||i.name!=="ErrnoError")throw i;return-i.Pa}},j:function(e,t){try{var r=O(e);return Kt(r,r.node,t,!1),0}catch(n){if(typeof $>"u"||n.name!=="ErrnoError")throw n;return-n.Pa}},h:function(e){try{var t=O(e);return mt(t,t.node,{timestamp:Date.now(),Fb:!1}),0}catch(r){if(typeof $>"u"||r.name!=="ErrnoError")throw r;return-r.Pa}},b:function(e,t,r){Fe=r;try{var n=O(e);switch(t){case 0:var i=ze();if(0>i)break;for(;we[i];)i++;return Lr(n,i).fd;case 1:case 2:return 0;case 3:return n.flags;case 4:return i=ze(),n.flags|=i,0;case 12:return i=ze(),_e[i+0>>1]=2,0;case 13:case 14:return 0}return-28}catch(a){if(typeof $>"u"||a.name!=="ErrnoError")throw a;return-a.Pa}},g:function(e,t){try{var r=O(e),n=r.node,i=r.Ma.Ta;e=i?r:n,i??=n.La.Ta,Ie(i);var a=i(e);return We(t,a)}catch(u){if(typeof $>"u"||u.name!=="ErrnoError")throw u;return-u.Pa}},H:function(e,t){t=-9007199254740992>t||9007199254740992<t?NaN:Number(t);try{if(isNaN(t))return 61;var r=O(e);if(0>t||!(r.flags&2097155))throw new d(28);return Zt(r,r.node,t),0}catch(n){if(typeof $>"u"||n.name!=="ErrnoError")throw n;return-n.Pa}},G:function(e,t){try{if(t===0)return-28;var r=qe("/")+1;return t<r?-68:(ee("/",x,e,t),r)}catch(n){if(typeof $>"u"||n.name!=="ErrnoError")throw n;return-n.Pa}},K:function(e,t){try{return e=e?R(x,e):"",We(t,xe(e,!0))}catch(r){if(typeof $>"u"||r.name!=="ErrnoError")throw r;return-r.Pa}},C:function(e,t,r){try{return t=t?R(x,t):"",t=ce(e,t),K(t,r),0}catch(n){if(typeof $>"u"||n.name!=="ErrnoError")throw n;return-n.Pa}},J:function(e,t,r,n){try{t=t?R(x,t):"";var i=n&256;return t=ce(e,t,n&4096),We(r,i?xe(t,!0):xe(t))}catch(a){if(typeof $>"u"||a.name!=="ErrnoError")throw a;return-a.Pa}},x:function(e,t,r,n){Fe=n;try{t=t?R(x,t):"",t=ce(e,t);var i=n?ze():0;return ge(t,r,i).fd}catch(a){if(typeof $>"u"||a.name!=="ErrnoError")throw a;return-a.Pa}},v:function(e,t,r,n){try{if(t=t?R(x,t):"",t=ce(e,t),0>=n)return-28;var i=Q(t).node;if(!i)throw new d(44);if(!i.La.readlink)throw new d(28);var a=i.La.readlink(i),u=Math.min(n,qe(a)),w=L[r+u];return ee(a,x,r,n+1),L[r+u]=w,u}catch(q){if(typeof $>"u"||q.name!=="ErrnoError")throw q;return-q.Pa}},u:function(e){try{return e=e?R(x,e):"",Gt(e),0}catch(t){if(typeof $>"u"||t.name!=="ErrnoError")throw t;return-t.Pa}},f:function(e,t){try{return e=e?R(x,e):"",We(t,xe(e))}catch(r){if(typeof $>"u"||r.name!=="ErrnoError")throw r;return-r.Pa}},r:function(e,t,r){try{return t=t?R(x,t):"",t=ce(e,t),r===0?Jt(t):r===512?Gt(t):be("Invalid flags passed to unlinkat"),0}catch(n){if(typeof $>"u"||n.name!=="ErrnoError")throw n;return-n.Pa}},q:function(e,t,r){try{t=t?R(x,t):"",t=ce(e,t,!0);var n=Date.now(),i,a;if(r){var u=I[r>>2]+4294967296*S[r+4>>2],w=S[r+8>>2];w==1073741823?i=n:w==1073741822?i=null:i=1e3*u+w/1e6,r+=16,u=I[r>>2]+4294967296*S[r+4>>2],w=S[r+8>>2],w==1073741823?a=n:w==1073741822?a=null:a=1e3*u+w/1e6}else a=i=n;if((a??i)!==null){e=i;var q=Q(t,{$a:!0}).node;Ie(q.La.Ua)(q,{atime:e,mtime:a})}return 0}catch(E){if(typeof $>"u"||E.name!=="ErrnoError")throw E;return-E.Pa}},m:()=>be(""),l:()=>{at=!1,gt=0},A:function(e,t){e=-9007199254740992>e||9007199254740992<e?NaN:Number(e),e=new Date(1e3*e),S[t>>2]=e.getSeconds(),S[t+4>>2]=e.getMinutes(),S[t+8>>2]=e.getHours(),S[t+12>>2]=e.getDate(),S[t+16>>2]=e.getMonth(),S[t+20>>2]=e.getFullYear()-1900,S[t+24>>2]=e.getDay();var r=e.getFullYear();S[t+28>>2]=(r%4!==0||r%100===0&&r%400!==0?zr:Fr)[e.getMonth()]+e.getDate()-1|0,S[t+36>>2]=-(60*e.getTimezoneOffset()),r=new Date(e.getFullYear(),6,1).getTimezoneOffset();var n=new Date(e.getFullYear(),0,1).getTimezoneOffset();S[t+32>>2]=(r!=n&&e.getTimezoneOffset()==Math.min(n,r))|0},y:function(e,t,r,n,i,a,u){i=-9007199254740992>i||9007199254740992<i?NaN:Number(i);try{if(isNaN(i))return 61;var w=O(n);if(t&2&&!(r&2)&&(w.flags&2097155)!==2)throw new d(2);if((w.flags&2097155)===1)throw new d(2);if(!w.Ma.ib)throw new d(43);if(!e)throw new d(28);var q=w.Ma.ib(w,e,i,t,r),E=q.Kb;return S[a>>2]=q.Ab,I[u>>2]=E,0}catch(T){if(typeof $>"u"||T.name!=="ErrnoError")throw T;return-T.Pa}},z:function(e,t,r,n,i,a){a=-9007199254740992>a||9007199254740992<a?NaN:Number(a);try{var u=O(i);if(r&2){if(r=a,(u.node.mode&61440)!==32768)throw new d(43);if(!(n&2)){var w=x.slice(e,e+t);u.Ma.jb&&u.Ma.jb(u,w,r,t,n)}}}catch(q){if(typeof $>"u"||q.name!=="ErrnoError")throw q;return-q.Pa}},n:(e,t)=>{if(Ae[e]&&(clearTimeout(Ae[e].id),delete Ae[e]),!t)return 0;var r=setTimeout(()=>{delete Ae[e],Br(()=>sr(e,performance.now()))},t);return Ae[e]={id:r,Xb:t},0},B:(e,t,r,n)=>{var i=new Date().getFullYear(),a=new Date(i,0,1).getTimezoneOffset();i=new Date(i,6,1).getTimezoneOffset(),I[e>>2]=60*Math.max(a,i),S[t>>2]=+(a!=i),t=u=>{var w=Math.abs(u);return`UTC${0<=u?"-":"+"}${String(Math.floor(w/60)).padStart(2,"0")}${String(w%60).padStart(2,"0")}`},e=t(a),t=t(i),i<a?(ee(e,x,r,17),ee(t,x,n,17)):(ee(e,x,n,17),ee(t,x,r,17))},d:()=>Date.now(),s:()=>2147483648,c:()=>performance.now(),o:e=>{var t=x.length;if(e>>>=0,2147483648<e)return!1;for(var r=1;4>=r;r*=2){var n=t*(1+.2/r);n=Math.min(n,e+100663296);e:{n=(Math.min(2147483648,65536*Math.ceil(Math.max(e,n)/65536))-Te.buffer.byteLength+65535)/65536|0;try{Te.grow(n),Mt();var i=1;break e}catch{}i=void 0}if(i)return!0}return!1},E:(e,t)=>{var r=0;return ir().forEach((n,i)=>{var a=t+r;for(i=I[e+4*i>>2]=a,a=0;a<n.length;++a)L[i++]=n.charCodeAt(a);L[i]=0,r+=n.length+1}),0},F:(e,t)=>{var r=ir();I[e>>2]=r.length;var n=0;return r.forEach(i=>n+=i.length+1),I[t>>2]=n,0},e:function(e){try{var t=O(e);return vt(t),0}catch(r){if(typeof $>"u"||r.name!=="ErrnoError")throw r;return r.Pa}},p:function(e,t){try{var r=O(e);return L[t]=r.tty?2:W(r.mode)?3:(r.mode&61440)===40960?7:4,_e[t+2>>1]=0,Y[t+8>>3]=BigInt(0),Y[t+16>>3]=BigInt(0),0}catch(n){if(typeof $>"u"||n.name!=="ErrnoError")throw n;return n.Pa}},w:function(e,t,r,n){try{e:{var i=O(e);e=t;for(var a,u=t=0;u<r;u++){var w=I[e>>2],q=I[e+4>>2];e+=8;var E=tr(i,L,w,q,a);if(0>E){var T=-1;break e}if(t+=E,E<q)break;typeof a<"u"&&(a+=E)}T=t}return I[n>>2]=T,0}catch(F){if(typeof $>"u"||F.name!=="ErrnoError")throw F;return F.Pa}},D:function(e,t,r,n){t=-9007199254740992>t||9007199254740992<t?NaN:Number(t);try{if(isNaN(t))return 61;var i=O(e);return er(i,t,r),Y[n>>3]=BigInt(i.position),i.ob&&t===0&&r===0&&(i.ob=null),0}catch(a){if(typeof $>"u"||a.name!=="ErrnoError")throw a;return a.Pa}},I:function(e){try{var t=O(e);return t.Ma?.fsync?t.Ma.fsync(t):0}catch(r){if(typeof $>"u"||r.name!=="ErrnoError")throw r;return r.Pa}},t:function(e,t,r,n){try{e:{var i=O(e);e=t;for(var a,u=t=0;u<r;u++){var w=I[e>>2],q=I[e+4>>2];e+=8;var E=rr(i,L,w,q,a);if(0>E){var T=-1;break e}if(t+=E,E<q)break;typeof a<"u"&&(a+=E)}T=t}return I[n>>2]=T,0}catch(F){if(typeof $>"u"||F.name!=="ErrnoError")throw F;return F.Pa}},k:nr},m;(async function(){function e(r){return m=r.exports,Te=m.M,Mt(),te=m.O,ue--,o.monitorRunDependencies?.(ue),ue==0&&ke&&(r=ke,ke=null,r()),m}ue++,o.monitorRunDependencies?.(ue);var t={a:Hr};return o.instantiateWasm?new Promise(r=>{o.instantiateWasm(t,(n,i)=>{e(n,i),r(n.exports)})}):(ot??=o.locateFile?o.locateFile("sql-wasm.wasm",z):z+"sql-wasm.wasm",e((await Mr(t)).instance))})(),o._sqlite3_free=e=>(o._sqlite3_free=m.P)(e),o._sqlite3_value_text=e=>(o._sqlite3_value_text=m.Q)(e),o._sqlite3_prepare_v2=(e,t,r,n,i)=>(o._sqlite3_prepare_v2=m.R)(e,t,r,n,i),o._sqlite3_step=e=>(o._sqlite3_step=m.S)(e),o._sqlite3_reset=e=>(o._sqlite3_reset=m.T)(e),o._sqlite3_exec=(e,t,r,n,i)=>(o._sqlite3_exec=m.U)(e,t,r,n,i),o._sqlite3_finalize=e=>(o._sqlite3_finalize=m.V)(e),o._sqlite3_column_name=(e,t)=>(o._sqlite3_column_name=m.W)(e,t),o._sqlite3_column_text=(e,t)=>(o._sqlite3_column_text=m.X)(e,t),o._sqlite3_column_type=(e,t)=>(o._sqlite3_column_type=m.Y)(e,t),o._sqlite3_errmsg=e=>(o._sqlite3_errmsg=m.Z)(e),o._sqlite3_clear_bindings=e=>(o._sqlite3_clear_bindings=m._)(e),o._sqlite3_value_blob=e=>(o._sqlite3_value_blob=m.$)(e),o._sqlite3_value_bytes=e=>(o._sqlite3_value_bytes=m.aa)(e),o._sqlite3_value_double=e=>(o._sqlite3_value_double=m.ba)(e),o._sqlite3_value_int=e=>(o._sqlite3_value_int=m.ca)(e),o._sqlite3_value_type=e=>(o._sqlite3_value_type=m.da)(e),o._sqlite3_result_blob=(e,t,r,n)=>(o._sqlite3_result_blob=m.ea)(e,t,r,n),o._sqlite3_result_double=(e,t)=>(o._sqlite3_result_double=m.fa)(e,t),o._sqlite3_result_error=(e,t,r)=>(o._sqlite3_result_error=m.ga)(e,t,r),o._sqlite3_result_int=(e,t)=>(o._sqlite3_result_int=m.ha)(e,t),o._sqlite3_result_int64=(e,t)=>(o._sqlite3_result_int64=m.ia)(e,t),o._sqlite3_result_null=e=>(o._sqlite3_result_null=m.ja)(e),o._sqlite3_result_text=(e,t,r,n)=>(o._sqlite3_result_text=m.ka)(e,t,r,n),o._sqlite3_aggregate_context=(e,t)=>(o._sqlite3_aggregate_context=m.la)(e,t),o._sqlite3_column_count=e=>(o._sqlite3_column_count=m.ma)(e),o._sqlite3_data_count=e=>(o._sqlite3_data_count=m.na)(e),o._sqlite3_column_blob=(e,t)=>(o._sqlite3_column_blob=m.oa)(e,t),o._sqlite3_column_bytes=(e,t)=>(o._sqlite3_column_bytes=m.pa)(e,t),o._sqlite3_column_double=(e,t)=>(o._sqlite3_column_double=m.qa)(e,t),o._sqlite3_bind_blob=(e,t,r,n,i)=>(o._sqlite3_bind_blob=m.ra)(e,t,r,n,i),o._sqlite3_bind_double=(e,t,r)=>(o._sqlite3_bind_double=m.sa)(e,t,r),o._sqlite3_bind_int=(e,t,r)=>(o._sqlite3_bind_int=m.ta)(e,t,r),o._sqlite3_bind_text=(e,t,r,n,i)=>(o._sqlite3_bind_text=m.ua)(e,t,r,n,i),o._sqlite3_bind_parameter_index=(e,t)=>(o._sqlite3_bind_parameter_index=m.va)(e,t),o._sqlite3_sql=e=>(o._sqlite3_sql=m.wa)(e),o._sqlite3_normalized_sql=e=>(o._sqlite3_normalized_sql=m.xa)(e),o._sqlite3_changes=e=>(o._sqlite3_changes=m.ya)(e),o._sqlite3_close_v2=e=>(o._sqlite3_close_v2=m.za)(e),o._sqlite3_create_function_v2=(e,t,r,n,i,a,u,w,q)=>(o._sqlite3_create_function_v2=m.Aa)(e,t,r,n,i,a,u,w,q),o._sqlite3_update_hook=(e,t,r)=>(o._sqlite3_update_hook=m.Ba)(e,t,r),o._sqlite3_open=(e,t)=>(o._sqlite3_open=m.Ca)(e,t);var qt=o._malloc=e=>(qt=o._malloc=m.Da)(e),He=o._free=e=>(He=o._free=m.Ea)(e);o._RegisterExtensionFunctions=e=>(o._RegisterExtensionFunctions=m.Fa)(e);var or=(e,t)=>(or=m.Ga)(e,t),sr=(e,t)=>(sr=m.Ha)(e,t),Me=e=>(Me=m.Ia)(e),ae=e=>(ae=m.Ja)(e),Ue=()=>(Ue=m.Ka)();o.stackSave=()=>Ue(),o.stackRestore=e=>Me(e),o.stackAlloc=e=>ae(e),o.cwrap=(e,t,r,n)=>{var i=!r||r.every(a=>a==="number"||a==="boolean");return t!=="string"&&i&&!n?o["_"+e]:(...a)=>Qr(e,t,r,a)},o.addFunction=Se,o.removeFunction=se,o.UTF8ToString=ut,o.ALLOC_NORMAL=Be,o.allocate=Qe,o.allocateUTF8OnStack=kt;function xt(){function e(){if(o.calledRun=!0,!Pe){if(!o.noFSInit&&!Wt){var t,r;Wt=!0,n??=o.stdin,t??=o.stdout,r??=o.stderr,n?oe("stdin",n):wt("/dev/tty","/dev/stdin"),t?oe("stdout",null,t):wt("/dev/tty","/dev/stdout"),r?oe("stderr",null,r):wt("/dev/tty1","/dev/stderr"),ge("/dev/stdin",0),ge("/dev/stdout",1),ge("/dev/stderr",1)}if(m.N(),Ft=!1,o.onRuntimeInitialized?.(),o.postRun)for(typeof o.postRun=="function"&&(o.postRun=[o.postRun]);o.postRun.length;){var n=o.postRun.shift();$t.unshift(n)}Ut($t)}}if(0<ue)ke=xt;else{if(o.preRun)for(typeof o.preRun=="function"&&(o.preRun=[o.preRun]);o.preRun.length;)Ur();Ut(Rt),0<ue?ke=xt:o.setStatus?(o.setStatus("Running..."),setTimeout(()=>{setTimeout(()=>o.setStatus(""),1),e()},1)):e()}}if(o.preInit)for(typeof o.preInit=="function"&&(o.preInit=[o.preInit]);0<o.preInit.length;)o.preInit.pop()();return xt(),b}),Ye)};typeof Je=="object"&&typeof de=="object"?(de.exports=Ge,de.exports.default=Ge):typeof define=="function"&&define.amd?define([],function(){return Ge}):typeof Je=="object"&&(Je.Module=Ge)});var On={};Sn(On,{activate:()=>Un,deactivate:()=>Cn});module.exports=Mn(On);var P=$e(require("vscode")),V=$e(require("fs")),M=$e(require("path")),yr=$e(require("https")),_r=$e(wr()),Ke=null,N,Re;function Un(f){console.log("Cursor Usage Tracker \u5DF2\u6FC0\u6D3B"),N=P.window.createStatusBarItem(P.StatusBarAlignment.Right,100),N.command="cursor-usage-tracker.showDetails",N.tooltip="\u70B9\u51FB\u67E5\u770B Cursor \u914D\u989D\u8BE6\u60C5",f.subscriptions.push(N);let c=P.commands.registerCommand("cursor-usage-tracker.refresh",()=>et());f.subscriptions.push(c);let h=P.commands.registerCommand("cursor-usage-tracker.showDetails",()=>In());f.subscriptions.push(h);let b=P.commands.registerCommand("cursor-usage-tracker.showLogs",()=>{ye||(ye=P.window.createOutputChannel("Cursor Usage Tracker")),ye.show()});f.subscriptions.push(b),et(),vr(),P.workspace.onDidChangeConfiguration(y=>{y.affectsConfiguration("cursorUsageTracker")&&vr()})}function vr(){Re&&clearInterval(Re);let c=P.workspace.getConfiguration("cursorUsageTracker").get("refreshInterval",300)*1e3;Re=setInterval(()=>{et()},c)}var ye;function v(f){ye||(ye=P.window.createOutputChannel("Cursor Usage Tracker"));let c=new Date().toLocaleTimeString();ye.appendLine(`[${c}] ${f}`),console.log(`[Cursor Usage Tracker] ${f}`)}async function $n(){let f=Rn();v(`\u5F00\u59CB\u641C\u7D22\u7528\u6237 ID\uFF0C\u5171 ${f.length} \u4E2A\u5019\u9009\u8DEF\u5F84`);for(let c of f)try{v(`\u5C1D\u8BD5\u8DEF\u5F84: ${c}`);let h=await kr(c);if(h)return v(`\u2713 \u6210\u529F\u627E\u5230\u7528\u6237 ID: ${h}`),h;v("  - \u672A\u5728\u6B64\u8DEF\u5F84\u627E\u5230\u7528\u6237 ID")}catch(h){v(`  - \u8BFB\u53D6\u5931\u8D25: ${h}`)}return v("\u2717 \u6240\u6709\u8DEF\u5F84\u90FD\u672A\u627E\u5230\u7528\u6237 ID"),null}function Rn(){let f=[],c=process.env.HOME||process.env.USERPROFILE||"";if(process.platform==="win32"){let h=process.env.APPDATA||M.join(c,"AppData","Roaming");f.push(M.join(h,"Cursor","sentry","scope_v3.json"),M.join(h,"Cursor","sentry","session.json"),M.join(h,"Cursor","User","globalStorage","storage.json"),M.join(h,"Cursor","storage.json"),M.join(h,"Cursor","User","settings.json"),M.join(c,".cursor","storage.json"),M.join(c,".cursor-tutor","storage.json"))}else process.platform==="darwin"?f.push(M.join(c,"Library","Application Support","Cursor","sentry","scope_v3.json"),M.join(c,"Library","Application Support","Cursor","sentry","session.json"),M.join(c,"Library","Application Support","Cursor","User","globalStorage","storage.json"),M.join(c,"Library","Application Support","Cursor","storage.json"),M.join(c,".cursor","storage.json")):f.push(M.join(c,".config","Cursor","sentry","scope_v3.json"),M.join(c,".config","Cursor","sentry","session.json"),M.join(c,".config","Cursor","User","globalStorage","storage.json"),M.join(c,".config","Cursor","storage.json"),M.join(c,".cursor","storage.json"));return f}async function kr(f){try{if(!V.existsSync(f)){v(`  - \u6587\u4EF6\u4E0D\u5B58\u5728: ${f}`);let h=M.dirname(f);return V.existsSync(h)&&V.statSync(h).isDirectory()?(v(`  - \u5C1D\u8BD5\u641C\u7D22\u76EE\u5F55: ${h}`),await qr(h)):null}v("  - \u6587\u4EF6\u5B58\u5728\uFF0C\u8BFB\u53D6\u5185\u5BB9...");let c=V.readFileSync(f,"utf8");v(`  - \u6587\u4EF6\u5927\u5C0F: ${c.length} \u5B57\u8282`);try{let h=JSON.parse(c);if(h.scope?.user?.id){v(`  - \u53D1\u73B0 scope.user.id: ${h.scope.user.id}`);let o=gr(h.scope.user.id);if(o)return v(`  - \u63D0\u53D6\u7528\u6237 ID: ${o}`),o}if(h.did){v(`  - \u53D1\u73B0 did: ${h.did}`);let o=gr(h.did);if(o)return v(`  - \u63D0\u53D6\u7528\u6237 ID: ${o}`),o}let b=["cursorAuth/cachedSignInMethod","userId","user_id","id"];for(let o of b)if(h[o]&&typeof h[o]=="string"&&h[o].startsWith("user_"))return v(`  - \u53D1\u73B0 ${o}: ${h[o]}`),h[o];let y=Er(h);return y&&v(`  - \u9012\u5F52\u641C\u7D22\u627E\u5230: ${y}`),y}catch{v("  - JSON \u89E3\u6790\u5931\u8D25\uFF0C\u5C1D\u8BD5\u6B63\u5219\u5339\u914D...");let b=c.match(/user_[a-zA-Z0-9]{20,}/);if(b)return v(`  - \u6B63\u5219\u5339\u914D\u627E\u5230: ${b[0]}`),b[0]}}catch(c){v(`  - \u8BFB\u53D6\u6587\u4EF6\u5931\u8D25: ${c}`)}return null}function gr(f){if(!f||typeof f!="string")return null;if(f.includes("|")){let h=f.split("|").find(b=>b.startsWith("user_"));if(h)return h}return f.startsWith("user_")?f:null}function Er(f){if(!f||typeof f!="object")return null;for(let c in f){let h=f[c];if(typeof h=="string"&&h.startsWith("user_")&&h.length>20)return h;if(typeof h=="object"){let b=Er(h);if(b)return b}}return null}async function qr(f){try{let c=V.readdirSync(f);for(let h of c){let b=M.join(f,h),y=V.statSync(b);if(y.isFile()&&(h.endsWith(".json")||h==="storage.json")){let o=await kr(b);if(o)return o}else if(y.isDirectory()&&!h.startsWith(".")){let o=await qr(b);if(o)return o}}}catch(c){console.error(`\u641C\u7D22\u76EE\u5F55\u5931\u8D25: ${f}`,c)}return null}function Dn(){let f=process.env.HOME||process.env.USERPROFILE||"";if(process.platform==="win32"){let c=process.env.APPDATA||M.join(f,"AppData","Roaming");return M.join(c,"Cursor","User","globalStorage","state.vscdb")}else return process.platform==="darwin"?M.join(f,"Library","Application Support","Cursor","User","globalStorage","state.vscdb"):M.join(f,".config","Cursor","User","globalStorage","state.vscdb")}async function Tn(){if(Ke)return v("\u4F7F\u7528\u7F13\u5B58\u7684 accessToken"),Ke;let f=Dn();if(v(`\u5C1D\u8BD5\u8BFB\u53D6\u6570\u636E\u5E93: ${f}`),!V.existsSync(f))return v(`\u2717 \u6570\u636E\u5E93\u6587\u4EF6\u4E0D\u5B58\u5728: ${f}`),null;try{let c=await(0,_r.default)({locateFile:o=>M.join(__dirname,o)}),h=V.readFileSync(f),b=new c.Database(h),y=b.exec("SELECT value FROM ItemTable WHERE key = 'cursorAuth/accessToken'");if(y.length>0&&y[0].values.length>0){let o=y[0].values[0][0];return v("\u2713 \u6210\u529F\u83B7\u53D6 accessToken"),Ke=o,b.close(),o}else{v("\u2717 \u672A\u627E\u5230 accessToken");let o=b.exec("SELECT key FROM ItemTable WHERE key LIKE '%cursorAuth%'");return o.length>0&&v(`  - \u627E\u5230\u7684 cursorAuth \u76F8\u5173 key: ${o[0].values.map(j=>j[0]).join(", ")}`),b.close(),null}}catch(c){return v(`\u2717 \u8BFB\u53D6\u6570\u636E\u5E93\u5931\u8D25: ${c}`),null}}async function Pn(f){let c=await Tn(),h=(b,y=0)=>new Promise(o=>{if(y>5){v("\u2717 \u91CD\u5B9A\u5411\u6B21\u6570\u8FC7\u591A\uFF0C\u505C\u6B62\u8BF7\u6C42"),o(null);return}v(`\u8BF7\u6C42 API: ${b}${y>0?` (\u91CD\u5B9A\u5411 #${y})`:""}`);let j=new URL(b),C={hostname:j.hostname,path:j.pathname+j.search,method:"GET",headers:{"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",Accept:"application/json"}};c?(v("  - \u4F7F\u7528 Cookie \u548C Bearer \u8BA4\u8BC1"),C.headers={...C.headers,Cookie:`WorkosCursorSessionToken=${c}`,Authorization:`Bearer ${c}`}):v("  - \u65E0\u8BA4\u8BC1\u4FE1\u606F\uFF0C\u5C1D\u8BD5\u65E0\u8BA4\u8BC1\u8BF7\u6C42"),yr.get(C,D=>{if(v(`API \u54CD\u5E94\u72B6\u6001\u7801: ${D.statusCode}`),D.statusCode===401){v("\u2717 \u8BA4\u8BC1\u5931\u8D25 (401)\uFF0C\u6E05\u9664\u7F13\u5B58\u7684 token"),Ke=null,o(null);return}if(D.statusCode&&[301,302,307,308].includes(D.statusCode)){let U=D.headers.location;if(U){v(`  - \u91CD\u5B9A\u5411\u5230: ${U}`);let re=U.startsWith("http")?U:`https://www.cursor.com${U}`;o(h(re,y+1))}else v("\u2717 \u91CD\u5B9A\u5411\u4F46\u6CA1\u6709 Location \u5934"),o(null);return}let X="";D.on("data",U=>{X+=U}),D.on("end",()=>{v(`API \u54CD\u5E94\u6570\u636E\u957F\u5EA6: ${X.length} \u5B57\u8282`);try{let U=JSON.parse(X);U.error?(v(`\u2717 API \u8FD4\u56DE\u9519\u8BEF: ${U.error}`),o(null)):(v("\u2713 API \u8BF7\u6C42\u6210\u529F"),v(`  - GPT-4 \u8BF7\u6C42\u6570: ${U["gpt-4"]?.numRequests||"N/A"}`),v(`  - GPT-4 \u6700\u5927\u8BF7\u6C42\u6570: ${U["gpt-4"]?.maxRequestUsage||"N/A"}`),o(U))}catch(U){v(`\u2717 JSON \u89E3\u6790\u5931\u8D25: ${U}`),v(`  - \u539F\u59CB\u6570\u636E: ${X.substring(0,200)}...`),o(null)}})}).on("error",D=>{v(`\u2717 \u7F51\u7EDC\u8BF7\u6C42\u5931\u8D25: ${D}`),o(null)})});return h(`https://cursor.com/api/usage?user=${f}`)}var Ze=null,xr=null;async function et(){if(v("========== \u5F00\u59CB\u5237\u65B0\u914D\u989D =========="),!P.workspace.getConfiguration("cursorUsageTracker").get("showInStatusBar",!0)){v("\u72B6\u6001\u680F\u663E\u793A\u5DF2\u7981\u7528\uFF0C\u8DF3\u8FC7\u5237\u65B0"),N.hide();return}N.text="$(sync~spin) \u83B7\u53D6\u4E2D...",N.show();try{v("\u6B65\u9AA4 1: \u83B7\u53D6\u7528\u6237 ID...");let h=await $n();if(!h){v("\u2717 \u83B7\u53D6\u7528\u6237 ID \u5931\u8D25"),N.text="$(warning) \u65E0 ID",N.tooltip="\u65E0\u6CD5\u81EA\u52A8\u83B7\u53D6 User ID\uFF0C\u8BF7\u70B9\u51FB\u67E5\u770B\u65E5\u5FD7",N.command="cursor-usage-tracker.showLogs";return}v("\u6B65\u9AA4 2: \u8C03\u7528 API \u83B7\u53D6\u914D\u989D\u6570\u636E..."),xr=h;let b=await Pn(h);if(!b){v("\u2717 API \u8BF7\u6C42\u5931\u8D25"),N.text="$(error) \u5931\u8D25",N.tooltip="\u65E0\u6CD5\u4ECE Cursor API \u83B7\u53D6\u6570\u636E\uFF0C\u8BF7\u70B9\u51FB\u67E5\u770B\u65E5\u5FD7",N.command="cursor-usage-tracker.showLogs";return}v("\u2713 \u914D\u989D\u6570\u636E\u83B7\u53D6\u6210\u529F"),Ze=b,Nn(b),v("========== \u5237\u65B0\u5B8C\u6210 ==========")}catch(h){v(`\u2717 \u5237\u65B0\u8FC7\u7A0B\u53D1\u751F\u5F02\u5E38: ${h}`),N.text="$(error) \u9519\u8BEF"}}function Nn(f){let c=f["gpt-4"];if(c&&c.maxRequestUsage){let h=c.numRequests,b=c.maxRequestUsage,y=b-h,o=Math.round(h/b*100),j="$(check)",C="statusBarItem.warningBackground";o>=90?(j="$(flame)",C="statusBarItem.errorBackground"):o>=70?j="$(warning)":(j="$(pulse)",C=""),N.text=`${j} ${y}`,N.tooltip=jn(f),o>=70?N.backgroundColor=new P.ThemeColor(C):N.backgroundColor=void 0}else N.text="$(info) Cursor",N.tooltip="\u65E0\u6CD5\u83B7\u53D6\u914D\u989D\u4FE1\u606F";N.show()}function jn(f){let c=new P.MarkdownString;c.isTrusted=!0;let h=f["gpt-4"];if(h){let b=h.numRequests,y=h.maxRequestUsage||"\u221E",o=typeof y=="number"?y-b:"\u221E",j=typeof y=="number"?Math.round(b/y*100):0;c.appendMarkdown(`### \u{1F916} GPT-4 \u914D\u989D
-`),c.appendMarkdown(`**${o}** / ${y} \u8BF7\u6C42\u53EF\u7528
+"use strict";
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __commonJS = (cb, mod) => function __require() {
+  return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
+};
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-`);let C=10,D=Math.round(j/100*C),X=C-D,U="\u2588".repeat(D)+"\u2591".repeat(X);c.appendMarkdown(`\`[${U}] ${j}%\`
+// node_modules/sql.js/dist/sql-wasm.js
+var require_sql_wasm = __commonJS({
+  "node_modules/sql.js/dist/sql-wasm.js"(exports2, module2) {
+    var initSqlJsPromise = void 0;
+    var initSqlJs2 = function(moduleConfig) {
+      if (initSqlJsPromise) {
+        return initSqlJsPromise;
+      }
+      initSqlJsPromise = new Promise(function(resolveModule, reject) {
+        var Module = typeof moduleConfig !== "undefined" ? moduleConfig : {};
+        var originalOnAbortFunction = Module["onAbort"];
+        Module["onAbort"] = function(errorThatCausedAbort) {
+          reject(new Error(errorThatCausedAbort));
+          if (originalOnAbortFunction) {
+            originalOnAbortFunction(errorThatCausedAbort);
+          }
+        };
+        Module["postRun"] = Module["postRun"] || [];
+        Module["postRun"].push(function() {
+          resolveModule(Module);
+        });
+        module2 = void 0;
+        var f;
+        f ||= typeof Module != "undefined" ? Module : {};
+        var aa = "object" == typeof window, ba = "undefined" != typeof WorkerGlobalScope, ca = "object" == typeof process && "object" == typeof process.versions && "string" == typeof process.versions.node && "renderer" != process.type;
+        "use strict";
+        f.onRuntimeInitialized = function() {
+          function a(g, l) {
+            switch (typeof l) {
+              case "boolean":
+                dc(g, l ? 1 : 0);
+                break;
+              case "number":
+                ec(g, l);
+                break;
+              case "string":
+                fc(g, l, -1, -1);
+                break;
+              case "object":
+                if (null === l) lb(g);
+                else if (null != l.length) {
+                  var n = da(l, ea);
+                  gc(g, n, l.length, -1);
+                  fa(n);
+                } else va(g, "Wrong API use : tried to return a value of an unknown type (" + l + ").", -1);
+                break;
+              default:
+                lb(g);
+            }
+          }
+          function b(g, l) {
+            for (var n = [], r = 0; r < g; r += 1) {
+              var t = m(l + 4 * r, "i32"), y = hc(t);
+              if (1 === y || 2 === y) t = ic(t);
+              else if (3 === y) t = jc(t);
+              else if (4 === y) {
+                y = t;
+                t = kc(y);
+                y = lc(y);
+                for (var L = new Uint8Array(t), J = 0; J < t; J += 1) L[J] = p[y + J];
+                t = L;
+              } else t = null;
+              n.push(t);
+            }
+            return n;
+          }
+          function c(g, l) {
+            this.Qa = g;
+            this.db = l;
+            this.Oa = 1;
+            this.lb = [];
+          }
+          function d(g, l) {
+            this.db = l;
+            l = ha(g) + 1;
+            this.eb = ia(l);
+            if (null === this.eb) throw Error("Unable to allocate memory for the SQL string");
+            u(g, x, this.eb, l);
+            this.kb = this.eb;
+            this.Za = this.pb = null;
+          }
+          function e(g) {
+            this.filename = "dbfile_" + (4294967295 * Math.random() >>> 0);
+            if (null != g) {
+              var l = this.filename, n = "/", r = l;
+              n && (n = "string" == typeof n ? n : ja(n), r = l ? ka(n + "/" + l) : n);
+              l = la(true, true);
+              r = ma(r, l);
+              if (g) {
+                if ("string" == typeof g) {
+                  n = Array(g.length);
+                  for (var t = 0, y = g.length; t < y; ++t) n[t] = g.charCodeAt(t);
+                  g = n;
+                }
+                na(r, l | 146);
+                n = oa(r, 577);
+                pa(n, g, 0, g.length, 0);
+                qa(n);
+                na(r, l);
+              }
+            }
+            this.handleError(q(this.filename, h));
+            this.db = m(h, "i32");
+            ob(this.db);
+            this.fb = {};
+            this.Sa = {};
+          }
+          var h = z(4), k = f.cwrap, q = k("sqlite3_open", "number", ["string", "number"]), w = k("sqlite3_close_v2", "number", ["number"]), v = k("sqlite3_exec", "number", ["number", "string", "number", "number", "number"]), C = k("sqlite3_changes", "number", ["number"]), G = k("sqlite3_prepare_v2", "number", ["number", "string", "number", "number", "number"]), pb = k("sqlite3_sql", "string", ["number"]), nc = k("sqlite3_normalized_sql", "string", ["number"]), qb = k("sqlite3_prepare_v2", "number", ["number", "number", "number", "number", "number"]), oc = k("sqlite3_bind_text", "number", ["number", "number", "number", "number", "number"]), rb = k("sqlite3_bind_blob", "number", ["number", "number", "number", "number", "number"]), pc = k("sqlite3_bind_double", "number", ["number", "number", "number"]), qc = k(
+            "sqlite3_bind_int",
+            "number",
+            ["number", "number", "number"]
+          ), rc = k("sqlite3_bind_parameter_index", "number", ["number", "string"]), sc = k("sqlite3_step", "number", ["number"]), tc = k("sqlite3_errmsg", "string", ["number"]), uc = k("sqlite3_column_count", "number", ["number"]), vc = k("sqlite3_data_count", "number", ["number"]), wc = k("sqlite3_column_double", "number", ["number", "number"]), sb = k("sqlite3_column_text", "string", ["number", "number"]), xc = k("sqlite3_column_blob", "number", ["number", "number"]), yc = k("sqlite3_column_bytes", "number", [
+            "number",
+            "number"
+          ]), zc = k("sqlite3_column_type", "number", ["number", "number"]), Ac = k("sqlite3_column_name", "string", ["number", "number"]), Bc = k("sqlite3_reset", "number", ["number"]), Cc = k("sqlite3_clear_bindings", "number", ["number"]), Dc = k("sqlite3_finalize", "number", ["number"]), tb = k("sqlite3_create_function_v2", "number", "number string number number number number number number number".split(" ")), hc = k("sqlite3_value_type", "number", ["number"]), kc = k("sqlite3_value_bytes", "number", ["number"]), jc = k(
+            "sqlite3_value_text",
+            "string",
+            ["number"]
+          ), lc = k("sqlite3_value_blob", "number", ["number"]), ic = k("sqlite3_value_double", "number", ["number"]), ec = k("sqlite3_result_double", "", ["number", "number"]), lb = k("sqlite3_result_null", "", ["number"]), fc = k("sqlite3_result_text", "", ["number", "string", "number", "number"]), gc = k("sqlite3_result_blob", "", ["number", "number", "number", "number"]), dc = k("sqlite3_result_int", "", ["number", "number"]), va = k("sqlite3_result_error", "", ["number", "string", "number"]), ub = k(
+            "sqlite3_aggregate_context",
+            "number",
+            ["number", "number"]
+          ), ob = k("RegisterExtensionFunctions", "number", ["number"]), vb = k("sqlite3_update_hook", "number", ["number", "number", "number"]);
+          c.prototype.bind = function(g) {
+            if (!this.Qa) throw "Statement closed";
+            this.reset();
+            return Array.isArray(g) ? this.Cb(g) : null != g && "object" === typeof g ? this.Db(g) : true;
+          };
+          c.prototype.step = function() {
+            if (!this.Qa) throw "Statement closed";
+            this.Oa = 1;
+            var g = sc(this.Qa);
+            switch (g) {
+              case 100:
+                return true;
+              case 101:
+                return false;
+              default:
+                throw this.db.handleError(g);
+            }
+          };
+          c.prototype.wb = function(g) {
+            null == g && (g = this.Oa, this.Oa += 1);
+            return wc(this.Qa, g);
+          };
+          c.prototype.Gb = function(g) {
+            null == g && (g = this.Oa, this.Oa += 1);
+            g = sb(this.Qa, g);
+            if ("function" !== typeof BigInt) throw Error("BigInt is not supported");
+            return BigInt(g);
+          };
+          c.prototype.Hb = function(g) {
+            null == g && (g = this.Oa, this.Oa += 1);
+            return sb(this.Qa, g);
+          };
+          c.prototype.getBlob = function(g) {
+            null == g && (g = this.Oa, this.Oa += 1);
+            var l = yc(this.Qa, g);
+            g = xc(this.Qa, g);
+            for (var n = new Uint8Array(l), r = 0; r < l; r += 1) n[r] = p[g + r];
+            return n;
+          };
+          c.prototype.get = function(g, l) {
+            l = l || {};
+            null != g && this.bind(g) && this.step();
+            g = [];
+            for (var n = vc(this.Qa), r = 0; r < n; r += 1) switch (zc(this.Qa, r)) {
+              case 1:
+                var t = l.useBigInt ? this.Gb(r) : this.wb(r);
+                g.push(t);
+                break;
+              case 2:
+                g.push(this.wb(r));
+                break;
+              case 3:
+                g.push(this.Hb(r));
+                break;
+              case 4:
+                g.push(this.getBlob(r));
+                break;
+              default:
+                g.push(null);
+            }
+            return g;
+          };
+          c.prototype.getColumnNames = function() {
+            for (var g = [], l = uc(this.Qa), n = 0; n < l; n += 1) g.push(Ac(this.Qa, n));
+            return g;
+          };
+          c.prototype.getAsObject = function(g, l) {
+            g = this.get(g, l);
+            l = this.getColumnNames();
+            for (var n = {}, r = 0; r < l.length; r += 1) n[l[r]] = g[r];
+            return n;
+          };
+          c.prototype.getSQL = function() {
+            return pb(this.Qa);
+          };
+          c.prototype.getNormalizedSQL = function() {
+            return nc(this.Qa);
+          };
+          c.prototype.run = function(g) {
+            null != g && this.bind(g);
+            this.step();
+            return this.reset();
+          };
+          c.prototype.sb = function(g, l) {
+            null == l && (l = this.Oa, this.Oa += 1);
+            g = ra(g);
+            var n = da(g, ea);
+            this.lb.push(n);
+            this.db.handleError(oc(this.Qa, l, n, g.length - 1, 0));
+          };
+          c.prototype.Bb = function(g, l) {
+            null == l && (l = this.Oa, this.Oa += 1);
+            var n = da(g, ea);
+            this.lb.push(n);
+            this.db.handleError(rb(
+              this.Qa,
+              l,
+              n,
+              g.length,
+              0
+            ));
+          };
+          c.prototype.rb = function(g, l) {
+            null == l && (l = this.Oa, this.Oa += 1);
+            this.db.handleError((g === (g | 0) ? qc : pc)(this.Qa, l, g));
+          };
+          c.prototype.Eb = function(g) {
+            null == g && (g = this.Oa, this.Oa += 1);
+            rb(this.Qa, g, 0, 0, 0);
+          };
+          c.prototype.tb = function(g, l) {
+            null == l && (l = this.Oa, this.Oa += 1);
+            switch (typeof g) {
+              case "string":
+                this.sb(g, l);
+                return;
+              case "number":
+                this.rb(g, l);
+                return;
+              case "bigint":
+                this.sb(g.toString(), l);
+                return;
+              case "boolean":
+                this.rb(g + 0, l);
+                return;
+              case "object":
+                if (null === g) {
+                  this.Eb(l);
+                  return;
+                }
+                if (null != g.length) {
+                  this.Bb(
+                    g,
+                    l
+                  );
+                  return;
+                }
+            }
+            throw "Wrong API use : tried to bind a value of an unknown type (" + g + ").";
+          };
+          c.prototype.Db = function(g) {
+            var l = this;
+            Object.keys(g).forEach(function(n) {
+              var r = rc(l.Qa, n);
+              0 !== r && l.tb(g[n], r);
+            });
+            return true;
+          };
+          c.prototype.Cb = function(g) {
+            for (var l = 0; l < g.length; l += 1) this.tb(g[l], l + 1);
+            return true;
+          };
+          c.prototype.reset = function() {
+            this.freemem();
+            return 0 === Cc(this.Qa) && 0 === Bc(this.Qa);
+          };
+          c.prototype.freemem = function() {
+            for (var g; void 0 !== (g = this.lb.pop()); ) fa(g);
+          };
+          c.prototype.free = function() {
+            this.freemem();
+            var g = 0 === Dc(this.Qa);
+            delete this.db.fb[this.Qa];
+            this.Qa = 0;
+            return g;
+          };
+          d.prototype.next = function() {
+            if (null === this.eb) return { done: true };
+            null !== this.Za && (this.Za.free(), this.Za = null);
+            if (!this.db.db) throw this.mb(), Error("Database closed");
+            var g = sa(), l = z(4);
+            ta(h);
+            ta(l);
+            try {
+              this.db.handleError(qb(this.db.db, this.kb, -1, h, l));
+              this.kb = m(l, "i32");
+              var n = m(h, "i32");
+              if (0 === n) return this.mb(), { done: true };
+              this.Za = new c(n, this.db);
+              this.db.fb[n] = this.Za;
+              return { value: this.Za, done: false };
+            } catch (r) {
+              throw this.pb = ua(this.kb), this.mb(), r;
+            } finally {
+              wa(g);
+            }
+          };
+          d.prototype.mb = function() {
+            fa(this.eb);
+            this.eb = null;
+          };
+          d.prototype.getRemainingSQL = function() {
+            return null !== this.pb ? this.pb : ua(this.kb);
+          };
+          "function" === typeof Symbol && "symbol" === typeof Symbol.iterator && (d.prototype[Symbol.iterator] = function() {
+            return this;
+          });
+          e.prototype.run = function(g, l) {
+            if (!this.db) throw "Database closed";
+            if (l) {
+              g = this.prepare(g, l);
+              try {
+                g.step();
+              } finally {
+                g.free();
+              }
+            } else this.handleError(v(this.db, g, 0, 0, h));
+            return this;
+          };
+          e.prototype.exec = function(g, l, n) {
+            if (!this.db) throw "Database closed";
+            var r = sa(), t = null;
+            try {
+              var y = xa(g), L = z(4);
+              for (g = []; 0 !== m(y, "i8"); ) {
+                ta(h);
+                ta(L);
+                this.handleError(qb(this.db, y, -1, h, L));
+                var J = m(h, "i32");
+                y = m(L, "i32");
+                if (0 !== J) {
+                  var I = null;
+                  t = new c(J, this);
+                  for (null != l && t.bind(l); t.step(); ) null === I && (I = { columns: t.getColumnNames(), values: [] }, g.push(I)), I.values.push(t.get(null, n));
+                  t.free();
+                }
+              }
+              return g;
+            } catch (M) {
+              throw t && t.free(), M;
+            } finally {
+              wa(r);
+            }
+          };
+          e.prototype.each = function(g, l, n, r, t) {
+            "function" === typeof l && (r = n, n = l, l = void 0);
+            g = this.prepare(g, l);
+            try {
+              for (; g.step(); ) n(g.getAsObject(
+                null,
+                t
+              ));
+            } finally {
+              g.free();
+            }
+            if ("function" === typeof r) return r();
+          };
+          e.prototype.prepare = function(g, l) {
+            ta(h);
+            this.handleError(G(this.db, g, -1, h, 0));
+            g = m(h, "i32");
+            if (0 === g) throw "Nothing to prepare";
+            var n = new c(g, this);
+            null != l && n.bind(l);
+            return this.fb[g] = n;
+          };
+          e.prototype.iterateStatements = function(g) {
+            return new d(g, this);
+          };
+          e.prototype["export"] = function() {
+            Object.values(this.fb).forEach(function(l) {
+              l.free();
+            });
+            Object.values(this.Sa).forEach(A);
+            this.Sa = {};
+            this.handleError(w(this.db));
+            var g = ya(this.filename);
+            this.handleError(q(
+              this.filename,
+              h
+            ));
+            this.db = m(h, "i32");
+            ob(this.db);
+            return g;
+          };
+          e.prototype.close = function() {
+            null !== this.db && (Object.values(this.fb).forEach(function(g) {
+              g.free();
+            }), Object.values(this.Sa).forEach(A), this.Sa = {}, this.Ya && (A(this.Ya), this.Ya = void 0), this.handleError(w(this.db)), za("/" + this.filename), this.db = null);
+          };
+          e.prototype.handleError = function(g) {
+            if (0 === g) return null;
+            g = tc(this.db);
+            throw Error(g);
+          };
+          e.prototype.getRowsModified = function() {
+            return C(this.db);
+          };
+          e.prototype.create_function = function(g, l) {
+            Object.prototype.hasOwnProperty.call(
+              this.Sa,
+              g
+            ) && (A(this.Sa[g]), delete this.Sa[g]);
+            var n = Aa(function(r, t, y) {
+              t = b(t, y);
+              try {
+                var L = l.apply(null, t);
+              } catch (J) {
+                va(r, J, -1);
+                return;
+              }
+              a(r, L);
+            }, "viii");
+            this.Sa[g] = n;
+            this.handleError(tb(this.db, g, l.length, 1, 0, n, 0, 0, 0));
+            return this;
+          };
+          e.prototype.create_aggregate = function(g, l) {
+            var n = l.init || function() {
+              return null;
+            }, r = l.finalize || function(I) {
+              return I;
+            }, t = l.step;
+            if (!t) throw "An aggregate function must have a step function in " + g;
+            var y = {};
+            Object.hasOwnProperty.call(this.Sa, g) && (A(this.Sa[g]), delete this.Sa[g]);
+            l = g + "__finalize";
+            Object.hasOwnProperty.call(this.Sa, l) && (A(this.Sa[l]), delete this.Sa[l]);
+            var L = Aa(function(I, M, Ra) {
+              var X = ub(I, 1);
+              Object.hasOwnProperty.call(y, X) || (y[X] = n());
+              M = b(M, Ra);
+              M = [y[X]].concat(M);
+              try {
+                y[X] = t.apply(null, M);
+              } catch (Fc) {
+                delete y[X], va(I, Fc, -1);
+              }
+            }, "viii"), J = Aa(function(I) {
+              var M = ub(I, 1);
+              try {
+                var Ra = r(y[M]);
+              } catch (X) {
+                delete y[M];
+                va(I, X, -1);
+                return;
+              }
+              a(I, Ra);
+              delete y[M];
+            }, "vi");
+            this.Sa[g] = L;
+            this.Sa[l] = J;
+            this.handleError(tb(this.db, g, t.length - 1, 1, 0, 0, L, J, 0));
+            return this;
+          };
+          e.prototype.updateHook = function(g) {
+            this.Ya && (vb(this.db, 0, 0), A(this.Ya), this.Ya = void 0);
+            g && (this.Ya = Aa(function(l, n, r, t, y) {
+              switch (n) {
+                case 18:
+                  l = "insert";
+                  break;
+                case 23:
+                  l = "update";
+                  break;
+                case 9:
+                  l = "delete";
+                  break;
+                default:
+                  throw "unknown operationCode in updateHook callback: " + n;
+              }
+              r = r ? B(x, r) : "";
+              t = t ? B(x, t) : "";
+              if (y > Number.MAX_SAFE_INTEGER) throw "rowId too big to fit inside a Number";
+              g(l, r, t, Number(y));
+            }, "viiiij"), vb(this.db, this.Ya, 0));
+          };
+          f.Database = e;
+        };
+        var Ba = { ...f }, Ca = "./this.program", Da = (a, b) => {
+          throw b;
+        }, D = "", Ea, Fa;
+        if (ca) {
+          var fs2 = require("fs");
+          require("path");
+          D = __dirname + "/";
+          Fa = (a) => {
+            a = Ga(a) ? new URL(a) : a;
+            return fs2.readFileSync(a);
+          };
+          Ea = async (a) => {
+            a = Ga(a) ? new URL(a) : a;
+            return fs2.readFileSync(a, void 0);
+          };
+          !f.thisProgram && 1 < process.argv.length && (Ca = process.argv[1].replace(/\\/g, "/"));
+          process.argv.slice(2);
+          "undefined" != typeof module2 && (module2.exports = f);
+          Da = (a, b) => {
+            process.exitCode = a;
+            throw b;
+          };
+        } else if (aa || ba) ba ? D = self.location.href : "undefined" != typeof document && document.currentScript && (D = document.currentScript.src), D = D.startsWith("blob:") ? "" : D.slice(0, D.replace(/[?#].*/, "").lastIndexOf("/") + 1), ba && (Fa = (a) => {
+          var b = new XMLHttpRequest();
+          b.open("GET", a, false);
+          b.responseType = "arraybuffer";
+          b.send(null);
+          return new Uint8Array(b.response);
+        }), Ea = async (a) => {
+          if (Ga(a)) return new Promise((c, d) => {
+            var e = new XMLHttpRequest();
+            e.open("GET", a, true);
+            e.responseType = "arraybuffer";
+            e.onload = () => {
+              200 == e.status || 0 == e.status && e.response ? c(e.response) : d(e.status);
+            };
+            e.onerror = d;
+            e.send(null);
+          });
+          var b = await fetch(a, { credentials: "same-origin" });
+          if (b.ok) return b.arrayBuffer();
+          throw Error(b.status + " : " + b.url);
+        };
+        var Ha = f.print || console.log.bind(console), Ia = f.printErr || console.error.bind(console);
+        Object.assign(f, Ba);
+        Ba = null;
+        f.thisProgram && (Ca = f.thisProgram);
+        var Ja = f.wasmBinary, Ka, La = false, Ma, p, x, Na, E, F, Oa, H, Pa, Ga = (a) => a.startsWith("file://");
+        function Qa() {
+          var a = Ka.buffer;
+          f.HEAP8 = p = new Int8Array(a);
+          f.HEAP16 = Na = new Int16Array(a);
+          f.HEAPU8 = x = new Uint8Array(a);
+          f.HEAPU16 = new Uint16Array(a);
+          f.HEAP32 = E = new Int32Array(a);
+          f.HEAPU32 = F = new Uint32Array(a);
+          f.HEAPF32 = Oa = new Float32Array(a);
+          f.HEAPF64 = Pa = new Float64Array(a);
+          f.HEAP64 = H = new BigInt64Array(a);
+          f.HEAPU64 = new BigUint64Array(a);
+        }
+        var K = 0, Sa = null;
+        function Ta(a) {
+          f.onAbort?.(a);
+          a = "Aborted(" + a + ")";
+          Ia(a);
+          La = true;
+          throw new WebAssembly.RuntimeError(a + ". Build with -sASSERTIONS for more info.");
+        }
+        var Ua;
+        async function Va(a) {
+          if (!Ja) try {
+            var b = await Ea(a);
+            return new Uint8Array(b);
+          } catch {
+          }
+          if (a == Ua && Ja) a = new Uint8Array(Ja);
+          else if (Fa) a = Fa(a);
+          else throw "both async and sync fetching of the wasm failed";
+          return a;
+        }
+        async function Wa(a, b) {
+          try {
+            var c = await Va(a);
+            return await WebAssembly.instantiate(c, b);
+          } catch (d) {
+            Ia(`failed to asynchronously prepare wasm: ${d}`), Ta(d);
+          }
+        }
+        async function Xa(a) {
+          var b = Ua;
+          if (!Ja && "function" == typeof WebAssembly.instantiateStreaming && !Ga(b) && !ca) try {
+            var c = fetch(b, { credentials: "same-origin" });
+            return await WebAssembly.instantiateStreaming(c, a);
+          } catch (d) {
+            Ia(`wasm streaming compile failed: ${d}`), Ia("falling back to ArrayBuffer instantiation");
+          }
+          return Wa(b, a);
+        }
+        class Ya {
+          name = "ExitStatus";
+          constructor(a) {
+            this.message = `Program terminated with exit(${a})`;
+            this.status = a;
+          }
+        }
+        var Za = (a) => {
+          for (; 0 < a.length; ) a.shift()(f);
+        }, $a = [], ab = [], bb = () => {
+          var a = f.preRun.shift();
+          ab.unshift(a);
+        };
+        function m(a, b = "i8") {
+          b.endsWith("*") && (b = "*");
+          switch (b) {
+            case "i1":
+              return p[a];
+            case "i8":
+              return p[a];
+            case "i16":
+              return Na[a >> 1];
+            case "i32":
+              return E[a >> 2];
+            case "i64":
+              return H[a >> 3];
+            case "float":
+              return Oa[a >> 2];
+            case "double":
+              return Pa[a >> 3];
+            case "*":
+              return F[a >> 2];
+            default:
+              Ta(`invalid type for getValue: ${b}`);
+          }
+        }
+        var cb = f.noExitRuntime || true;
+        function ta(a) {
+          var b = "i32";
+          b.endsWith("*") && (b = "*");
+          switch (b) {
+            case "i1":
+              p[a] = 0;
+              break;
+            case "i8":
+              p[a] = 0;
+              break;
+            case "i16":
+              Na[a >> 1] = 0;
+              break;
+            case "i32":
+              E[a >> 2] = 0;
+              break;
+            case "i64":
+              H[a >> 3] = BigInt(0);
+              break;
+            case "float":
+              Oa[a >> 2] = 0;
+              break;
+            case "double":
+              Pa[a >> 3] = 0;
+              break;
+            case "*":
+              F[a >> 2] = 0;
+              break;
+            default:
+              Ta(`invalid type for setValue: ${b}`);
+          }
+        }
+        var db = "undefined" != typeof TextDecoder ? new TextDecoder() : void 0, B = (a, b = 0, c = NaN) => {
+          var d = b + c;
+          for (c = b; a[c] && !(c >= d); ) ++c;
+          if (16 < c - b && a.buffer && db) return db.decode(a.subarray(b, c));
+          for (d = ""; b < c; ) {
+            var e = a[b++];
+            if (e & 128) {
+              var h = a[b++] & 63;
+              if (192 == (e & 224)) d += String.fromCharCode((e & 31) << 6 | h);
+              else {
+                var k = a[b++] & 63;
+                e = 224 == (e & 240) ? (e & 15) << 12 | h << 6 | k : (e & 7) << 18 | h << 12 | k << 6 | a[b++] & 63;
+                65536 > e ? d += String.fromCharCode(e) : (e -= 65536, d += String.fromCharCode(55296 | e >> 10, 56320 | e & 1023));
+              }
+            } else d += String.fromCharCode(e);
+          }
+          return d;
+        }, ua = (a, b) => a ? B(x, a, b) : "", eb = (a, b) => {
+          for (var c = 0, d = a.length - 1; 0 <= d; d--) {
+            var e = a[d];
+            "." === e ? a.splice(d, 1) : ".." === e ? (a.splice(d, 1), c++) : c && (a.splice(d, 1), c--);
+          }
+          if (b) for (; c; c--) a.unshift("..");
+          return a;
+        }, ka = (a) => {
+          var b = "/" === a.charAt(0), c = "/" === a.slice(-1);
+          (a = eb(a.split("/").filter((d) => !!d), !b).join("/")) || b || (a = ".");
+          a && c && (a += "/");
+          return (b ? "/" : "") + a;
+        }, fb = (a) => {
+          var b = /^(\/?|)([\s\S]*?)((?:\.{1,2}|[^\/]+?|)(\.[^.\/]*|))(?:[\/]*)$/.exec(a).slice(1);
+          a = b[0];
+          b = b[1];
+          if (!a && !b) return ".";
+          b &&= b.slice(0, -1);
+          return a + b;
+        }, gb = (a) => a && a.match(/([^\/]+|\/)\/*$/)[1], hb = () => {
+          if (ca) {
+            var a = require("crypto");
+            return (b) => a.randomFillSync(b);
+          }
+          return (b) => crypto.getRandomValues(b);
+        }, ib = (a) => {
+          (ib = hb())(a);
+        }, jb = (...a) => {
+          for (var b = "", c = false, d = a.length - 1; -1 <= d && !c; d--) {
+            c = 0 <= d ? a[d] : "/";
+            if ("string" != typeof c) throw new TypeError("Arguments to path.resolve must be strings");
+            if (!c) return "";
+            b = c + "/" + b;
+            c = "/" === c.charAt(0);
+          }
+          b = eb(b.split("/").filter((e) => !!e), !c).join("/");
+          return (c ? "/" : "") + b || ".";
+        }, kb = [], ha = (a) => {
+          for (var b = 0, c = 0; c < a.length; ++c) {
+            var d = a.charCodeAt(c);
+            127 >= d ? b++ : 2047 >= d ? b += 2 : 55296 <= d && 57343 >= d ? (b += 4, ++c) : b += 3;
+          }
+          return b;
+        }, u = (a, b, c, d) => {
+          if (!(0 < d)) return 0;
+          var e = c;
+          d = c + d - 1;
+          for (var h = 0; h < a.length; ++h) {
+            var k = a.charCodeAt(h);
+            if (55296 <= k && 57343 >= k) {
+              var q = a.charCodeAt(++h);
+              k = 65536 + ((k & 1023) << 10) | q & 1023;
+            }
+            if (127 >= k) {
+              if (c >= d) break;
+              b[c++] = k;
+            } else {
+              if (2047 >= k) {
+                if (c + 1 >= d) break;
+                b[c++] = 192 | k >> 6;
+              } else {
+                if (65535 >= k) {
+                  if (c + 2 >= d) break;
+                  b[c++] = 224 | k >> 12;
+                } else {
+                  if (c + 3 >= d) break;
+                  b[c++] = 240 | k >> 18;
+                  b[c++] = 128 | k >> 12 & 63;
+                }
+                b[c++] = 128 | k >> 6 & 63;
+              }
+              b[c++] = 128 | k & 63;
+            }
+          }
+          b[c] = 0;
+          return c - e;
+        }, ra = (a, b) => {
+          var c = Array(ha(a) + 1);
+          a = u(a, c, 0, c.length);
+          b && (c.length = a);
+          return c;
+        }, mb = [];
+        function nb(a, b) {
+          mb[a] = { input: [], output: [], cb: b };
+          wb(a, xb);
+        }
+        var xb = { open(a) {
+          var b = mb[a.node.rdev];
+          if (!b) throw new N(43);
+          a.tty = b;
+          a.seekable = false;
+        }, close(a) {
+          a.tty.cb.fsync(a.tty);
+        }, fsync(a) {
+          a.tty.cb.fsync(a.tty);
+        }, read(a, b, c, d) {
+          if (!a.tty || !a.tty.cb.xb) throw new N(60);
+          for (var e = 0, h = 0; h < d; h++) {
+            try {
+              var k = a.tty.cb.xb(a.tty);
+            } catch (q) {
+              throw new N(29);
+            }
+            if (void 0 === k && 0 === e) throw new N(6);
+            if (null === k || void 0 === k) break;
+            e++;
+            b[c + h] = k;
+          }
+          e && (a.node.atime = Date.now());
+          return e;
+        }, write(a, b, c, d) {
+          if (!a.tty || !a.tty.cb.qb) throw new N(60);
+          try {
+            for (var e = 0; e < d; e++) a.tty.cb.qb(a.tty, b[c + e]);
+          } catch (h) {
+            throw new N(29);
+          }
+          d && (a.node.mtime = a.node.ctime = Date.now());
+          return e;
+        } }, yb = { xb() {
+          a: {
+            if (!kb.length) {
+              var a = null;
+              if (ca) {
+                var b = Buffer.alloc(256), c = 0, d = process.stdin.fd;
+                try {
+                  c = fs2.readSync(d, b, 0, 256);
+                } catch (e) {
+                  if (e.toString().includes("EOF")) c = 0;
+                  else throw e;
+                }
+                0 < c && (a = b.slice(0, c).toString("utf-8"));
+              } else "undefined" != typeof window && "function" == typeof window.prompt && (a = window.prompt("Input: "), null !== a && (a += "\n"));
+              if (!a) {
+                a = null;
+                break a;
+              }
+              kb = ra(a, true);
+            }
+            a = kb.shift();
+          }
+          return a;
+        }, qb(a, b) {
+          null === b || 10 === b ? (Ha(B(a.output)), a.output = []) : 0 != b && a.output.push(b);
+        }, fsync(a) {
+          0 < a.output?.length && (Ha(B(a.output)), a.output = []);
+        }, Tb() {
+          return { Ob: 25856, Qb: 5, Nb: 191, Pb: 35387, Mb: [3, 28, 127, 21, 4, 0, 1, 0, 17, 19, 26, 0, 18, 15, 23, 22, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] };
+        }, Ub() {
+          return 0;
+        }, Vb() {
+          return [24, 80];
+        } }, zb = { qb(a, b) {
+          null === b || 10 === b ? (Ia(B(a.output)), a.output = []) : 0 != b && a.output.push(b);
+        }, fsync(a) {
+          0 < a.output?.length && (Ia(B(a.output)), a.output = []);
+        } }, O = { Wa: null, Xa() {
+          return O.createNode(null, "/", 16895, 0);
+        }, createNode(a, b, c, d) {
+          if (24576 === (c & 61440) || 4096 === (c & 61440)) throw new N(63);
+          O.Wa || (O.Wa = { dir: { node: { Ta: O.La.Ta, Ua: O.La.Ua, lookup: O.La.lookup, hb: O.La.hb, rename: O.La.rename, unlink: O.La.unlink, rmdir: O.La.rmdir, readdir: O.La.readdir, symlink: O.La.symlink }, stream: { Va: O.Ma.Va } }, file: { node: { Ta: O.La.Ta, Ua: O.La.Ua }, stream: { Va: O.Ma.Va, read: O.Ma.read, write: O.Ma.write, ib: O.Ma.ib, jb: O.Ma.jb } }, link: { node: { Ta: O.La.Ta, Ua: O.La.Ua, readlink: O.La.readlink }, stream: {} }, ub: { node: { Ta: O.La.Ta, Ua: O.La.Ua }, stream: Ab } });
+          c = Bb(a, b, c, d);
+          P(c.mode) ? (c.La = O.Wa.dir.node, c.Ma = O.Wa.dir.stream, c.Na = {}) : 32768 === (c.mode & 61440) ? (c.La = O.Wa.file.node, c.Ma = O.Wa.file.stream, c.Ra = 0, c.Na = null) : 40960 === (c.mode & 61440) ? (c.La = O.Wa.link.node, c.Ma = O.Wa.link.stream) : 8192 === (c.mode & 61440) && (c.La = O.Wa.ub.node, c.Ma = O.Wa.ub.stream);
+          c.atime = c.mtime = c.ctime = Date.now();
+          a && (a.Na[b] = c, a.atime = a.mtime = a.ctime = c.atime);
+          return c;
+        }, Sb(a) {
+          return a.Na ? a.Na.subarray ? a.Na.subarray(0, a.Ra) : new Uint8Array(a.Na) : new Uint8Array(0);
+        }, La: { Ta(a) {
+          var b = {};
+          b.dev = 8192 === (a.mode & 61440) ? a.id : 1;
+          b.ino = a.id;
+          b.mode = a.mode;
+          b.nlink = 1;
+          b.uid = 0;
+          b.gid = 0;
+          b.rdev = a.rdev;
+          P(a.mode) ? b.size = 4096 : 32768 === (a.mode & 61440) ? b.size = a.Ra : 40960 === (a.mode & 61440) ? b.size = a.link.length : b.size = 0;
+          b.atime = new Date(a.atime);
+          b.mtime = new Date(a.mtime);
+          b.ctime = new Date(a.ctime);
+          b.blksize = 4096;
+          b.blocks = Math.ceil(b.size / b.blksize);
+          return b;
+        }, Ua(a, b) {
+          for (var c of ["mode", "atime", "mtime", "ctime"]) null != b[c] && (a[c] = b[c]);
+          void 0 !== b.size && (b = b.size, a.Ra != b && (0 == b ? (a.Na = null, a.Ra = 0) : (c = a.Na, a.Na = new Uint8Array(b), c && a.Na.set(c.subarray(0, Math.min(b, a.Ra))), a.Ra = b)));
+        }, lookup() {
+          throw O.vb;
+        }, hb(a, b, c, d) {
+          return O.createNode(a, b, c, d);
+        }, rename(a, b, c) {
+          try {
+            var d = Q(b, c);
+          } catch (h) {
+          }
+          if (d) {
+            if (P(a.mode)) for (var e in d.Na) throw new N(55);
+            Cb(d);
+          }
+          delete a.parent.Na[a.name];
+          b.Na[c] = a;
+          a.name = c;
+          b.ctime = b.mtime = a.parent.ctime = a.parent.mtime = Date.now();
+        }, unlink(a, b) {
+          delete a.Na[b];
+          a.ctime = a.mtime = Date.now();
+        }, rmdir(a, b) {
+          var c = Q(a, b), d;
+          for (d in c.Na) throw new N(55);
+          delete a.Na[b];
+          a.ctime = a.mtime = Date.now();
+        }, readdir(a) {
+          return [".", "..", ...Object.keys(a.Na)];
+        }, symlink(a, b, c) {
+          a = O.createNode(a, b, 41471, 0);
+          a.link = c;
+          return a;
+        }, readlink(a) {
+          if (40960 !== (a.mode & 61440)) throw new N(28);
+          return a.link;
+        } }, Ma: { read(a, b, c, d, e) {
+          var h = a.node.Na;
+          if (e >= a.node.Ra) return 0;
+          a = Math.min(a.node.Ra - e, d);
+          if (8 < a && h.subarray) b.set(h.subarray(e, e + a), c);
+          else for (d = 0; d < a; d++) b[c + d] = h[e + d];
+          return a;
+        }, write(a, b, c, d, e, h) {
+          b.buffer === p.buffer && (h = false);
+          if (!d) return 0;
+          a = a.node;
+          a.mtime = a.ctime = Date.now();
+          if (b.subarray && (!a.Na || a.Na.subarray)) {
+            if (h) return a.Na = b.subarray(c, c + d), a.Ra = d;
+            if (0 === a.Ra && 0 === e) return a.Na = b.slice(c, c + d), a.Ra = d;
+            if (e + d <= a.Ra) return a.Na.set(b.subarray(
+              c,
+              c + d
+            ), e), d;
+          }
+          h = e + d;
+          var k = a.Na ? a.Na.length : 0;
+          k >= h || (h = Math.max(h, k * (1048576 > k ? 2 : 1.125) >>> 0), 0 != k && (h = Math.max(h, 256)), k = a.Na, a.Na = new Uint8Array(h), 0 < a.Ra && a.Na.set(k.subarray(0, a.Ra), 0));
+          if (a.Na.subarray && b.subarray) a.Na.set(b.subarray(c, c + d), e);
+          else for (h = 0; h < d; h++) a.Na[e + h] = b[c + h];
+          a.Ra = Math.max(a.Ra, e + d);
+          return d;
+        }, Va(a, b, c) {
+          1 === c ? b += a.position : 2 === c && 32768 === (a.node.mode & 61440) && (b += a.node.Ra);
+          if (0 > b) throw new N(28);
+          return b;
+        }, ib(a, b, c, d, e) {
+          if (32768 !== (a.node.mode & 61440)) throw new N(43);
+          a = a.node.Na;
+          if (e & 2 || !a || a.buffer !== p.buffer) {
+            e = true;
+            d = 65536 * Math.ceil(b / 65536);
+            var h = Db(65536, d);
+            h && x.fill(0, h, h + d);
+            d = h;
+            if (!d) throw new N(48);
+            if (a) {
+              if (0 < c || c + b < a.length) a.subarray ? a = a.subarray(c, c + b) : a = Array.prototype.slice.call(a, c, c + b);
+              p.set(a, d);
+            }
+          } else e = false, d = a.byteOffset;
+          return { Kb: d, Ab: e };
+        }, jb(a, b, c, d) {
+          O.Ma.write(a, b, 0, d, c, false);
+          return 0;
+        } } }, la = (a, b) => {
+          var c = 0;
+          a && (c |= 365);
+          b && (c |= 146);
+          return c;
+        }, Eb = null, Fb = {}, Gb = [], Hb = 1, R = null, Ib = false, Jb = true, Kb = {}, N = class {
+          name = "ErrnoError";
+          constructor(a) {
+            this.Pa = a;
+          }
+        }, Lb = class {
+          gb = {};
+          node = null;
+          get flags() {
+            return this.gb.flags;
+          }
+          set flags(a) {
+            this.gb.flags = a;
+          }
+          get position() {
+            return this.gb.position;
+          }
+          set position(a) {
+            this.gb.position = a;
+          }
+        }, Mb = class {
+          La = {};
+          Ma = {};
+          ab = null;
+          constructor(a, b, c, d) {
+            a ||= this;
+            this.parent = a;
+            this.Xa = a.Xa;
+            this.id = Hb++;
+            this.name = b;
+            this.mode = c;
+            this.rdev = d;
+            this.atime = this.mtime = this.ctime = Date.now();
+          }
+          get read() {
+            return 365 === (this.mode & 365);
+          }
+          set read(a) {
+            a ? this.mode |= 365 : this.mode &= -366;
+          }
+          get write() {
+            return 146 === (this.mode & 146);
+          }
+          set write(a) {
+            a ? this.mode |= 146 : this.mode &= -147;
+          }
+        };
+        function S(a, b = {}) {
+          if (!a) throw new N(44);
+          b.nb ?? (b.nb = true);
+          "/" === a.charAt(0) || (a = "//" + a);
+          var c = 0;
+          a: for (; 40 > c; c++) {
+            a = a.split("/").filter((q) => !!q);
+            for (var d = Eb, e = "/", h = 0; h < a.length; h++) {
+              var k = h === a.length - 1;
+              if (k && b.parent) break;
+              if ("." !== a[h]) if (".." === a[h]) e = fb(e), d = d.parent;
+              else {
+                e = ka(e + "/" + a[h]);
+                try {
+                  d = Q(d, a[h]);
+                } catch (q) {
+                  if (44 === q?.Pa && k && b.Jb) return { path: e };
+                  throw q;
+                }
+                !d.ab || k && !b.nb || (d = d.ab.root);
+                if (40960 === (d.mode & 61440) && (!k || b.$a)) {
+                  if (!d.La.readlink) throw new N(52);
+                  d = d.La.readlink(d);
+                  "/" === d.charAt(0) || (d = fb(e) + "/" + d);
+                  a = d + "/" + a.slice(h + 1).join("/");
+                  continue a;
+                }
+              }
+            }
+            return { path: e, node: d };
+          }
+          throw new N(32);
+        }
+        function ja(a) {
+          for (var b; ; ) {
+            if (a === a.parent) return a = a.Xa.zb, b ? "/" !== a[a.length - 1] ? `${a}/${b}` : a + b : a;
+            b = b ? `${a.name}/${b}` : a.name;
+            a = a.parent;
+          }
+        }
+        function Nb(a, b) {
+          for (var c = 0, d = 0; d < b.length; d++) c = (c << 5) - c + b.charCodeAt(d) | 0;
+          return (a + c >>> 0) % R.length;
+        }
+        function Cb(a) {
+          var b = Nb(a.parent.id, a.name);
+          if (R[b] === a) R[b] = a.bb;
+          else for (b = R[b]; b; ) {
+            if (b.bb === a) {
+              b.bb = a.bb;
+              break;
+            }
+            b = b.bb;
+          }
+        }
+        function Q(a, b) {
+          var c = P(a.mode) ? (c = Ob(a, "x")) ? c : a.La.lookup ? 0 : 2 : 54;
+          if (c) throw new N(c);
+          for (c = R[Nb(a.id, b)]; c; c = c.bb) {
+            var d = c.name;
+            if (c.parent.id === a.id && d === b) return c;
+          }
+          return a.La.lookup(a, b);
+        }
+        function Bb(a, b, c, d) {
+          a = new Mb(a, b, c, d);
+          b = Nb(a.parent.id, a.name);
+          a.bb = R[b];
+          return R[b] = a;
+        }
+        function P(a) {
+          return 16384 === (a & 61440);
+        }
+        function Pb(a) {
+          var b = ["r", "w", "rw"][a & 3];
+          a & 512 && (b += "w");
+          return b;
+        }
+        function Ob(a, b) {
+          if (Jb) return 0;
+          if (!b.includes("r") || a.mode & 292) {
+            if (b.includes("w") && !(a.mode & 146) || b.includes("x") && !(a.mode & 73)) return 2;
+          } else return 2;
+          return 0;
+        }
+        function Qb(a, b) {
+          if (!P(a.mode)) return 54;
+          try {
+            return Q(a, b), 20;
+          } catch (c) {
+          }
+          return Ob(a, "wx");
+        }
+        function Rb(a, b, c) {
+          try {
+            var d = Q(a, b);
+          } catch (e) {
+            return e.Pa;
+          }
+          if (a = Ob(a, "wx")) return a;
+          if (c) {
+            if (!P(d.mode)) return 54;
+            if (d === d.parent || "/" === ja(d)) return 10;
+          } else if (P(d.mode)) return 31;
+          return 0;
+        }
+        function Sb(a) {
+          if (!a) throw new N(63);
+          return a;
+        }
+        function T(a) {
+          a = Gb[a];
+          if (!a) throw new N(8);
+          return a;
+        }
+        function Tb(a, b = -1) {
+          a = Object.assign(new Lb(), a);
+          if (-1 == b) a: {
+            for (b = 0; 4096 >= b; b++) if (!Gb[b]) break a;
+            throw new N(33);
+          }
+          a.fd = b;
+          return Gb[b] = a;
+        }
+        function Ub(a, b = -1) {
+          a = Tb(a, b);
+          a.Ma?.Rb?.(a);
+          return a;
+        }
+        function Vb(a, b, c) {
+          var d = a?.Ma.Ua;
+          a = d ? a : b;
+          d ??= b.La.Ua;
+          Sb(d);
+          d(a, c);
+        }
+        var Ab = { open(a) {
+          a.Ma = Fb[a.node.rdev].Ma;
+          a.Ma.open?.(a);
+        }, Va() {
+          throw new N(70);
+        } };
+        function wb(a, b) {
+          Fb[a] = { Ma: b };
+        }
+        function Wb(a, b) {
+          var c = "/" === b;
+          if (c && Eb) throw new N(10);
+          if (!c && b) {
+            var d = S(b, { nb: false });
+            b = d.path;
+            d = d.node;
+            if (d.ab) throw new N(10);
+            if (!P(d.mode)) throw new N(54);
+          }
+          b = { type: a, Wb: {}, zb: b, Ib: [] };
+          a = a.Xa(b);
+          a.Xa = b;
+          b.root = a;
+          c ? Eb = a : d && (d.ab = b, d.Xa && d.Xa.Ib.push(b));
+        }
+        function Xb(a, b, c) {
+          var d = S(a, { parent: true }).node;
+          a = gb(a);
+          if (!a) throw new N(28);
+          if ("." === a || ".." === a) throw new N(20);
+          var e = Qb(d, a);
+          if (e) throw new N(e);
+          if (!d.La.hb) throw new N(63);
+          return d.La.hb(d, a, b, c);
+        }
+        function ma(a, b = 438) {
+          return Xb(a, b & 4095 | 32768, 0);
+        }
+        function U(a, b = 511) {
+          return Xb(a, b & 1023 | 16384, 0);
+        }
+        function Yb(a, b, c) {
+          "undefined" == typeof c && (c = b, b = 438);
+          Xb(a, b | 8192, c);
+        }
+        function Zb(a, b) {
+          if (!jb(a)) throw new N(44);
+          var c = S(b, { parent: true }).node;
+          if (!c) throw new N(44);
+          b = gb(b);
+          var d = Qb(c, b);
+          if (d) throw new N(d);
+          if (!c.La.symlink) throw new N(63);
+          c.La.symlink(c, b, a);
+        }
+        function $b(a) {
+          var b = S(a, { parent: true }).node;
+          a = gb(a);
+          var c = Q(b, a), d = Rb(b, a, true);
+          if (d) throw new N(d);
+          if (!b.La.rmdir) throw new N(63);
+          if (c.ab) throw new N(10);
+          b.La.rmdir(b, a);
+          Cb(c);
+        }
+        function za(a) {
+          var b = S(a, { parent: true }).node;
+          if (!b) throw new N(44);
+          a = gb(a);
+          var c = Q(b, a), d = Rb(b, a, false);
+          if (d) throw new N(d);
+          if (!b.La.unlink) throw new N(63);
+          if (c.ab) throw new N(10);
+          b.La.unlink(b, a);
+          Cb(c);
+        }
+        function ac(a, b) {
+          a = S(a, { $a: !b }).node;
+          return Sb(a.La.Ta)(a);
+        }
+        function bc(a, b, c, d) {
+          Vb(a, b, { mode: c & 4095 | b.mode & -4096, ctime: Date.now(), Fb: d });
+        }
+        function na(a, b) {
+          a = "string" == typeof a ? S(a, { $a: true }).node : a;
+          bc(null, a, b);
+        }
+        function cc(a, b, c) {
+          if (P(b.mode)) throw new N(31);
+          if (32768 !== (b.mode & 61440)) throw new N(28);
+          var d = Ob(b, "w");
+          if (d) throw new N(d);
+          Vb(a, b, { size: c, timestamp: Date.now() });
+        }
+        function oa(a, b, c = 438) {
+          if ("" === a) throw new N(44);
+          if ("string" == typeof b) {
+            var d = { r: 0, "r+": 2, w: 577, "w+": 578, a: 1089, "a+": 1090 }[b];
+            if ("undefined" == typeof d) throw Error(`Unknown file open mode: ${b}`);
+            b = d;
+          }
+          c = b & 64 ? c & 4095 | 32768 : 0;
+          if ("object" == typeof a) d = a;
+          else {
+            var e = a.endsWith("/");
+            a = S(a, { $a: !(b & 131072), Jb: true });
+            d = a.node;
+            a = a.path;
+          }
+          var h = false;
+          if (b & 64) if (d) {
+            if (b & 128) throw new N(20);
+          } else {
+            if (e) throw new N(31);
+            d = Xb(a, c | 511, 0);
+            h = true;
+          }
+          if (!d) throw new N(44);
+          8192 === (d.mode & 61440) && (b &= -513);
+          if (b & 65536 && !P(d.mode)) throw new N(54);
+          if (!h && (e = d ? 40960 === (d.mode & 61440) ? 32 : P(d.mode) && ("r" !== Pb(b) || b & 576) ? 31 : Ob(d, Pb(b)) : 44)) throw new N(e);
+          b & 512 && !h && (e = d, e = "string" == typeof e ? S(e, { $a: true }).node : e, cc(null, e, 0));
+          b &= -131713;
+          e = Tb({ node: d, path: ja(d), flags: b, seekable: true, position: 0, Ma: d.Ma, Lb: [], error: false });
+          e.Ma.open && e.Ma.open(e);
+          h && na(d, c & 511);
+          !f.logReadFiles || b & 1 || a in Kb || (Kb[a] = 1);
+          return e;
+        }
+        function qa(a) {
+          if (null === a.fd) throw new N(8);
+          a.ob && (a.ob = null);
+          try {
+            a.Ma.close && a.Ma.close(a);
+          } catch (b) {
+            throw b;
+          } finally {
+            Gb[a.fd] = null;
+          }
+          a.fd = null;
+        }
+        function mc(a, b, c) {
+          if (null === a.fd) throw new N(8);
+          if (!a.seekable || !a.Ma.Va) throw new N(70);
+          if (0 != c && 1 != c && 2 != c) throw new N(28);
+          a.position = a.Ma.Va(a, b, c);
+          a.Lb = [];
+        }
+        function Ec(a, b, c, d, e) {
+          if (0 > d || 0 > e) throw new N(28);
+          if (null === a.fd) throw new N(8);
+          if (1 === (a.flags & 2097155)) throw new N(8);
+          if (P(a.node.mode)) throw new N(31);
+          if (!a.Ma.read) throw new N(28);
+          var h = "undefined" != typeof e;
+          if (!h) e = a.position;
+          else if (!a.seekable) throw new N(70);
+          b = a.Ma.read(a, b, c, d, e);
+          h || (a.position += b);
+          return b;
+        }
+        function pa(a, b, c, d, e) {
+          if (0 > d || 0 > e) throw new N(28);
+          if (null === a.fd) throw new N(8);
+          if (0 === (a.flags & 2097155)) throw new N(8);
+          if (P(a.node.mode)) throw new N(31);
+          if (!a.Ma.write) throw new N(28);
+          a.seekable && a.flags & 1024 && mc(a, 0, 2);
+          var h = "undefined" != typeof e;
+          if (!h) e = a.position;
+          else if (!a.seekable) throw new N(70);
+          b = a.Ma.write(a, b, c, d, e, void 0);
+          h || (a.position += b);
+          return b;
+        }
+        function ya(a) {
+          var b = "binary";
+          if ("utf8" !== b && "binary" !== b) throw Error(`Invalid encoding type "${b}"`);
+          var c;
+          var d = oa(a, d || 0);
+          a = ac(a).size;
+          var e = new Uint8Array(a);
+          Ec(d, e, 0, a, 0);
+          "utf8" === b ? c = B(e) : "binary" === b && (c = e);
+          qa(d);
+          return c;
+        }
+        function V(a, b, c) {
+          a = ka("/dev/" + a);
+          var d = la(!!b, !!c);
+          V.yb ?? (V.yb = 64);
+          var e = V.yb++ << 8 | 0;
+          wb(e, { open(h) {
+            h.seekable = false;
+          }, close() {
+            c?.buffer?.length && c(10);
+          }, read(h, k, q, w) {
+            for (var v = 0, C = 0; C < w; C++) {
+              try {
+                var G = b();
+              } catch (pb) {
+                throw new N(29);
+              }
+              if (void 0 === G && 0 === v) throw new N(6);
+              if (null === G || void 0 === G) break;
+              v++;
+              k[q + C] = G;
+            }
+            v && (h.node.atime = Date.now());
+            return v;
+          }, write(h, k, q, w) {
+            for (var v = 0; v < w; v++) try {
+              c(k[q + v]);
+            } catch (C) {
+              throw new N(29);
+            }
+            w && (h.node.mtime = h.node.ctime = Date.now());
+            return v;
+          } });
+          Yb(a, d, e);
+        }
+        var W = {};
+        function Gc(a, b, c) {
+          if ("/" === b.charAt(0)) return b;
+          a = -100 === a ? "/" : T(a).path;
+          if (0 == b.length) {
+            if (!c) throw new N(44);
+            return a;
+          }
+          return a + "/" + b;
+        }
+        function Hc(a, b) {
+          E[a >> 2] = b.dev;
+          E[a + 4 >> 2] = b.mode;
+          F[a + 8 >> 2] = b.nlink;
+          E[a + 12 >> 2] = b.uid;
+          E[a + 16 >> 2] = b.gid;
+          E[a + 20 >> 2] = b.rdev;
+          H[a + 24 >> 3] = BigInt(b.size);
+          E[a + 32 >> 2] = 4096;
+          E[a + 36 >> 2] = b.blocks;
+          var c = b.atime.getTime(), d = b.mtime.getTime(), e = b.ctime.getTime();
+          H[a + 40 >> 3] = BigInt(Math.floor(c / 1e3));
+          F[a + 48 >> 2] = c % 1e3 * 1e6;
+          H[a + 56 >> 3] = BigInt(Math.floor(d / 1e3));
+          F[a + 64 >> 2] = d % 1e3 * 1e6;
+          H[a + 72 >> 3] = BigInt(Math.floor(e / 1e3));
+          F[a + 80 >> 2] = e % 1e3 * 1e6;
+          H[a + 88 >> 3] = BigInt(b.ino);
+          return 0;
+        }
+        var Ic = void 0, Jc = () => {
+          var a = E[+Ic >> 2];
+          Ic += 4;
+          return a;
+        }, Kc = 0, Lc = [0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335], Mc = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334], Nc = {}, Oc = (a) => {
+          Ma = a;
+          cb || 0 < Kc || (f.onExit?.(a), La = true);
+          Da(a, new Ya(a));
+        }, Pc = (a) => {
+          if (!La) try {
+            if (a(), !(cb || 0 < Kc)) try {
+              Ma = a = Ma, Oc(a);
+            } catch (b) {
+              b instanceof Ya || "unwind" == b || Da(1, b);
+            }
+          } catch (b) {
+            b instanceof Ya || "unwind" == b || Da(1, b);
+          }
+        }, Qc = {}, Sc = () => {
+          if (!Rc) {
+            var a = { USER: "web_user", LOGNAME: "web_user", PATH: "/", PWD: "/", HOME: "/home/web_user", LANG: ("object" == typeof navigator && navigator.languages && navigator.languages[0] || "C").replace("-", "_") + ".UTF-8", _: Ca || "./this.program" }, b;
+            for (b in Qc) void 0 === Qc[b] ? delete a[b] : a[b] = Qc[b];
+            var c = [];
+            for (b in a) c.push(`${b}=${a[b]}`);
+            Rc = c;
+          }
+          return Rc;
+        }, Rc, xa = (a) => {
+          var b = ha(a) + 1, c = z(b);
+          u(a, x, c, b);
+          return c;
+        }, Tc = (a, b, c, d) => {
+          var e = { string: (v) => {
+            var C = 0;
+            null !== v && void 0 !== v && 0 !== v && (C = xa(v));
+            return C;
+          }, array: (v) => {
+            var C = z(v.length);
+            p.set(v, C);
+            return C;
+          } };
+          a = f["_" + a];
+          var h = [], k = 0;
+          if (d) for (var q = 0; q < d.length; q++) {
+            var w = e[c[q]];
+            w ? (0 === k && (k = sa()), h[q] = w(d[q])) : h[q] = d[q];
+          }
+          c = a(...h);
+          return c = function(v) {
+            0 !== k && wa(k);
+            return "string" === b ? v ? B(x, v) : "" : "boolean" === b ? !!v : v;
+          }(c);
+        }, ea = 0, da = (a, b) => {
+          b = 1 == b ? z(a.length) : ia(a.length);
+          a.subarray || a.slice || (a = new Uint8Array(a));
+          x.set(a, b);
+          return b;
+        }, Uc, Vc = [], Y, A = (a) => {
+          Uc.delete(Y.get(a));
+          Y.set(a, null);
+          Vc.push(a);
+        }, Aa = (a, b) => {
+          if (!Uc) {
+            Uc = /* @__PURE__ */ new WeakMap();
+            var c = Y.length;
+            if (Uc) for (var d = 0; d < 0 + c; d++) {
+              var e = Y.get(d);
+              e && Uc.set(e, d);
+            }
+          }
+          if (c = Uc.get(a) || 0) return c;
+          if (Vc.length) c = Vc.pop();
+          else {
+            try {
+              Y.grow(1);
+            } catch (w) {
+              if (!(w instanceof RangeError)) throw w;
+              throw "Unable to grow wasm table. Set ALLOW_TABLE_GROWTH.";
+            }
+            c = Y.length - 1;
+          }
+          try {
+            Y.set(c, a);
+          } catch (w) {
+            if (!(w instanceof TypeError)) throw w;
+            if ("function" == typeof WebAssembly.Function) {
+              var h = WebAssembly.Function;
+              d = { i: "i32", j: "i64", f: "f32", d: "f64", e: "externref", p: "i32" };
+              e = { parameters: [], results: "v" == b[0] ? [] : [d[b[0]]] };
+              for (var k = 1; k < b.length; ++k) e.parameters.push(d[b[k]]);
+              b = new h(e, a);
+            } else {
+              d = [1];
+              e = b.slice(0, 1);
+              b = b.slice(1);
+              k = { i: 127, p: 127, j: 126, f: 125, d: 124, e: 111 };
+              d.push(96);
+              var q = b.length;
+              128 > q ? d.push(q) : d.push(q % 128 | 128, q >> 7);
+              for (h of b) d.push(k[h]);
+              "v" == e ? d.push(0) : d.push(1, k[e]);
+              b = [0, 97, 115, 109, 1, 0, 0, 0, 1];
+              h = d.length;
+              128 > h ? b.push(h) : b.push(h % 128 | 128, h >> 7);
+              b.push(...d);
+              b.push(2, 7, 1, 1, 101, 1, 102, 0, 0, 7, 5, 1, 1, 102, 0, 0);
+              b = new WebAssembly.Module(new Uint8Array(b));
+              b = new WebAssembly.Instance(b, { e: { f: a } }).exports.f;
+            }
+            Y.set(c, b);
+          }
+          Uc.set(a, c);
+          return c;
+        };
+        R = Array(4096);
+        Wb(O, "/");
+        U("/tmp");
+        U("/home");
+        U("/home/web_user");
+        (function() {
+          U("/dev");
+          wb(259, { read: () => 0, write: (d, e, h, k) => k, Va: () => 0 });
+          Yb("/dev/null", 259);
+          nb(1280, yb);
+          nb(1536, zb);
+          Yb("/dev/tty", 1280);
+          Yb("/dev/tty1", 1536);
+          var a = new Uint8Array(1024), b = 0, c = () => {
+            0 === b && (ib(a), b = a.byteLength);
+            return a[--b];
+          };
+          V("random", c);
+          V("urandom", c);
+          U("/dev/shm");
+          U("/dev/shm/tmp");
+        })();
+        (function() {
+          U("/proc");
+          var a = U("/proc/self");
+          U("/proc/self/fd");
+          Wb({ Xa() {
+            var b = Bb(a, "fd", 16895, 73);
+            b.Ma = { Va: O.Ma.Va };
+            b.La = { lookup(c, d) {
+              c = +d;
+              var e = T(c);
+              c = { parent: null, Xa: { zb: "fake" }, La: { readlink: () => e.path }, id: c + 1 };
+              return c.parent = c;
+            }, readdir() {
+              return Array.from(Gb.entries()).filter(([, c]) => c).map(([c]) => c.toString());
+            } };
+            return b;
+          } }, "/proc/self/fd");
+        })();
+        O.vb = new N(44);
+        O.vb.stack = "<generic error, no stack>";
+        var Xc = { a: (a, b, c, d) => Ta(`Assertion failed: ${a ? B(x, a) : ""}, at: ` + [b ? b ? B(x, b) : "" : "unknown filename", c, d ? d ? B(x, d) : "" : "unknown function"]), i: function(a, b) {
+          try {
+            return a = a ? B(x, a) : "", na(a, b), 0;
+          } catch (c) {
+            if ("undefined" == typeof W || "ErrnoError" !== c.name) throw c;
+            return -c.Pa;
+          }
+        }, L: function(a, b, c) {
+          try {
+            b = b ? B(x, b) : "";
+            b = Gc(a, b);
+            if (c & -8) return -28;
+            var d = S(b, { $a: true }).node;
+            if (!d) return -44;
+            a = "";
+            c & 4 && (a += "r");
+            c & 2 && (a += "w");
+            c & 1 && (a += "x");
+            return a && Ob(d, a) ? -2 : 0;
+          } catch (e) {
+            if ("undefined" == typeof W || "ErrnoError" !== e.name) throw e;
+            return -e.Pa;
+          }
+        }, j: function(a, b) {
+          try {
+            var c = T(a);
+            bc(c, c.node, b, false);
+            return 0;
+          } catch (d) {
+            if ("undefined" == typeof W || "ErrnoError" !== d.name) throw d;
+            return -d.Pa;
+          }
+        }, h: function(a) {
+          try {
+            var b = T(a);
+            Vb(b, b.node, { timestamp: Date.now(), Fb: false });
+            return 0;
+          } catch (c) {
+            if ("undefined" == typeof W || "ErrnoError" !== c.name) throw c;
+            return -c.Pa;
+          }
+        }, b: function(a, b, c) {
+          Ic = c;
+          try {
+            var d = T(a);
+            switch (b) {
+              case 0:
+                var e = Jc();
+                if (0 > e) break;
+                for (; Gb[e]; ) e++;
+                return Ub(d, e).fd;
+              case 1:
+              case 2:
+                return 0;
+              case 3:
+                return d.flags;
+              case 4:
+                return e = Jc(), d.flags |= e, 0;
+              case 12:
+                return e = Jc(), Na[e + 0 >> 1] = 2, 0;
+              case 13:
+              case 14:
+                return 0;
+            }
+            return -28;
+          } catch (h) {
+            if ("undefined" == typeof W || "ErrnoError" !== h.name) throw h;
+            return -h.Pa;
+          }
+        }, g: function(a, b) {
+          try {
+            var c = T(a), d = c.node, e = c.Ma.Ta;
+            a = e ? c : d;
+            e ??= d.La.Ta;
+            Sb(e);
+            var h = e(a);
+            return Hc(b, h);
+          } catch (k) {
+            if ("undefined" == typeof W || "ErrnoError" !== k.name) throw k;
+            return -k.Pa;
+          }
+        }, H: function(a, b) {
+          b = -9007199254740992 > b || 9007199254740992 < b ? NaN : Number(b);
+          try {
+            if (isNaN(b)) return 61;
+            var c = T(a);
+            if (0 > b || 0 === (c.flags & 2097155)) throw new N(28);
+            cc(c, c.node, b);
+            return 0;
+          } catch (d) {
+            if ("undefined" == typeof W || "ErrnoError" !== d.name) throw d;
+            return -d.Pa;
+          }
+        }, G: function(a, b) {
+          try {
+            if (0 === b) return -28;
+            var c = ha("/") + 1;
+            if (b < c) return -68;
+            u("/", x, a, b);
+            return c;
+          } catch (d) {
+            if ("undefined" == typeof W || "ErrnoError" !== d.name) throw d;
+            return -d.Pa;
+          }
+        }, K: function(a, b) {
+          try {
+            return a = a ? B(x, a) : "", Hc(b, ac(a, true));
+          } catch (c) {
+            if ("undefined" == typeof W || "ErrnoError" !== c.name) throw c;
+            return -c.Pa;
+          }
+        }, C: function(a, b, c) {
+          try {
+            return b = b ? B(x, b) : "", b = Gc(a, b), U(b, c), 0;
+          } catch (d) {
+            if ("undefined" == typeof W || "ErrnoError" !== d.name) throw d;
+            return -d.Pa;
+          }
+        }, J: function(a, b, c, d) {
+          try {
+            b = b ? B(x, b) : "";
+            var e = d & 256;
+            b = Gc(a, b, d & 4096);
+            return Hc(c, e ? ac(b, true) : ac(b));
+          } catch (h) {
+            if ("undefined" == typeof W || "ErrnoError" !== h.name) throw h;
+            return -h.Pa;
+          }
+        }, x: function(a, b, c, d) {
+          Ic = d;
+          try {
+            b = b ? B(x, b) : "";
+            b = Gc(a, b);
+            var e = d ? Jc() : 0;
+            return oa(b, c, e).fd;
+          } catch (h) {
+            if ("undefined" == typeof W || "ErrnoError" !== h.name) throw h;
+            return -h.Pa;
+          }
+        }, v: function(a, b, c, d) {
+          try {
+            b = b ? B(x, b) : "";
+            b = Gc(a, b);
+            if (0 >= d) return -28;
+            var e = S(b).node;
+            if (!e) throw new N(44);
+            if (!e.La.readlink) throw new N(28);
+            var h = e.La.readlink(e);
+            var k = Math.min(d, ha(h)), q = p[c + k];
+            u(h, x, c, d + 1);
+            p[c + k] = q;
+            return k;
+          } catch (w) {
+            if ("undefined" == typeof W || "ErrnoError" !== w.name) throw w;
+            return -w.Pa;
+          }
+        }, u: function(a) {
+          try {
+            return a = a ? B(x, a) : "", $b(a), 0;
+          } catch (b) {
+            if ("undefined" == typeof W || "ErrnoError" !== b.name) throw b;
+            return -b.Pa;
+          }
+        }, f: function(a, b) {
+          try {
+            return a = a ? B(x, a) : "", Hc(b, ac(a));
+          } catch (c) {
+            if ("undefined" == typeof W || "ErrnoError" !== c.name) throw c;
+            return -c.Pa;
+          }
+        }, r: function(a, b, c) {
+          try {
+            return b = b ? B(x, b) : "", b = Gc(a, b), 0 === c ? za(b) : 512 === c ? $b(b) : Ta("Invalid flags passed to unlinkat"), 0;
+          } catch (d) {
+            if ("undefined" == typeof W || "ErrnoError" !== d.name) throw d;
+            return -d.Pa;
+          }
+        }, q: function(a, b, c) {
+          try {
+            b = b ? B(x, b) : "";
+            b = Gc(a, b, true);
+            var d = Date.now(), e, h;
+            if (c) {
+              var k = F[c >> 2] + 4294967296 * E[c + 4 >> 2], q = E[c + 8 >> 2];
+              1073741823 == q ? e = d : 1073741822 == q ? e = null : e = 1e3 * k + q / 1e6;
+              c += 16;
+              k = F[c >> 2] + 4294967296 * E[c + 4 >> 2];
+              q = E[c + 8 >> 2];
+              1073741823 == q ? h = d : 1073741822 == q ? h = null : h = 1e3 * k + q / 1e6;
+            } else h = e = d;
+            if (null !== (h ?? e)) {
+              a = e;
+              var w = S(b, { $a: true }).node;
+              Sb(w.La.Ua)(w, { atime: a, mtime: h });
+            }
+            return 0;
+          } catch (v) {
+            if ("undefined" == typeof W || "ErrnoError" !== v.name) throw v;
+            return -v.Pa;
+          }
+        }, m: () => Ta(""), l: () => {
+          cb = false;
+          Kc = 0;
+        }, A: function(a, b) {
+          a = -9007199254740992 > a || 9007199254740992 < a ? NaN : Number(a);
+          a = new Date(1e3 * a);
+          E[b >> 2] = a.getSeconds();
+          E[b + 4 >> 2] = a.getMinutes();
+          E[b + 8 >> 2] = a.getHours();
+          E[b + 12 >> 2] = a.getDate();
+          E[b + 16 >> 2] = a.getMonth();
+          E[b + 20 >> 2] = a.getFullYear() - 1900;
+          E[b + 24 >> 2] = a.getDay();
+          var c = a.getFullYear();
+          E[b + 28 >> 2] = (0 !== c % 4 || 0 === c % 100 && 0 !== c % 400 ? Mc : Lc)[a.getMonth()] + a.getDate() - 1 | 0;
+          E[b + 36 >> 2] = -(60 * a.getTimezoneOffset());
+          c = new Date(
+            a.getFullYear(),
+            6,
+            1
+          ).getTimezoneOffset();
+          var d = new Date(a.getFullYear(), 0, 1).getTimezoneOffset();
+          E[b + 32 >> 2] = (c != d && a.getTimezoneOffset() == Math.min(d, c)) | 0;
+        }, y: function(a, b, c, d, e, h, k) {
+          e = -9007199254740992 > e || 9007199254740992 < e ? NaN : Number(e);
+          try {
+            if (isNaN(e)) return 61;
+            var q = T(d);
+            if (0 !== (b & 2) && 0 === (c & 2) && 2 !== (q.flags & 2097155)) throw new N(2);
+            if (1 === (q.flags & 2097155)) throw new N(2);
+            if (!q.Ma.ib) throw new N(43);
+            if (!a) throw new N(28);
+            var w = q.Ma.ib(q, a, e, b, c);
+            var v = w.Kb;
+            E[h >> 2] = w.Ab;
+            F[k >> 2] = v;
+            return 0;
+          } catch (C) {
+            if ("undefined" == typeof W || "ErrnoError" !== C.name) throw C;
+            return -C.Pa;
+          }
+        }, z: function(a, b, c, d, e, h) {
+          h = -9007199254740992 > h || 9007199254740992 < h ? NaN : Number(h);
+          try {
+            var k = T(e);
+            if (c & 2) {
+              c = h;
+              if (32768 !== (k.node.mode & 61440)) throw new N(43);
+              if (!(d & 2)) {
+                var q = x.slice(a, a + b);
+                k.Ma.jb && k.Ma.jb(k, q, c, b, d);
+              }
+            }
+          } catch (w) {
+            if ("undefined" == typeof W || "ErrnoError" !== w.name) throw w;
+            return -w.Pa;
+          }
+        }, n: (a, b) => {
+          Nc[a] && (clearTimeout(Nc[a].id), delete Nc[a]);
+          if (!b) return 0;
+          var c = setTimeout(() => {
+            delete Nc[a];
+            Pc(() => Wc(a, performance.now()));
+          }, b);
+          Nc[a] = {
+            id: c,
+            Xb: b
+          };
+          return 0;
+        }, B: (a, b, c, d) => {
+          var e = (/* @__PURE__ */ new Date()).getFullYear(), h = new Date(e, 0, 1).getTimezoneOffset();
+          e = new Date(e, 6, 1).getTimezoneOffset();
+          F[a >> 2] = 60 * Math.max(h, e);
+          E[b >> 2] = Number(h != e);
+          b = (k) => {
+            var q = Math.abs(k);
+            return `UTC${0 <= k ? "-" : "+"}${String(Math.floor(q / 60)).padStart(2, "0")}${String(q % 60).padStart(2, "0")}`;
+          };
+          a = b(h);
+          b = b(e);
+          e < h ? (u(a, x, c, 17), u(b, x, d, 17)) : (u(a, x, d, 17), u(b, x, c, 17));
+        }, d: () => Date.now(), s: () => 2147483648, c: () => performance.now(), o: (a) => {
+          var b = x.length;
+          a >>>= 0;
+          if (2147483648 < a) return false;
+          for (var c = 1; 4 >= c; c *= 2) {
+            var d = b * (1 + 0.2 / c);
+            d = Math.min(d, a + 100663296);
+            a: {
+              d = (Math.min(2147483648, 65536 * Math.ceil(Math.max(a, d) / 65536)) - Ka.buffer.byteLength + 65535) / 65536 | 0;
+              try {
+                Ka.grow(d);
+                Qa();
+                var e = 1;
+                break a;
+              } catch (h) {
+              }
+              e = void 0;
+            }
+            if (e) return true;
+          }
+          return false;
+        }, E: (a, b) => {
+          var c = 0;
+          Sc().forEach((d, e) => {
+            var h = b + c;
+            e = F[a + 4 * e >> 2] = h;
+            for (h = 0; h < d.length; ++h) p[e++] = d.charCodeAt(h);
+            p[e] = 0;
+            c += d.length + 1;
+          });
+          return 0;
+        }, F: (a, b) => {
+          var c = Sc();
+          F[a >> 2] = c.length;
+          var d = 0;
+          c.forEach((e) => d += e.length + 1);
+          F[b >> 2] = d;
+          return 0;
+        }, e: function(a) {
+          try {
+            var b = T(a);
+            qa(b);
+            return 0;
+          } catch (c) {
+            if ("undefined" == typeof W || "ErrnoError" !== c.name) throw c;
+            return c.Pa;
+          }
+        }, p: function(a, b) {
+          try {
+            var c = T(a);
+            p[b] = c.tty ? 2 : P(c.mode) ? 3 : 40960 === (c.mode & 61440) ? 7 : 4;
+            Na[b + 2 >> 1] = 0;
+            H[b + 8 >> 3] = BigInt(0);
+            H[b + 16 >> 3] = BigInt(0);
+            return 0;
+          } catch (d) {
+            if ("undefined" == typeof W || "ErrnoError" !== d.name) throw d;
+            return d.Pa;
+          }
+        }, w: function(a, b, c, d) {
+          try {
+            a: {
+              var e = T(a);
+              a = b;
+              for (var h, k = b = 0; k < c; k++) {
+                var q = F[a >> 2], w = F[a + 4 >> 2];
+                a += 8;
+                var v = Ec(e, p, q, w, h);
+                if (0 > v) {
+                  var C = -1;
+                  break a;
+                }
+                b += v;
+                if (v < w) break;
+                "undefined" != typeof h && (h += v);
+              }
+              C = b;
+            }
+            F[d >> 2] = C;
+            return 0;
+          } catch (G) {
+            if ("undefined" == typeof W || "ErrnoError" !== G.name) throw G;
+            return G.Pa;
+          }
+        }, D: function(a, b, c, d) {
+          b = -9007199254740992 > b || 9007199254740992 < b ? NaN : Number(b);
+          try {
+            if (isNaN(b)) return 61;
+            var e = T(a);
+            mc(e, b, c);
+            H[d >> 3] = BigInt(e.position);
+            e.ob && 0 === b && 0 === c && (e.ob = null);
+            return 0;
+          } catch (h) {
+            if ("undefined" == typeof W || "ErrnoError" !== h.name) throw h;
+            return h.Pa;
+          }
+        }, I: function(a) {
+          try {
+            var b = T(a);
+            return b.Ma?.fsync ? b.Ma.fsync(b) : 0;
+          } catch (c) {
+            if ("undefined" == typeof W || "ErrnoError" !== c.name) throw c;
+            return c.Pa;
+          }
+        }, t: function(a, b, c, d) {
+          try {
+            a: {
+              var e = T(a);
+              a = b;
+              for (var h, k = b = 0; k < c; k++) {
+                var q = F[a >> 2], w = F[a + 4 >> 2];
+                a += 8;
+                var v = pa(e, p, q, w, h);
+                if (0 > v) {
+                  var C = -1;
+                  break a;
+                }
+                b += v;
+                if (v < w) break;
+                "undefined" != typeof h && (h += v);
+              }
+              C = b;
+            }
+            F[d >> 2] = C;
+            return 0;
+          } catch (G) {
+            if ("undefined" == typeof W || "ErrnoError" !== G.name) throw G;
+            return G.Pa;
+          }
+        }, k: Oc }, Z;
+        (async function() {
+          function a(c) {
+            Z = c.exports;
+            Ka = Z.M;
+            Qa();
+            Y = Z.O;
+            K--;
+            f.monitorRunDependencies?.(K);
+            0 == K && Sa && (c = Sa, Sa = null, c());
+            return Z;
+          }
+          K++;
+          f.monitorRunDependencies?.(K);
+          var b = { a: Xc };
+          if (f.instantiateWasm) return new Promise((c) => {
+            f.instantiateWasm(b, (d, e) => {
+              a(d, e);
+              c(d.exports);
+            });
+          });
+          Ua ??= f.locateFile ? f.locateFile("sql-wasm.wasm", D) : D + "sql-wasm.wasm";
+          return a((await Xa(b)).instance);
+        })();
+        f._sqlite3_free = (a) => (f._sqlite3_free = Z.P)(a);
+        f._sqlite3_value_text = (a) => (f._sqlite3_value_text = Z.Q)(a);
+        f._sqlite3_prepare_v2 = (a, b, c, d, e) => (f._sqlite3_prepare_v2 = Z.R)(a, b, c, d, e);
+        f._sqlite3_step = (a) => (f._sqlite3_step = Z.S)(a);
+        f._sqlite3_reset = (a) => (f._sqlite3_reset = Z.T)(a);
+        f._sqlite3_exec = (a, b, c, d, e) => (f._sqlite3_exec = Z.U)(a, b, c, d, e);
+        f._sqlite3_finalize = (a) => (f._sqlite3_finalize = Z.V)(a);
+        f._sqlite3_column_name = (a, b) => (f._sqlite3_column_name = Z.W)(a, b);
+        f._sqlite3_column_text = (a, b) => (f._sqlite3_column_text = Z.X)(a, b);
+        f._sqlite3_column_type = (a, b) => (f._sqlite3_column_type = Z.Y)(a, b);
+        f._sqlite3_errmsg = (a) => (f._sqlite3_errmsg = Z.Z)(a);
+        f._sqlite3_clear_bindings = (a) => (f._sqlite3_clear_bindings = Z._)(a);
+        f._sqlite3_value_blob = (a) => (f._sqlite3_value_blob = Z.$)(a);
+        f._sqlite3_value_bytes = (a) => (f._sqlite3_value_bytes = Z.aa)(a);
+        f._sqlite3_value_double = (a) => (f._sqlite3_value_double = Z.ba)(a);
+        f._sqlite3_value_int = (a) => (f._sqlite3_value_int = Z.ca)(a);
+        f._sqlite3_value_type = (a) => (f._sqlite3_value_type = Z.da)(a);
+        f._sqlite3_result_blob = (a, b, c, d) => (f._sqlite3_result_blob = Z.ea)(a, b, c, d);
+        f._sqlite3_result_double = (a, b) => (f._sqlite3_result_double = Z.fa)(a, b);
+        f._sqlite3_result_error = (a, b, c) => (f._sqlite3_result_error = Z.ga)(a, b, c);
+        f._sqlite3_result_int = (a, b) => (f._sqlite3_result_int = Z.ha)(a, b);
+        f._sqlite3_result_int64 = (a, b) => (f._sqlite3_result_int64 = Z.ia)(a, b);
+        f._sqlite3_result_null = (a) => (f._sqlite3_result_null = Z.ja)(a);
+        f._sqlite3_result_text = (a, b, c, d) => (f._sqlite3_result_text = Z.ka)(a, b, c, d);
+        f._sqlite3_aggregate_context = (a, b) => (f._sqlite3_aggregate_context = Z.la)(a, b);
+        f._sqlite3_column_count = (a) => (f._sqlite3_column_count = Z.ma)(a);
+        f._sqlite3_data_count = (a) => (f._sqlite3_data_count = Z.na)(a);
+        f._sqlite3_column_blob = (a, b) => (f._sqlite3_column_blob = Z.oa)(a, b);
+        f._sqlite3_column_bytes = (a, b) => (f._sqlite3_column_bytes = Z.pa)(a, b);
+        f._sqlite3_column_double = (a, b) => (f._sqlite3_column_double = Z.qa)(a, b);
+        f._sqlite3_bind_blob = (a, b, c, d, e) => (f._sqlite3_bind_blob = Z.ra)(a, b, c, d, e);
+        f._sqlite3_bind_double = (a, b, c) => (f._sqlite3_bind_double = Z.sa)(a, b, c);
+        f._sqlite3_bind_int = (a, b, c) => (f._sqlite3_bind_int = Z.ta)(a, b, c);
+        f._sqlite3_bind_text = (a, b, c, d, e) => (f._sqlite3_bind_text = Z.ua)(a, b, c, d, e);
+        f._sqlite3_bind_parameter_index = (a, b) => (f._sqlite3_bind_parameter_index = Z.va)(a, b);
+        f._sqlite3_sql = (a) => (f._sqlite3_sql = Z.wa)(a);
+        f._sqlite3_normalized_sql = (a) => (f._sqlite3_normalized_sql = Z.xa)(a);
+        f._sqlite3_changes = (a) => (f._sqlite3_changes = Z.ya)(a);
+        f._sqlite3_close_v2 = (a) => (f._sqlite3_close_v2 = Z.za)(a);
+        f._sqlite3_create_function_v2 = (a, b, c, d, e, h, k, q, w) => (f._sqlite3_create_function_v2 = Z.Aa)(a, b, c, d, e, h, k, q, w);
+        f._sqlite3_update_hook = (a, b, c) => (f._sqlite3_update_hook = Z.Ba)(a, b, c);
+        f._sqlite3_open = (a, b) => (f._sqlite3_open = Z.Ca)(a, b);
+        var ia = f._malloc = (a) => (ia = f._malloc = Z.Da)(a), fa = f._free = (a) => (fa = f._free = Z.Ea)(a);
+        f._RegisterExtensionFunctions = (a) => (f._RegisterExtensionFunctions = Z.Fa)(a);
+        var Db = (a, b) => (Db = Z.Ga)(a, b), Wc = (a, b) => (Wc = Z.Ha)(a, b), wa = (a) => (wa = Z.Ia)(a), z = (a) => (z = Z.Ja)(a), sa = () => (sa = Z.Ka)();
+        f.stackSave = () => sa();
+        f.stackRestore = (a) => wa(a);
+        f.stackAlloc = (a) => z(a);
+        f.cwrap = (a, b, c, d) => {
+          var e = !c || c.every((h) => "number" === h || "boolean" === h);
+          return "string" !== b && e && !d ? f["_" + a] : (...h) => Tc(a, b, c, h);
+        };
+        f.addFunction = Aa;
+        f.removeFunction = A;
+        f.UTF8ToString = ua;
+        f.ALLOC_NORMAL = ea;
+        f.allocate = da;
+        f.allocateUTF8OnStack = xa;
+        function Yc() {
+          function a() {
+            f.calledRun = true;
+            if (!La) {
+              if (!f.noFSInit && !Ib) {
+                var b, c;
+                Ib = true;
+                d ??= f.stdin;
+                b ??= f.stdout;
+                c ??= f.stderr;
+                d ? V("stdin", d) : Zb("/dev/tty", "/dev/stdin");
+                b ? V("stdout", null, b) : Zb("/dev/tty", "/dev/stdout");
+                c ? V("stderr", null, c) : Zb("/dev/tty1", "/dev/stderr");
+                oa("/dev/stdin", 0);
+                oa("/dev/stdout", 1);
+                oa("/dev/stderr", 1);
+              }
+              Z.N();
+              Jb = false;
+              f.onRuntimeInitialized?.();
+              if (f.postRun) for ("function" == typeof f.postRun && (f.postRun = [f.postRun]); f.postRun.length; ) {
+                var d = f.postRun.shift();
+                $a.unshift(d);
+              }
+              Za($a);
+            }
+          }
+          if (0 < K) Sa = Yc;
+          else {
+            if (f.preRun) for ("function" == typeof f.preRun && (f.preRun = [f.preRun]); f.preRun.length; ) bb();
+            Za(ab);
+            0 < K ? Sa = Yc : f.setStatus ? (f.setStatus("Running..."), setTimeout(() => {
+              setTimeout(() => f.setStatus(""), 1);
+              a();
+            }, 1)) : a();
+          }
+        }
+        if (f.preInit) for ("function" == typeof f.preInit && (f.preInit = [f.preInit]); 0 < f.preInit.length; ) f.preInit.pop()();
+        Yc();
+        return Module;
+      });
+      return initSqlJsPromise;
+    };
+    if (typeof exports2 === "object" && typeof module2 === "object") {
+      module2.exports = initSqlJs2;
+      module2.exports.default = initSqlJs2;
+    } else if (typeof define === "function" && define["amd"]) {
+      define([], function() {
+        return initSqlJs2;
+      });
+    } else if (typeof exports2 === "object") {
+      exports2["Module"] = initSqlJs2;
+    }
+  }
+});
 
-`),c.appendMarkdown(`--- 
-`),c.appendMarkdown(`- **\u5DF2\u7528**: ${b}
-`),c.appendMarkdown(`- **Tokens**: ${(h.numTokens/1e6).toFixed(2)}M
-`)}if(f.startOfMonth){let b=new Date(f.startOfMonth),y=new Date(b);y.setMonth(y.getMonth()+1);let o=Math.ceil((y.getTime()-Date.now())/(1e3*60*60*24));c.appendMarkdown(`
+// src/extension.ts
+var extension_exports = {};
+__export(extension_exports, {
+  activate: () => activate,
+  deactivate: () => deactivate
+});
+module.exports = __toCommonJS(extension_exports);
+var vscode = __toESM(require("vscode"));
+var fs = __toESM(require("fs"));
+var path = __toESM(require("path"));
+var https = __toESM(require("https"));
+var import_sql = __toESM(require_sql_wasm());
+var cachedAccessToken = null;
+var statusBarItem;
+var refreshInterval;
+function activate(context) {
+  console.log("Cursor Usage Tracker \u5DF2\u6FC0\u6D3B");
+  statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
+  statusBarItem.command = "cursor-usage-tracker.showDetails";
+  statusBarItem.tooltip = "\u70B9\u51FB\u67E5\u770B Cursor \u914D\u989D\u8BE6\u60C5";
+  context.subscriptions.push(statusBarItem);
+  const refreshCommand = vscode.commands.registerCommand("cursor-usage-tracker.refresh", () => refreshUsage());
+  context.subscriptions.push(refreshCommand);
+  const showDetailsCommand = vscode.commands.registerCommand(
+    "cursor-usage-tracker.showDetails",
+    () => showUsageDetails()
+  );
+  context.subscriptions.push(showDetailsCommand);
+  const showLogsCommand = vscode.commands.registerCommand("cursor-usage-tracker.showLogs", () => {
+    if (!outputChannel) {
+      outputChannel = vscode.window.createOutputChannel("Cursor Usage Tracker");
+    }
+    outputChannel.show();
+  });
+  context.subscriptions.push(showLogsCommand);
+  refreshUsage();
+  setupAutoRefresh();
+  vscode.workspace.onDidChangeConfiguration((e) => {
+    if (e.affectsConfiguration("cursorUsageTracker")) {
+      setupAutoRefresh();
+    }
+  });
+}
+function setupAutoRefresh() {
+  if (refreshInterval) {
+    clearInterval(refreshInterval);
+  }
+  const config = vscode.workspace.getConfiguration("cursorUsageTracker");
+  const interval = config.get("refreshInterval", 300) * 1e3;
+  refreshInterval = setInterval(() => {
+    refreshUsage();
+  }, interval);
+}
+var outputChannel;
+function log(message) {
+  if (!outputChannel) {
+    outputChannel = vscode.window.createOutputChannel("Cursor Usage Tracker");
+  }
+  const timestamp = (/* @__PURE__ */ new Date()).toLocaleTimeString();
+  outputChannel.appendLine(`[${timestamp}] ${message}`);
+  console.log(`[Cursor Usage Tracker] ${message}`);
+}
+async function getUserId() {
+  const possiblePaths = getPossibleStoragePaths();
+  log(`\u5F00\u59CB\u641C\u7D22\u7528\u6237 ID\uFF0C\u5171 ${possiblePaths.length} \u4E2A\u5019\u9009\u8DEF\u5F84`);
+  for (const storagePath of possiblePaths) {
+    try {
+      log(`\u5C1D\u8BD5\u8DEF\u5F84: ${storagePath}`);
+      const userId = await findUserIdInPath(storagePath);
+      if (userId) {
+        log(`\u2713 \u6210\u529F\u627E\u5230\u7528\u6237 ID: ${userId}`);
+        return userId;
+      } else {
+        log(`  - \u672A\u5728\u6B64\u8DEF\u5F84\u627E\u5230\u7528\u6237 ID`);
+      }
+    } catch (error) {
+      log(`  - \u8BFB\u53D6\u5931\u8D25: ${error}`);
+    }
+  }
+  log(`\u2717 \u6240\u6709\u8DEF\u5F84\u90FD\u672A\u627E\u5230\u7528\u6237 ID`);
+  return null;
+}
+function getPossibleStoragePaths() {
+  const paths = [];
+  const homeDir = process.env.HOME || process.env.USERPROFILE || "";
+  if (process.platform === "win32") {
+    const appData = process.env.APPDATA || path.join(homeDir, "AppData", "Roaming");
+    paths.push(
+      // 新版 Cursor 将用户信息存储在 sentry 目录
+      path.join(appData, "Cursor", "sentry", "scope_v3.json"),
+      path.join(appData, "Cursor", "sentry", "session.json"),
+      // 旧版路径保留兼容
+      path.join(appData, "Cursor", "User", "globalStorage", "storage.json"),
+      path.join(appData, "Cursor", "storage.json"),
+      path.join(appData, "Cursor", "User", "settings.json"),
+      path.join(homeDir, ".cursor", "storage.json"),
+      path.join(homeDir, ".cursor-tutor", "storage.json")
+    );
+  } else if (process.platform === "darwin") {
+    paths.push(
+      // 新版 Cursor 将用户信息存储在 sentry 目录
+      path.join(homeDir, "Library", "Application Support", "Cursor", "sentry", "scope_v3.json"),
+      path.join(homeDir, "Library", "Application Support", "Cursor", "sentry", "session.json"),
+      // 旧版路径保留兼容
+      path.join(homeDir, "Library", "Application Support", "Cursor", "User", "globalStorage", "storage.json"),
+      path.join(homeDir, "Library", "Application Support", "Cursor", "storage.json"),
+      path.join(homeDir, ".cursor", "storage.json")
+    );
+  } else {
+    paths.push(
+      // 新版 Cursor 将用户信息存储在 sentry 目录
+      path.join(homeDir, ".config", "Cursor", "sentry", "scope_v3.json"),
+      path.join(homeDir, ".config", "Cursor", "sentry", "session.json"),
+      // 旧版路径保留兼容
+      path.join(homeDir, ".config", "Cursor", "User", "globalStorage", "storage.json"),
+      path.join(homeDir, ".config", "Cursor", "storage.json"),
+      path.join(homeDir, ".cursor", "storage.json")
+    );
+  }
+  return paths;
+}
+async function findUserIdInPath(filePath) {
+  try {
+    if (!fs.existsSync(filePath)) {
+      log(`  - \u6587\u4EF6\u4E0D\u5B58\u5728: ${filePath}`);
+      const dirPath = path.dirname(filePath);
+      if (fs.existsSync(dirPath) && fs.statSync(dirPath).isDirectory()) {
+        log(`  - \u5C1D\u8BD5\u641C\u7D22\u76EE\u5F55: ${dirPath}`);
+        return await searchDirectoryForUserId(dirPath);
+      }
+      return null;
+    }
+    log(`  - \u6587\u4EF6\u5B58\u5728\uFF0C\u8BFB\u53D6\u5185\u5BB9...`);
+    const content = fs.readFileSync(filePath, "utf8");
+    log(`  - \u6587\u4EF6\u5927\u5C0F: ${content.length} \u5B57\u8282`);
+    try {
+      const data = JSON.parse(content);
+      if (data.scope?.user?.id) {
+        log(`  - \u53D1\u73B0 scope.user.id: ${data.scope.user.id}`);
+        const userId = extractUserIdFromOAuth(data.scope.user.id);
+        if (userId) {
+          log(`  - \u63D0\u53D6\u7528\u6237 ID: ${userId}`);
+          return userId;
+        }
+      }
+      if (data.did) {
+        log(`  - \u53D1\u73B0 did: ${data.did}`);
+        const userId = extractUserIdFromOAuth(data.did);
+        if (userId) {
+          log(`  - \u63D0\u53D6\u7528\u6237 ID: ${userId}`);
+          return userId;
+        }
+      }
+      const possibleKeys = ["cursorAuth/cachedSignInMethod", "userId", "user_id", "id"];
+      for (const key of possibleKeys) {
+        if (data[key] && typeof data[key] === "string" && data[key].startsWith("user_")) {
+          log(`  - \u53D1\u73B0 ${key}: ${data[key]}`);
+          return data[key];
+        }
+      }
+      const found = findUserIdInObject(data);
+      if (found) {
+        log(`  - \u9012\u5F52\u641C\u7D22\u627E\u5230: ${found}`);
+      }
+      return found;
+    } catch (parseError) {
+      log(`  - JSON \u89E3\u6790\u5931\u8D25\uFF0C\u5C1D\u8BD5\u6B63\u5219\u5339\u914D...`);
+      const match = content.match(/user_[a-zA-Z0-9]{20,}/);
+      if (match) {
+        log(`  - \u6B63\u5219\u5339\u914D\u627E\u5230: ${match[0]}`);
+        return match[0];
+      }
+    }
+  } catch (error) {
+    log(`  - \u8BFB\u53D6\u6587\u4EF6\u5931\u8D25: ${error}`);
+  }
+  return null;
+}
+function extractUserIdFromOAuth(oauthId) {
+  if (!oauthId || typeof oauthId !== "string") return null;
+  if (oauthId.includes("|")) {
+    const parts = oauthId.split("|");
+    const userPart = parts.find((p) => p.startsWith("user_"));
+    if (userPart) return userPart;
+  }
+  if (oauthId.startsWith("user_")) {
+    return oauthId;
+  }
+  return null;
+}
+function findUserIdInObject(obj) {
+  if (!obj || typeof obj !== "object") {
+    return null;
+  }
+  for (const key in obj) {
+    const value = obj[key];
+    if (typeof value === "string" && value.startsWith("user_") && value.length > 20) {
+      return value;
+    }
+    if (typeof value === "object") {
+      const found = findUserIdInObject(value);
+      if (found) {
+        return found;
+      }
+    }
+  }
+  return null;
+}
+async function searchDirectoryForUserId(dirPath) {
+  try {
+    const files = fs.readdirSync(dirPath);
+    for (const file of files) {
+      const filePath = path.join(dirPath, file);
+      const stat = fs.statSync(filePath);
+      if (stat.isFile() && (file.endsWith(".json") || file === "storage.json")) {
+        const userId = await findUserIdInPath(filePath);
+        if (userId) return userId;
+      } else if (stat.isDirectory() && !file.startsWith(".")) {
+        const userId = await searchDirectoryForUserId(filePath);
+        if (userId) return userId;
+      }
+    }
+  } catch (error) {
+    console.error(`\u641C\u7D22\u76EE\u5F55\u5931\u8D25: ${dirPath}`, error);
+  }
+  return null;
+}
+function getCursorDbPath() {
+  const homeDir = process.env.HOME || process.env.USERPROFILE || "";
+  if (process.platform === "win32") {
+    const appData = process.env.APPDATA || path.join(homeDir, "AppData", "Roaming");
+    return path.join(appData, "Cursor", "User", "globalStorage", "state.vscdb");
+  } else if (process.platform === "darwin") {
+    return path.join(homeDir, "Library", "Application Support", "Cursor", "User", "globalStorage", "state.vscdb");
+  } else {
+    return path.join(homeDir, ".config", "Cursor", "User", "globalStorage", "state.vscdb");
+  }
+}
+async function getAccessToken() {
+  if (cachedAccessToken) {
+    log(`\u4F7F\u7528\u7F13\u5B58\u7684 accessToken`);
+    return cachedAccessToken;
+  }
+  const dbPath = getCursorDbPath();
+  log(`\u5C1D\u8BD5\u8BFB\u53D6\u6570\u636E\u5E93: ${dbPath}`);
+  if (!fs.existsSync(dbPath)) {
+    log(`\u2717 \u6570\u636E\u5E93\u6587\u4EF6\u4E0D\u5B58\u5728: ${dbPath}`);
+    return null;
+  }
+  try {
+    const SQL = await (0, import_sql.default)({
+      locateFile: (file) => path.join(__dirname, file)
+    });
+    const fileBuffer = fs.readFileSync(dbPath);
+    const db = new SQL.Database(fileBuffer);
+    const result = db.exec("SELECT value FROM ItemTable WHERE key = 'cursorAuth/accessToken'");
+    if (result.length > 0 && result[0].values.length > 0) {
+      const tokenValue = result[0].values[0][0];
+      log(`\u2713 \u6210\u529F\u83B7\u53D6 accessToken`);
+      cachedAccessToken = tokenValue;
+      db.close();
+      return tokenValue;
+    } else {
+      log(`\u2717 \u672A\u627E\u5230 accessToken`);
+      const allKeys = db.exec("SELECT key FROM ItemTable WHERE key LIKE '%cursorAuth%'");
+      if (allKeys.length > 0) {
+        log(`  - \u627E\u5230\u7684 cursorAuth \u76F8\u5173 key: ${allKeys[0].values.map((v) => v[0]).join(", ")}`);
+      }
+      db.close();
+      return null;
+    }
+  } catch (error) {
+    log(`\u2717 \u8BFB\u53D6\u6570\u636E\u5E93\u5931\u8D25: ${error}`);
+    return null;
+  }
+}
+async function fetchUsageFromAPI(userId) {
+  const accessToken = await getAccessToken();
+  const cookieValue = accessToken ? `${userId}%3A%3A${accessToken}` : null;
+  const makeRequest = (url, redirectCount = 0) => {
+    return new Promise((resolve) => {
+      if (redirectCount > 5) {
+        log(`\u2717 \u91CD\u5B9A\u5411\u6B21\u6570\u8FC7\u591A\uFF0C\u505C\u6B62\u8BF7\u6C42`);
+        resolve(null);
+        return;
+      }
+      log(`\u8BF7\u6C42 API: ${url}${redirectCount > 0 ? ` (\u91CD\u5B9A\u5411 #${redirectCount})` : ""}`);
+      const urlObj = new URL(url);
+      const options = {
+        hostname: urlObj.hostname,
+        path: urlObj.pathname + urlObj.search,
+        method: "GET",
+        headers: {
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+          Accept: "application/json"
+        }
+      };
+      if (cookieValue) {
+        log(`  - \u4F7F\u7528 Cookie \u8BA4\u8BC1`);
+        options.headers = {
+          ...options.headers,
+          Cookie: `WorkosCursorSessionToken=${cookieValue}`
+        };
+      } else {
+        log(`  - \u65E0\u8BA4\u8BC1\u4FE1\u606F\uFF0C\u5C1D\u8BD5\u65E0\u8BA4\u8BC1\u8BF7\u6C42`);
+      }
+      https.get(options, (res) => {
+        log(`API \u54CD\u5E94\u72B6\u6001\u7801: ${res.statusCode}`);
+        if (res.statusCode === 401) {
+          log(`\u2717 \u8BA4\u8BC1\u5931\u8D25 (401)\uFF0C\u6E05\u9664\u7F13\u5B58\u7684 token`);
+          cachedAccessToken = null;
+          resolve(null);
+          return;
+        }
+        if (res.statusCode && [301, 302, 307, 308].includes(res.statusCode)) {
+          const location = res.headers.location;
+          if (location) {
+            log(`  - \u91CD\u5B9A\u5411\u5230: ${location}`);
+            const redirectUrl = location.startsWith("http") ? location : `https://www.cursor.com${location}`;
+            resolve(makeRequest(redirectUrl, redirectCount + 1));
+          } else {
+            log(`\u2717 \u91CD\u5B9A\u5411\u4F46\u6CA1\u6709 Location \u5934`);
+            resolve(null);
+          }
+          return;
+        }
+        let data = "";
+        res.on("data", (chunk) => {
+          data += chunk;
+        });
+        res.on("end", () => {
+          log(`API \u54CD\u5E94\u6570\u636E\u957F\u5EA6: ${data.length} \u5B57\u8282`);
+          try {
+            const parsed = JSON.parse(data);
+            if (parsed.error) {
+              log(`\u2717 API \u8FD4\u56DE\u9519\u8BEF: ${parsed.error}`);
+              resolve(null);
+            } else {
+              log(`\u2713 API \u8BF7\u6C42\u6210\u529F`);
+              log(`  - GPT-4 \u8BF7\u6C42\u6570: ${parsed["gpt-4"]?.numRequests || "N/A"}`);
+              log(`  - GPT-4 \u6700\u5927\u8BF7\u6C42\u6570: ${parsed["gpt-4"]?.maxRequestUsage || "N/A"}`);
+              resolve(parsed);
+            }
+          } catch (error) {
+            log(`\u2717 JSON \u89E3\u6790\u5931\u8D25: ${error}`);
+            log(`  - \u539F\u59CB\u6570\u636E: ${data.substring(0, 200)}...`);
+            resolve(null);
+          }
+        });
+      }).on("error", (error) => {
+        log(`\u2717 \u7F51\u7EDC\u8BF7\u6C42\u5931\u8D25: ${error}`);
+        resolve(null);
+      });
+    });
+  };
+  return makeRequest(`https://cursor.com/api/usage?user=${userId}`);
+}
+var lastUsageData = null;
+var lastUserId = null;
+async function refreshUsage() {
+  log("========== \u5F00\u59CB\u5237\u65B0\u914D\u989D ==========");
+  const config = vscode.workspace.getConfiguration("cursorUsageTracker");
+  const showInStatusBar = config.get("showInStatusBar", true);
+  if (!showInStatusBar) {
+    log("\u72B6\u6001\u680F\u663E\u793A\u5DF2\u7981\u7528\uFF0C\u8DF3\u8FC7\u5237\u65B0");
+    statusBarItem.hide();
+    return;
+  }
+  statusBarItem.text = "$(sync~spin) \u83B7\u53D6\u4E2D...";
+  statusBarItem.show();
+  try {
+    log("\u6B65\u9AA4 1: \u83B7\u53D6\u7528\u6237 ID...");
+    const userId = await getUserId();
+    if (!userId) {
+      log("\u2717 \u83B7\u53D6\u7528\u6237 ID \u5931\u8D25");
+      statusBarItem.text = "$(warning) \u65E0 ID";
+      statusBarItem.tooltip = "\u65E0\u6CD5\u81EA\u52A8\u83B7\u53D6 User ID\uFF0C\u8BF7\u70B9\u51FB\u67E5\u770B\u65E5\u5FD7";
+      statusBarItem.command = "cursor-usage-tracker.showLogs";
+      return;
+    }
+    log(`\u6B65\u9AA4 2: \u8C03\u7528 API \u83B7\u53D6\u914D\u989D\u6570\u636E...`);
+    lastUserId = userId;
+    const usageData = await fetchUsageFromAPI(userId);
+    if (!usageData) {
+      log("\u2717 API \u8BF7\u6C42\u5931\u8D25");
+      statusBarItem.text = "$(error) \u5931\u8D25";
+      statusBarItem.tooltip = "\u65E0\u6CD5\u4ECE Cursor API \u83B7\u53D6\u6570\u636E\uFF0C\u8BF7\u70B9\u51FB\u67E5\u770B\u65E5\u5FD7";
+      statusBarItem.command = "cursor-usage-tracker.showLogs";
+      return;
+    }
+    log("\u2713 \u914D\u989D\u6570\u636E\u83B7\u53D6\u6210\u529F");
+    lastUsageData = usageData;
+    updateStatusBar(usageData);
+    log("========== \u5237\u65B0\u5B8C\u6210 ==========");
+  } catch (error) {
+    log(`\u2717 \u5237\u65B0\u8FC7\u7A0B\u53D1\u751F\u5F02\u5E38: ${error}`);
+    statusBarItem.text = "$(error) \u9519\u8BEF";
+  }
+}
+function updateStatusBar(data) {
+  const gpt4 = data["gpt-4"];
+  if (gpt4 && gpt4.maxRequestUsage) {
+    const used = gpt4.numRequests;
+    const max = gpt4.maxRequestUsage;
+    const remaining = max - used;
+    const percentage = Math.round(used / max * 100);
+    let icon = "$(check)";
+    let colorTheme = "statusBarItem.warningBackground";
+    if (percentage >= 90) {
+      icon = "$(flame)";
+      colorTheme = "statusBarItem.errorBackground";
+    } else if (percentage >= 70) {
+      icon = "$(warning)";
+    } else {
+      icon = "$(pulse)";
+      colorTheme = "";
+    }
+    statusBarItem.text = `${icon} ${remaining}`;
+    statusBarItem.tooltip = createTooltip(data);
+    if (percentage >= 70) {
+      statusBarItem.backgroundColor = new vscode.ThemeColor(colorTheme);
+    } else {
+      statusBarItem.backgroundColor = void 0;
+    }
+  } else {
+    statusBarItem.text = "$(info) Cursor";
+    statusBarItem.tooltip = "\u65E0\u6CD5\u83B7\u53D6\u914D\u989D\u4FE1\u606F";
+  }
+  statusBarItem.show();
+}
+function createTooltip(data) {
+  const md = new vscode.MarkdownString();
+  md.isTrusted = true;
+  const gpt4 = data["gpt-4"];
+  if (gpt4) {
+    const used = gpt4.numRequests;
+    const max = gpt4.maxRequestUsage || "\u221E";
+    const remaining = typeof max === "number" ? max - used : "\u221E";
+    const percentage = typeof max === "number" ? Math.round(used / max * 100) : 0;
+    md.appendMarkdown(`### \u{1F916} GPT-4 \u914D\u989D
+`);
+    md.appendMarkdown(`**${remaining}** / ${max} \u8BF7\u6C42\u53EF\u7528
+
+`);
+    const bars = 10;
+    const filled = Math.round(percentage / 100 * bars);
+    const empty = bars - filled;
+    const barStr = "\u2588".repeat(filled) + "\u2591".repeat(empty);
+    md.appendMarkdown(`\`[${barStr}] ${percentage}%\`
+
+`);
+    md.appendMarkdown(`--- 
+`);
+    md.appendMarkdown(`- **\u5DF2\u7528**: ${used}
+`);
+    md.appendMarkdown(`- **Tokens**: ${(gpt4.numTokens / 1e6).toFixed(2)}M
+`);
+  }
+  if (data.startOfMonth) {
+    const resetDate = new Date(data.startOfMonth);
+    const nextReset = new Date(resetDate);
+    nextReset.setMonth(nextReset.getMonth() + 1);
+    const daysLeft = Math.ceil((nextReset.getTime() - Date.now()) / (1e3 * 60 * 60 * 24));
+    md.appendMarkdown(`
 ---
-`),c.appendMarkdown(`\u{1F4C5} **${o}\u5929** \u540E\u91CD\u7F6E (${y.toLocaleDateString()})`)}return c.appendMarkdown(`
+`);
+    md.appendMarkdown(`\u{1F4C5} **${daysLeft}\u5929** \u540E\u91CD\u7F6E (${nextReset.toLocaleDateString()})`);
+  }
+  md.appendMarkdown(`
 
-$(graph) [\u67E5\u770B\u8BE6\u7EC6\u62A5\u544A](command:cursor-usage-tracker.showDetails)`),c}async function In(){if(Ze||await et(),!Ze){P.window.showErrorMessage("\u65E0\u6CD5\u83B7\u53D6 Cursor \u914D\u989D\u4FE1\u606F");return}let f=P.window.createWebviewPanel("cursorUsageReport","Cursor \u914D\u989D\u4EEA\u8868\u76D8",P.ViewColumn.One,{enableScripts:!0});f.webview.html=Ln(Ze,xr||"Unknown")}function Ln(f,c){let h=f["gpt-4"],b=h?.numRequests||0,y=h?.maxRequestUsage||500,o=y-b,j=Math.round(b/y*100),C=h?.numTokens||0,D="#4cc9f0";j>75?D="#f72585":j>50&&(D="#f8961e");let X=new Date(f.startOfMonth),U=new Date(X);U.setMonth(U.getMonth()+1);let re=Math.ceil((U.getTime()-Date.now())/(1e3*60*60*24)),z=80,ne=2*Math.PI*z,pe=ne-j/100*ne;return`<!DOCTYPE html>
+$(graph) [\u67E5\u770B\u8BE6\u7EC6\u62A5\u544A](command:cursor-usage-tracker.showDetails)`);
+  return md;
+}
+async function showUsageDetails() {
+  if (!lastUsageData) {
+    await refreshUsage();
+  }
+  if (!lastUsageData) {
+    vscode.window.showErrorMessage("\u65E0\u6CD5\u83B7\u53D6 Cursor \u914D\u989D\u4FE1\u606F");
+    return;
+  }
+  const panel = vscode.window.createWebviewPanel(
+    "cursorUsageReport",
+    "Cursor \u914D\u989D\u4EEA\u8868\u76D8",
+    vscode.ViewColumn.One,
+    { enableScripts: true }
+  );
+  panel.webview.html = getWebviewContent(lastUsageData, lastUserId || "Unknown");
+}
+function getWebviewContent(data, userId) {
+  const gpt4 = data["gpt-4"];
+  const used = gpt4?.numRequests || 0;
+  const max = gpt4?.maxRequestUsage || 500;
+  const remaining = max - used;
+  const percentage = Math.round(used / max * 100);
+  const tokens = gpt4?.numTokens || 0;
+  let color = "#4cc9f0";
+  if (percentage > 75) color = "#f72585";
+  else if (percentage > 50) color = "#f8961e";
+  const resetDate = new Date(data.startOfMonth);
+  const nextReset = new Date(resetDate);
+  nextReset.setMonth(nextReset.getMonth() + 1);
+  const daysUntilReset = Math.ceil((nextReset.getTime() - Date.now()) / (1e3 * 60 * 60 * 24));
+  const radius = 80;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - percentage / 100 * circumference;
+  return `<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -23,8 +2640,8 @@ $(graph) [\u67E5\u770B\u8BE6\u7EC6\u62A5\u544A](command:cursor-usage-tracker.sho
             --card-bg: #161b22;
             --text-primary: #f0f6fc;
             --text-secondary: #8b949e;
-            --accent-color: ${D};
-            --accent-glow: ${D}40;
+            --accent-color: ${color};
+            --accent-glow: ${color}40;
         }
         
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -99,8 +2716,8 @@ $(graph) [\u67E5\u770B\u8BE6\u7EC6\u62A5\u544A](command:cursor-usage-tracker.sho
             fill: none;
             stroke: var(--accent-color);
             stroke-width: 12;
-            stroke-dasharray: ${ne};
-            stroke-dashoffset: ${ne}; /* Initial for animation */
+            stroke-dasharray: ${circumference};
+            stroke-dashoffset: ${circumference}; /* Initial for animation */
             stroke-linecap: round;
             animation: progress 1.5s ease-out forwards;
             filter: drop-shadow(0 0 8px var(--accent-glow));
@@ -128,7 +2745,7 @@ $(graph) [\u67E5\u770B\u8BE6\u7EC6\u62A5\u544A](command:cursor-usage-tracker.sho
         }
 
         @keyframes progress {
-            to { stroke-dashoffset: ${pe}; }
+            to { stroke-dashoffset: ${offset}; }
         }
 
         /* \u7EDF\u8BA1\u6570\u636E\u7F51\u683C */
@@ -210,42 +2827,54 @@ $(graph) [\u67E5\u770B\u8BE6\u7EC6\u62A5\u544A](command:cursor-usage-tracker.sho
 
         <div class="chart-container">
             <svg class="chart-svg">
-                <circle class="chart-circle-bg" cx="100" cy="100" r="${z}"></circle>
-                <circle class="chart-circle" cx="100" cy="100" r="${z}"></circle>
+                <circle class="chart-circle-bg" cx="100" cy="100" r="${radius}"></circle>
+                <circle class="chart-circle" cx="100" cy="100" r="${radius}"></circle>
             </svg>
             <div class="chart-content">
-                <div class="chart-number">${o}</div>
+                <div class="chart-number">${remaining}</div>
                 <div class="chart-label">LEFT</div>
             </div>
         </div>
 
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-value">${b} / ${y}</div>
+                <div class="stat-value">${used} / ${max}</div>
                 <div class="stat-name">Requests Used</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value">${(C/1e6).toFixed(2)}M</div>
+                <div class="stat-value">${(tokens / 1e6).toFixed(2)}M</div>
                 <div class="stat-name">Tokens Processed</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value">${j}%</div>
+                <div class="stat-value">${percentage}%</div>
                 <div class="stat-name">Consumption</div>
             </div>
              <div class="stat-card">
-                <div class="stat-value">${re} Days</div>
+                <div class="stat-value">${daysUntilReset} Days</div>
                 <div class="stat-name">Until Reset</div>
             </div>
         </div>
 
         <div class="footer-info">
             <span>Next Cycle</span>
-            <span class="reset-badge">${U.toLocaleDateString()}</span>
+            <span class="reset-badge">${nextReset.toLocaleDateString()}</span>
         </div>
         
         <div class="user-id-container">
-            <span class="user-id">${c}</span>
+            <span class="user-id">${userId}</span>
         </div>
     </div>
 </body>
-</html>`}function Cn(){Re&&clearInterval(Re)}0&&(module.exports={activate,deactivate});
+</html>`;
+}
+function deactivate() {
+  if (refreshInterval) {
+    clearInterval(refreshInterval);
+  }
+}
+// Annotate the CommonJS export names for ESM import in node:
+0 && (module.exports = {
+  activate,
+  deactivate
+});
+//# sourceMappingURL=extension.js.map

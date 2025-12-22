@@ -370,10 +370,14 @@ async function getAccessToken(): Promise<string | null> {
 /**
  * 从 API 获取使用量数据
  * 使用 WorkosCursorSessionToken Cookie 进行认证
+ * Cookie 格式: userId%3A%3AaccessToken (即 userId::accessToken 的 URL 编码)
  */
 async function fetchUsageFromAPI(userId: string): Promise<UsageData | null> {
 	// 先获取 accessToken
 	const accessToken = await getAccessToken();
+
+	// 构建正确的 Cookie 值: userId::accessToken (URL 编码后为 userId%3A%3AaccessToken)
+	const cookieValue = accessToken ? `${userId}%3A%3A${accessToken}` : null;
 
 	const makeRequest = (url: string, redirectCount: number = 0): Promise<UsageData | null> => {
 		return new Promise((resolve) => {
@@ -397,13 +401,12 @@ async function fetchUsageFromAPI(userId: string): Promise<UsageData | null> {
 				},
 			};
 
-			// 如果有 accessToken，添加认证头
-			if (accessToken) {
-				log(`  - 使用 Cookie 和 Bearer 认证`);
+			// 如果有 Cookie，添加认证头
+			if (cookieValue) {
+				log(`  - 使用 Cookie 认证`);
 				options.headers = {
 					...options.headers,
-					Cookie: `WorkosCursorSessionToken=${accessToken}`,
-					Authorization: `Bearer ${accessToken}`,
+					Cookie: `WorkosCursorSessionToken=${cookieValue}`,
 				};
 			} else {
 				log(`  - 无认证信息，尝试无认证请求`);
@@ -467,6 +470,7 @@ async function fetchUsageFromAPI(userId: string): Promise<UsageData | null> {
 		});
 	};
 
+	// 注意：必须使用 cursor.com 而不是 www.cursor.com，否则会 308 重定向
 	return makeRequest(`https://cursor.com/api/usage?user=${userId}`);
 }
 
