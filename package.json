@@ -23,6 +23,10 @@
       {
         "command": "cursor-usage-tracker.showDetails",
         "title": "显示 Cursor 配额详情"
+      },
+      {
+        "command": "cursor-usage-tracker.showLogs",
+        "title": "查看 Cursor Usage Tracker 日志"
       }
     ],
     "configuration": {
@@ -50,11 +54,14 @@
   "devDependencies": {
     "@types/node": "^20.10.0",
     "@types/vscode": "^1.85.0",
-    "typescript": "^5.3.0",
-    "@vscode/vsce": "^2.22.0"
+    "@vscode/vsce": "^2.22.0",
+    "typescript": "^5.3.0"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/Tendo33/cursor-usage-tracker"
+  },
+  "dependencies": {
+    "sql.js": "^1.13.0"
   }
 }
