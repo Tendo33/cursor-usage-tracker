@@ -185,7 +185,7 @@ A: 技术上可以安装，但只有使用 Cursor 时才有实际意义。
 
 ## 📄 开源协议
 
-[MIT License](LICENSE) © TuDou
+[MIT License](LICENSE) © SimonSun
 
 ---
 

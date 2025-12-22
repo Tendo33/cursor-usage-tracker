@@ -3,7 +3,7 @@
   "displayName": "Cursor Usage Tracker",
   "description": "在状态栏显示 Cursor 剩余配额",
   "version": "1.0.0",
-  "publisher": "TuDou",
+  "publisher": "SimonSun",
   "engines": {
     "vscode": "^1.85.0"
   },
