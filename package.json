@@ -20,10 +20,7 @@
         "command": "cursor-usage-tracker.refresh",
         "title": "刷新 Cursor 配额"
       },
-      {
-        "command": "cursor-usage-tracker.showDetails",
-        "title": "显示 Cursor 配额详情"
-      },
+
       {
         "command": "cursor-usage-tracker.showLogs",
         "title": "查看 Cursor Usage Tracker 日志"
