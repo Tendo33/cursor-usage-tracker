@@ -1,7 +1,7 @@
 // {{RIPER-7 Action}}
 // Role: LD | Task_ID: #6-8 | Time: 2025-12-22T13:05:00+08:00
-// Logic: 升级 UI 为现代仪表盘风格，增加 SVG 环形图和动态光效
-// Principle: SOLID-S (单一职责)
+// Logic: Upgrade UI to modern dashboard style, add SVG ring chart and dynamic light effects
+// Principle: SOLID-S (Single Responsibility)
 
 import * as vscode from 'vscode';
 import * as fs from 'fs';
@@ -9,7 +9,7 @@ import * as path from 'path';
 import * as https from 'https';
 import initSqlJs, { Database } from "sql.js";
 
-// 缓存的 access token
+// Cached access token
 let cachedAccessToken: string | null = null;
 
 interface UsageData {
@@ -34,18 +34,18 @@ let statusBarItem: vscode.StatusBarItem;
 let refreshInterval: NodeJS.Timeout | undefined;
 
 export function activate(context: vscode.ExtensionContext) {
-	console.log("Cursor Usage Tracker 已激活");
+	console.log("Cursor Usage Tracker activated");
 
-	// 创建状态栏项
+	// Create status bar item
 	statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
-	statusBarItem.tooltip = "Cursor 配额信息";
+	statusBarItem.tooltip = "Cursor Quota Info";
 	context.subscriptions.push(statusBarItem);
 
-	// 注册刷新命令
+	// Register refresh command
 	const refreshCommand = vscode.commands.registerCommand("cursor-usage-tracker.refresh", () => refreshUsage());
 	context.subscriptions.push(refreshCommand);
 
-	// 注册查看日志命令
+	// Register show logs command
 	const showLogsCommand = vscode.commands.registerCommand("cursor-usage-tracker.showLogs", () => {
 		if (!outputChannel) {
 			outputChannel = vscode.window.createOutputChannel("Cursor Usage Tracker");
@@ -54,13 +54,13 @@ export function activate(context: vscode.ExtensionContext) {
 	});
 	context.subscriptions.push(showLogsCommand);
 
-	// 初始刷新
+	// Initial refresh
 	refreshUsage();
 
-	// 设置自动刷新
+	// Setup auto refresh
 	setupAutoRefresh();
 
-	// 监听配置变更
+	// Listen for configuration changes
 	vscode.workspace.onDidChangeConfiguration((e) => {
 		if (e.affectsConfiguration("cursorUsageTracker")) {
 			setupAutoRefresh();
@@ -81,7 +81,7 @@ function setupAutoRefresh() {
 	}, interval);
 }
 
-// 创建输出通道用于日志
+// Create output channel for logs
 let outputChannel: vscode.OutputChannel;
 
 function log(message: string) {
@@ -95,24 +95,24 @@ function log(message: string) {
 
 async function getUserId(): Promise<string | null> {
 	const possiblePaths = getPossibleStoragePaths();
-	log(`开始搜索用户 ID，共 ${possiblePaths.length} 个候选路径`);
+	log(`Searching for user ID, ${possiblePaths.length} candidate paths`);
 
 	for (const storagePath of possiblePaths) {
 		try {
-			log(`尝试路径: ${storagePath}`);
+			log(`Trying path: ${storagePath}`);
 			const userId = await findUserIdInPath(storagePath);
 			if (userId) {
-				log(`✓ 成功找到用户 ID: ${userId}`);
+				log(`✓ Successfully found user ID: ${userId}`);
 				return userId;
 			} else {
-				log(`  - 未在此路径找到用户 ID`);
+				log(`  - User ID not found in this path`);
 			}
 		} catch (error) {
-			log(`  - 读取失败: ${error}`);
+			log(`  - Read failed: ${error}`);
 		}
 	}
 
-	log(`✗ 所有路径都未找到用户 ID`);
+	log(`✗ User ID not found in any path`);
 	return null;
 }
 
@@ -123,10 +123,10 @@ function getPossibleStoragePaths(): string[] {
 	if (process.platform === "win32") {
 		const appData = process.env.APPDATA || path.join(homeDir, "AppData", "Roaming");
 		paths.push(
-			// 新版 Cursor 将用户信息存储在 sentry 目录
+			// New Cursor stores user info in sentry directory
 			path.join(appData, "Cursor", "sentry", "scope_v3.json"),
 			path.join(appData, "Cursor", "sentry", "session.json"),
-			// 旧版路径保留兼容
+			// Legacy paths for compatibility
 			path.join(appData, "Cursor", "User", "globalStorage", "storage.json"),
 			path.join(appData, "Cursor", "storage.json"),
 			path.join(appData, "Cursor", "User", "settings.json"),
@@ -135,20 +135,20 @@ function getPossibleStoragePaths(): string[] {
 		);
 	} else if (process.platform === "darwin") {
 		paths.push(
-			// 新版 Cursor 将用户信息存储在 sentry 目录
+			// New Cursor stores user info in sentry directory
 			path.join(homeDir, "Library", "Application Support", "Cursor", "sentry", "scope_v3.json"),
 			path.join(homeDir, "Library", "Application Support", "Cursor", "sentry", "session.json"),
-			// 旧版路径保留兼容
+			// Legacy paths for compatibility
 			path.join(homeDir, "Library", "Application Support", "Cursor", "User", "globalStorage", "storage.json"),
 			path.join(homeDir, "Library", "Application Support", "Cursor", "storage.json"),
 			path.join(homeDir, ".cursor", "storage.json")
 		);
 	} else {
 		paths.push(
-			// 新版 Cursor 将用户信息存储在 sentry 目录
+			// New Cursor stores user info in sentry directory
 			path.join(homeDir, ".config", "Cursor", "sentry", "scope_v3.json"),
 			path.join(homeDir, ".config", "Cursor", "sentry", "session.json"),
-			// 旧版路径保留兼容
+			// Legacy paths for compatibility
 			path.join(homeDir, ".config", "Cursor", "User", "globalStorage", "storage.json"),
 			path.join(homeDir, ".config", "Cursor", "storage.json"),
 			path.join(homeDir, ".cursor", "storage.json")
@@ -161,84 +161,84 @@ function getPossibleStoragePaths(): string[] {
 async function findUserIdInPath(filePath: string): Promise<string | null> {
 	try {
 		if (!fs.existsSync(filePath)) {
-			log(`  - 文件不存在: ${filePath}`);
+			log(`  - File does not exist: ${filePath}`);
 			const dirPath = path.dirname(filePath);
 			if (fs.existsSync(dirPath) && fs.statSync(dirPath).isDirectory()) {
-				log(`  - 尝试搜索目录: ${dirPath}`);
+				log(`  - Trying to search directory: ${dirPath}`);
 				return await searchDirectoryForUserId(dirPath);
 			}
 			return null;
 		}
 
-		log(`  - 文件存在，读取内容...`);
+		log(`  - File exists, reading content...`);
 		const content = fs.readFileSync(filePath, "utf8");
-		log(`  - 文件大小: ${content.length} 字节`);
+		log(`  - File size: ${content.length} bytes`);
 
 		try {
 			const data = JSON.parse(content);
 
-			// 检查 sentry/scope_v3.json 格式: scope.user.id = "google-oauth2|user_xxx"
+			// Check sentry/scope_v3.json format: scope.user.id = "google-oauth2|user_xxx"
 			if (data.scope?.user?.id) {
-				log(`  - 发现 scope.user.id: ${data.scope.user.id}`);
+				log(`  - Found scope.user.id: ${data.scope.user.id}`);
 				const userId = extractUserIdFromOAuth(data.scope.user.id);
 				if (userId) {
-					log(`  - 提取用户 ID: ${userId}`);
+					log(`  - Extracted user ID: ${userId}`);
 					return userId;
 				}
 			}
 
-			// 检查 sentry/session.json 格式: did = "google-oauth2|user_xxx"
+			// Check sentry/session.json format: did = "google-oauth2|user_xxx"
 			if (data.did) {
-				log(`  - 发现 did: ${data.did}`);
+				log(`  - Found did: ${data.did}`);
 				const userId = extractUserIdFromOAuth(data.did);
 				if (userId) {
-					log(`  - 提取用户 ID: ${userId}`);
+					log(`  - Extracted user ID: ${userId}`);
 					return userId;
 				}
 			}
 
-			// 旧版格式检查
+			// Legacy format check
 			const possibleKeys = ["cursorAuth/cachedSignInMethod", "userId", "user_id", "id"];
 			for (const key of possibleKeys) {
 				if (data[key] && typeof data[key] === "string" && data[key].startsWith("user_")) {
-					log(`  - 发现 ${key}: ${data[key]}`);
+					log(`  - Found ${key}: ${data[key]}`);
 					return data[key];
 				}
 			}
 
-			// 递归搜索对象
+			// Recursively search object
 			const found = findUserIdInObject(data);
 			if (found) {
-				log(`  - 递归搜索找到: ${found}`);
+				log(`  - Found by recursive search: ${found}`);
 			}
 			return found;
 		} catch (parseError) {
-			log(`  - JSON 解析失败，尝试正则匹配...`);
+			log(`  - JSON parsing failed, trying regex match...`);
 			const match = content.match(/user_[a-zA-Z0-9]{20,}/);
 			if (match) {
-				log(`  - 正则匹配找到: ${match[0]}`);
+				log(`  - Found by regex: ${match[0]}`);
 				return match[0];
 			}
 		}
 	} catch (error) {
-		log(`  - 读取文件失败: ${error}`);
+		log(`  - Failed to read file: ${error}`);
 	}
 	return null;
 }
 
-// 从 OAuth ID 格式中提取 user_xxx 部分
-// 例如: "google-oauth2|user_01J87EEM44VT22PEP4HM8A3GSG" -> "user_01J87EEM44VT22PEP4HM8A3GSG"
+// Extract user_xxx part from OAuth ID format
+// Example: "google-oauth2|user_01J87EEM44VT22PEP4HM8A3GSG" -> "user_01J87EEM44VT22PEP4HM8A3GSG"
 function extractUserIdFromOAuth(oauthId: string): string | null {
 	if (!oauthId || typeof oauthId !== "string") return null;
 
-	// 如果包含 | 分隔符，取后面的部分
+	// If contains | separator, take the part after it
 	if (oauthId.includes("|")) {
 		const parts = oauthId.split("|");
 		const userPart = parts.find((p) => p.startsWith("user_"));
 		if (userPart) return userPart;
 	}
 
-	// 直接匹配 user_ 开头的 ID
+	// Directly match ID starting with user_
 	if (oauthId.startsWith("user_")) {
 		return oauthId;
 	}
@@ -280,13 +280,13 @@ async function searchDirectoryForUserId(dirPath: string): Promise<string | null>
 			}
 		}
 	} catch (error) {
-		console.error(`搜索目录失败: ${dirPath}`, error);
+		console.error(`Failed to search directory: ${dirPath}`, error);
 	}
 	return null;
 }
 
 /**
- * 获取 Cursor state.vscdb 数据库路径
+ * Get Cursor state.vscdb database path
  */
 function getCursorDbPath(): string {
 	const homeDir = process.env.HOME || process.env.USERPROFILE || "";
@@ -302,87 +302,87 @@ function getCursorDbPath(): string {
 }
 
 /**
- * 从 state.vscdb 读取 accessToken
- * 使用 sql.js 读取 SQLite 数据库
+ * Read accessToken from state.vscdb
+ * Use sql.js to read SQLite database
  */
 async function getAccessToken(): Promise<string | null> {
-	// 如果已有缓存，直接返回
+	// Return cached token if available
 	if (cachedAccessToken) {
-		log(`使用缓存的 accessToken`);
+		log(`Using cached accessToken`);
 		return cachedAccessToken;
 	}
 
 	const dbPath = getCursorDbPath();
-	log(`尝试读取数据库: ${dbPath}`);
+	log(`Trying to read database: ${dbPath}`);
 
 	if (!fs.existsSync(dbPath)) {
-		log(`✗ 数据库文件不存在: ${dbPath}`);
+		log(`✗ Database file does not exist: ${dbPath}`);
 		return null;
 	}
 
 	try {
-		// 初始化 sql.js，指定 WASM 文件位置（与打包后的 extension.js 同目录）
+		// Initialize sql.js, specify WASM file location (same directory as bundled extension.js)
 		const SQL = await initSqlJs({
 			locateFile: (file: string) => path.join(__dirname, file),
 		});
 
-		// 读取数据库文件
+		// Read database file
 		const fileBuffer = fs.readFileSync(dbPath);
 		const db: Database = new SQL.Database(fileBuffer);
 
-		// 查询 accessToken
+		// Query accessToken
 		const result = db.exec("SELECT value FROM ItemTable WHERE key = 'cursorAuth/accessToken'");
 
 		if (result.length > 0 && result[0].values.length > 0) {
 			const tokenValue = result[0].values[0][0] as string;
-			log(`✓ 成功获取 accessToken`);
+			log(`✓ Successfully retrieved accessToken`);
 
-			// 缓存 token
+			// Cache token
 			cachedAccessToken = tokenValue;
 
 			db.close();
 			return tokenValue;
 		} else {
-			log(`✗ 未找到 accessToken`);
+			log(`✗ accessToken not found`);
 
-			// 尝试列出所有 cursorAuth 相关的 key
+			// Try to list all cursorAuth related keys
 			const allKeys = db.exec("SELECT key FROM ItemTable WHERE key LIKE '%cursorAuth%'");
 			if (allKeys.length > 0) {
-				log(`  - 找到的 cursorAuth 相关 key: ${allKeys[0].values.map((v) => v[0]).join(", ")}`);
+				log(`  - Found cursorAuth related keys: ${allKeys[0].values.map((v) => v[0]).join(", ")}`);
 			}
 
 			db.close();
 			return null;
 		}
 	} catch (error) {
-		log(`✗ 读取数据库失败: ${error}`);
+		log(`✗ Failed to read database: ${error}`);
 		return null;
 	}
 }
 
 /**
- * 从 API 获取使用量数据
- * 使用 WorkosCursorSessionToken Cookie 进行认证
- * Cookie 格式: userId%3A%3AaccessToken (即 userId::accessToken 的 URL 编码)
+ * Fetch usage data from API
+ * Authenticate using WorkosCursorSessionToken Cookie
+ * Cookie format: userId%3A%3AaccessToken (URL-encoded userId::accessToken)
  */
 async function fetchUsageFromAPI(userId: string): Promise<UsageData | null> {
-	// 先获取 accessToken
+	// First get accessToken
 	const accessToken = await getAccessToken();
 
-	// 构建正确的 Cookie 值: userId::accessToken (URL 编码后为 userId%3A%3AaccessToken)
+	// Build correct Cookie value: userId::accessToken (URL-encoded as userId%3A%3AaccessToken)
 	const cookieValue = accessToken ? `${userId}%3A%3A${accessToken}` : null;
 
 	const makeRequest = (url: string, redirectCount: number = 0): Promise<UsageData | null> => {
 		return new Promise((resolve) => {
 			if (redirectCount > 5) {
-				log(`✗ 重定向次数过多，停止请求`);
+				log(`✗ Too many redirects, stopping request`);
 				resolve(null);
 				return;
 			}
 
-			log(`请求 API: ${url}${redirectCount > 0 ? ` (重定向 #${redirectCount})` : ""}`);
+			log(`Requesting API: ${url}${redirectCount > 0 ? ` (redirect #${redirectCount})` : ""}`);
 
-			// 构建请求选项
+			// Build request options
 			const urlObj = new URL(url);
 			const options: https.RequestOptions = {
 				hostname: urlObj.hostname,
@@ -394,39 +394,39 @@ async function fetchUsageFromAPI(userId: string): Promise<UsageData | null> {
 				},
 			};
 
-			// 如果有 Cookie，添加认证头
+			// Add authentication header if Cookie exists
 			if (cookieValue) {
-				log(`  - 使用 Cookie 认证`);
+				log(`  - Using Cookie authentication`);
 				options.headers = {
 					...options.headers,
 					Cookie: `WorkosCursorSessionToken=${cookieValue}`,
 				};
 			} else {
-				log(`  - 无认证信息，尝试无认证请求`);
+				log(`  - No authentication info, trying unauthenticated request`);
 			}
 
 			https
 				.get(options, (res) => {
-					log(`API 响应状态码: ${res.statusCode}`);
+					log(`API response status code: ${res.statusCode}`);
 
-					// 处理 401 未授权
+					// Handle 401 Unauthorized
 					if (res.statusCode === 401) {
-						log(`✗ 认证失败 (401)，清除缓存的 token`);
+						log(`✗ Authentication failed (401), clearing cached token`);
 						cachedAccessToken = null;
 						resolve(null);
 						return;
 					}
 
-					// 处理重定向 (301, 302, 307, 308)
+					// Handle redirects (301, 302, 307, 308)
 					if (res.statusCode && [301, 302, 307, 308].includes(res.statusCode)) {
 						const location = res.headers.location;
 						if (location) {
-							log(`  - 重定向到: ${location}`);
-							// 如果是相对路径，需要拼接
+							log(`  - Redirecting to: ${location}`);
+							// If relative path, need to concatenate
 							const redirectUrl = location.startsWith("http") ? location : `https://www.cursor.com${location}`;
 							resolve(makeRequest(redirectUrl, redirectCount + 1));
 						} else {
-							log(`✗ 重定向但没有 Location 头`);
+							log(`✗ Redirect without Location header`);
 							resolve(null);
 						}
 						return;
@@ -437,33 +437,33 @@ async function fetchUsageFromAPI(userId: string): Promise<UsageData | null> {
 						data += chunk;
 					});
 					res.on("end", () => {
-						log(`API 响应数据长度: ${data.length} 字节`);
+						log(`API response data length: ${data.length} bytes`);
 						try {
 							const parsed = JSON.parse(data);
 							if (parsed.error) {
-								log(`✗ API 返回错误: ${parsed.error}`);
+								log(`✗ API returned error: ${parsed.error}`);
 								resolve(null);
 							} else {
-								log(`✓ API 请求成功`);
-								log(`  - GPT-4 请求数: ${parsed["gpt-4"]?.numRequests || "N/A"}`);
-								log(`  - GPT-4 最大请求数: ${parsed["gpt-4"]?.maxRequestUsage || "N/A"}`);
+								log(`✓ API request successful`);
+								log(`  - GPT-4 requests: ${parsed["gpt-4"]?.numRequests || "N/A"}`);
+								log(`  - GPT-4 max requests: ${parsed["gpt-4"]?.maxRequestUsage || "N/A"}`);
 								resolve(parsed as UsageData);
 							}
 						} catch (error) {
-							log(`✗ JSON 解析失败: ${error}`);
-							log(`  - 原始数据: ${data.substring(0, 200)}...`);
+							log(`✗ JSON parsing failed: ${error}`);
+							log(`  - Raw data: ${data.substring(0, 200)}...`);
 							resolve(null);
 						}
 					});
 				})
 				.on("error", (error) => {
-					log(`✗ 网络请求失败: ${error}`);
+					log(`✗ Network request failed: ${error}`);
 					resolve(null);
 				});
 		});
 	};
 
-	// 注意：必须使用 cursor.com 而不是 www.cursor.com，否则会 308 重定向
+	// Note: Must use cursor.com instead of www.cursor.com, otherwise will get 308 redirect
 	return makeRequest(`https://cursor.com/api/usage?user=${userId}`);
 }
 
@@ -471,49 +471,49 @@ let lastUsageData: UsageData | null = null;
 let lastUserId: string | null = null;
 
 async function refreshUsage() {
-	log("========== 开始刷新配额 ==========");
+	log("========== Starting quota refresh ==========");
 	const config = vscode.workspace.getConfiguration("cursorUsageTracker");
 	const showInStatusBar = config.get<boolean>("showInStatusBar", true);
 
 	if (!showInStatusBar) {
-		log("状态栏显示已禁用，跳过刷新");
+		log("Status bar display disabled, skipping refresh");
 		statusBarItem.hide();
 		return;
 	}
 
-	statusBarItem.text = "$(sync~spin) 获取中...";
+	statusBarItem.text = "$(sync~spin) Loading...";
 	statusBarItem.show();
 
 	try {
-		log("步骤 1: 获取用户 ID...");
+		log("Step 1: Getting user ID...");
 		const userId = await getUserId();
 		if (!userId) {
-			log("✗ 获取用户 ID 失败");
-			statusBarItem.text = "$(warning) 无 ID";
-			statusBarItem.tooltip = "无法自动获取 User ID，请点击查看日志";
+			log("✗ Failed to get user ID");
+			statusBarItem.text = "$(warning) No ID";
+			statusBarItem.tooltip = "Unable to automatically get User ID, click to view logs";
 			statusBarItem.command = "cursor-usage-tracker.showLogs";
 			return;
 		}
 
-		log(`步骤 2: 调用 API 获取配额数据...`);
+		log(`Step 2: Calling API to get quota data...`);
 		lastUserId = userId;
 		const usageData = await fetchUsageFromAPI(userId);
 
 		if (!usageData) {
-			log("✗ API 请求失败");
-			statusBarItem.text = "$(error) 失败";
-			statusBarItem.tooltip = "无法从 Cursor API 获取数据，请点击查看日志";
+			log("✗ API request failed");
+			statusBarItem.text = "$(error) Failed";
+			statusBarItem.tooltip = "Unable to fetch data from Cursor API, click to view logs";
 			statusBarItem.command = "cursor-usage-tracker.showLogs";
 			return;
 		}
 
-		log("✓ 配额数据获取成功");
+		log("✓ Quota data retrieved successfully");
 		lastUsageData = usageData;
 		updateStatusBar(usageData);
-		log("========== 刷新完成 ==========");
+		log("========== Refresh completed ==========");
 	} catch (error) {
-		log(`✗ 刷新过程发生异常: ${error}`);
-		statusBarItem.text = "$(error) 错误";
+		log(`✗ Exception occurred during refresh: ${error}`);
+		statusBarItem.text = "$(error) Error";
 	}
 }
 
@@ -523,39 +523,30 @@ function updateStatusBar(data: UsageData) {
 	if (gpt4 && gpt4.maxRequestUsage) {
 		const used = gpt4.numRequests;
 		const max = gpt4.maxRequestUsage;
-		const remaining = max - used;
 		const percentage = Math.round((used / max) * 100);
 
-		let icon = "$(circle-filled)";
-		let colorTheme = "";
-
-		// 根据百分比显示红绿灯
-		if (percentage >= 70) {
-			// 绿灯：70-100%
-			icon = "$(circle-filled)";
-			colorTheme = ""; // 默认绿色主题
-		} else if (percentage >= 30) {
-			// 黄灯：30-70%
-			icon = "$(circle-filled)";
-			colorTheme = "statusBarItem.warningBackground";
+		// Show traffic light based on used percentage (no background color change)
+		let icon = "";
+		if (percentage < 30) {
+			// Green: used < 30% (low usage, good status)
+			icon = "🟢";
+		} else if (percentage < 70) {
+			// Yellow: used 30-70% (moderate usage)
+			icon = "🟡";
 		} else {
-			// 红灯：<30%
-			icon = "$(circle-filled)";
-			colorTheme = "statusBarItem.errorBackground";
+			// Red: used >= 70% (high usage, need attention)
+			icon = "🔴";
 		}
 
-		statusBarItem.text = `${icon} ${remaining}`;
+		// Display format: 🟢 0/500 (used/total)
+		statusBarItem.text = `${icon} ${used}/${max}`;
 		statusBarItem.tooltip = createTooltip(data);
-
-		// 根据红绿灯设置背景颜色
-		if (colorTheme) {
-			statusBarItem.backgroundColor = new vscode.ThemeColor(colorTheme);
-		} else {
-			statusBarItem.backgroundColor = undefined;
-		}
+		
+		// Don't set background color, keep default style
+		statusBarItem.backgroundColor = undefined;
 	} else {
 		statusBarItem.text = "$(info) Cursor";
-		statusBarItem.tooltip = "无法获取配额信息";
+		statusBarItem.tooltip = "Unable to get quota information";
 	}
 	statusBarItem.show();
 }
@@ -568,13 +559,12 @@ function createTooltip(data: UsageData): vscode.MarkdownString {
 	if (gpt4) {
 		const used = gpt4.numRequests;
 		const max = gpt4.maxRequestUsage || "∞";
-		const remaining = typeof max === "number" ? max - used : "∞";
 		const percentage = typeof max === "number" ? Math.round((used / max) * 100) : 0;
 
-		md.appendMarkdown(`### 🤖 Cursor 配额\n`);
-		md.appendMarkdown(`**${remaining}** / ${max} 请求可用\n\n`);
+		md.appendMarkdown(`### 🤖 Cursor Quota\n`);
+		md.appendMarkdown(`**${used}**/${max} Used\n\n`);
 
-		// 进度条模拟
+		// Progress bar simulation
 		const bars = 10;
 		const filled = Math.round((percentage / 100) * bars);
 		const empty = bars - filled;
@@ -582,7 +572,7 @@ function createTooltip(data: UsageData): vscode.MarkdownString {
 
 		md.appendMarkdown(`\`[${barStr}] ${percentage}%\`\n\n`);
 		md.appendMarkdown(`--- \n`);
-		md.appendMarkdown(`- **已用**: ${used}\n`);
+		md.appendMarkdown(`- **Used**: ${used}\n`);
 		md.appendMarkdown(`- **Tokens**: ${(gpt4.numTokens / 1000000).toFixed(2)}M\n`);
 	}
 
@@ -593,7 +583,7 @@ function createTooltip(data: UsageData): vscode.MarkdownString {
 		const daysLeft = Math.ceil((nextReset.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
 
 		md.appendMarkdown(`\n---\n`);
-		md.appendMarkdown(`📅 **${daysLeft}天** 后重置 (${nextReset.toLocaleDateString()})`);
+		md.appendMarkdown(`📅 Resets in **${daysLeft} days** (${nextReset.toLocaleDateString()})`);
 	}
 
 	return md;
