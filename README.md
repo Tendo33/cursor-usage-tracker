@@ -6,13 +6,13 @@
   <img src="https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge" />
 </p>
 
-> 🔋 在状态栏实时显示你的 Cursor GPT-4 剩余配额，再也不用担心配额不够用！
+> 🔋 在状态栏实时显示你的 Cursor 剩余配额
 
 ---
 
 ## ✨ 功能特性
 
-- 📊 **状态栏实时显示** - 随时查看 GPT-4 剩余请求次数
+- 📊 **状态栏实时显示** - 随时查看 Cursor 配额剩余请求次数
 - 🎨 **现代仪表盘 UI** - 精美的 SVG 环形图配额详情面板
 - 🔄 **自动刷新** - 可配置自动刷新间隔（默认 5 分钟）
 - 🔔 **智能预警** - 配额低于 30%/10% 时状态栏变色提醒
@@ -48,7 +48,7 @@
 1. **克隆并安装依赖**
 
    ```bash
-   git clone https://github.com/your-username/cursor-usage-tracker.git
+   git clone https://github.com/Tendo33/cursor-usage-tracker.git
    cd cursor-usage-tracker
    npm install
    ```
@@ -75,9 +75,9 @@
 
 | 图标 | 含义 |
 |------|------|
-| `$(pulse) 150` | 正常状态，显示剩余请求数 |
-| `$(warning) 80` | 配额使用超过 70% |
-| `$(flame) 20` | 配额使用超过 90%，即将耗尽 |
+| 🟢 `150` | 正常状态（配额使用 < 30%），显示剩余请求数 |
+| 🟡 `80` | 警告状态（配额使用 30%-70%） |
+| 🔴 `20` | 危险状态（配额使用 > 70%），即将耗尽 |
 | `$(sync~spin) 获取中...` | 正在获取数据 |
 | `$(warning) 无 ID` | 未能获取用户 ID，请确保已登录 Cursor |
 

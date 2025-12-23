@@ -527,11 +527,11 @@ function updateStatusBar(data: UsageData) {
 
 		// Show traffic light based on used percentage (no background color change)
 		let icon = "";
-		if (percentage < 30) {
-			// Green: used < 30% (low usage, good status)
+		if (percentage < 40) {
+			// Green: used < 40% (low usage, good status)
 			icon = "🟢";
 		} else if (percentage < 70) {
-			// Yellow: used 30-70% (moderate usage)
+			// Yellow: used 40-70% (moderate usage)
 			icon = "🟡";
 		} else {
 			// Red: used >= 70% (high usage, need attention)
