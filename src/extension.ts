@@ -304,12 +304,18 @@ function getCursorDbPath(): string {
 /**
  * Read accessToken from state.vscdb
  * Use sql.js to read SQLite database
+ * @param forceRefresh - If true, ignore cached token and read from database
  */
-async function getAccessToken(): Promise<string | null> {
-	// Return cached token if available
-	if (cachedAccessToken) {
+async function getAccessToken(forceRefresh: boolean = false): Promise<string | null> {
+	// Return cached token if available (unless force refresh)
+	if (cachedAccessToken && !forceRefresh) {
 		log(`Using cached accessToken`);
 		return cachedAccessToken;
+	}
+
+	if (forceRefresh) {
+		log(`Force refreshing accessToken from database`);
+		cachedAccessToken = null;
 	}
 
 	const dbPath = getCursorDbPath();
@@ -364,8 +370,10 @@ async function getAccessToken(): Promise<string | null> {
  * Fetch usage data from API
  * Authenticate using WorkosCursorSessionToken Cookie
  * Cookie format: userId%3A%3AaccessToken (URL-encoded userId::accessToken)
+ * @param userId - User ID
+ * @param retryOnAuth - If true, retry once with fresh token on 401 error (default: true)
  */
-async function fetchUsageFromAPI(userId: string): Promise<UsageData | null> {
+async function fetchUsageFromAPI(userId: string, retryOnAuth: boolean = true): Promise<UsageData | null> {
 	// First get accessToken
 	const accessToken = await getAccessToken();
 
@@ -409,11 +417,19 @@ async function fetchUsageFromAPI(userId: string): Promise<UsageData | null> {
 				.get(options, (res) => {
 					log(`API response status code: ${res.statusCode}`);
 
-					// Handle 401 Unauthorized
+					// Handle 401 Unauthorized - retry with fresh token if allowed
 					if (res.statusCode === 401) {
 						log(`✗ Authentication failed (401), clearing cached token`);
 						cachedAccessToken = null;
-						resolve(null);
+						
+						if (retryOnAuth) {
+							log(`  - Retrying with fresh token from database...`);
+							// Retry with force refresh token, but don't retry again
+							resolve(fetchUsageFromAPI(userId, false));
+						} else {
+							log(`  - Already retried, giving up`);
+							resolve(null);
+						}
 						return;
 					}
 

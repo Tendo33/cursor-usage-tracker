@@ -2,7 +2,7 @@
   "name": "cursor-usage-tracker",
   "displayName": "Cursor Usage Tracker",
   "description": "在状态栏显示 Cursor 剩余配额",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "publisher": "SimonSun",
   "icon": "icon.png",
   "engines": {
