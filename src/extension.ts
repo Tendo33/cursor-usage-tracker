@@ -1,12 +1,7 @@
-// {{RIPER-7 Action}}
-// Role: LD | Task_ID: #6-8 | Time: 2025-12-22T13:05:00+08:00
-// Logic: Upgrade UI to modern dashboard style, add SVG ring chart and dynamic light effects
-// Principle: SOLID-S (Single Responsibility)
-
-import * as vscode from 'vscode';
-import * as fs from 'fs';
-import * as path from 'path';
-import * as https from 'https';
+import * as vscode from "vscode";
+import * as fs from "fs";
+import * as path from "path";
+import * as https from "https";
 import initSqlJs, { Database } from "sql.js";
 
 // Cached access token
@@ -421,7 +416,7 @@ async function fetchUsageFromAPI(userId: string, retryOnAuth: boolean = true): P
 					if (res.statusCode === 401) {
 						log(`✗ Authentication failed (401), clearing cached token`);
 						cachedAccessToken = null;
-						
+
 						if (retryOnAuth) {
 							log(`  - Retrying with fresh token from database...`);
 							// Retry with force refresh token, but don't retry again
@@ -557,7 +552,7 @@ function updateStatusBar(data: UsageData) {
 		// Display format: 🟢 0/500 (used/total)
 		statusBarItem.text = `${icon} ${used}/${max}`;
 		statusBarItem.tooltip = createTooltip(data);
-		
+
 		// Don't set background color, keep default style
 		statusBarItem.backgroundColor = undefined;
 	} else {
@@ -605,10 +600,8 @@ function createTooltip(data: UsageData): vscode.MarkdownString {
 	return md;
 }
 
-
-
 export function deactivate() {
-    if (refreshInterval) {
-        clearInterval(refreshInterval);
-    }
+	if (refreshInterval) {
+		clearInterval(refreshInterval);
+	}
 }
