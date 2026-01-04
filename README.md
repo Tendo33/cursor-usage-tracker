@@ -2,7 +2,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Platform-VSCode%20%7C%20Cursor-blue?style=for-the-badge&logo=visual-studio-code" />
-  <img src="https://img.shields.io/badge/Version-1.0.0-green?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Version-1.0.1-green?style=for-the-badge" />
   <img src="https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge" />
 </p>
 
@@ -14,10 +14,10 @@
 
 ## ✨ 功能特性
 
-- 📊 **状态栏实时显示** - 随时查看 Cursor 配额剩余请求次数
-- 🎨 **现代仪表盘 UI** - 精美的 SVG 环形图配额详情面板
+- 📊 **状态栏实时显示** - 随时查看 Cursor 配额使用情况（已用/总量）
+- 🎨 **悬浮提示详情** - 鼠标悬停状态栏查看详细配额信息
 - 🔄 **自动刷新** - 可配置自动刷新间隔（默认 5 分钟）
-- 🔔 **智能预警** - 配额低于 30%/10% 时状态栏变色提醒
+- 🔔 **智能预警** - 配额使用超过 40%/70% 时状态栏变色提醒
 - 🖥️ **跨平台支持** - Windows / macOS / Linux
 
 ---
@@ -35,7 +35,7 @@
    npm run package
    ```
 
-   这会在项目根目录生成 `cursor-usage-tracker-1.0.0.vsix` 文件。
+   这会在项目根目录生成 `cursor-usage-tracker-1.0.1.vsix` 文件。
 
 2. **安装到 Cursor / VSCode**
 
@@ -77,24 +77,15 @@
 
 | 图标 | 含义 |
 |------|------|
-| 🟢 `150` | 正常状态（配额使用 < 30%），显示剩余请求数 |
-| 🟡 `80` | 警告状态（配额使用 30%-70%） |
-| 🔴 `20` | 危险状态（配额使用 > 70%），即将耗尽 |
-| `$(sync~spin) 获取中...` | 正在获取数据 |
-| `$(warning) 无 ID` | 未能获取用户 ID，请确保已登录 Cursor |
+| 🟢 `0/500` | 正常状态（使用量 < 40%），显示 已用/总量 |
+| 🟡 `250/500` | 警告状态（使用量 40%-70%） |
+| 🔴 `400/500` | 危险状态（使用量 ≥ 70%），配额紧张 |
+| `$(sync~spin) Loading...` | 正在获取数据 |
+| `$(warning) No ID` | 未能获取用户 ID，请确保已登录 Cursor |
 
 ### 查看详细配额
 
-**点击状态栏图标** 或 执行命令：
-
-- `Ctrl+Shift+P` → 输入 `显示 Cursor 配额详情`
-
-将打开一个现代化的仪表盘面板，展示：
-
-- 📈 环形进度图（剩余配额可视化）
-- 📊 已用/总量请求数
-- 🔢 消耗的 Tokens 数
-- 📅 距离配额重置剩余天数
+**鼠标悬停状态栏图标** 可查看详细配额信息，包括请求数和 Token 消耗。
 
 ### 手动刷新
 

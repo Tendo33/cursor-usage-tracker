@@ -478,8 +478,6 @@ async function fetchUsageFromAPI(userId: string, retryOnAuth: boolean = true): P
 	return makeRequest(`https://cursor.com/api/usage?user=${userId}`);
 }
 
-let lastUsageData: UsageData | null = null;
-let lastUserId: string | null = null;
 
 async function refreshUsage() {
 	log("========== Starting quota refresh ==========");
@@ -507,7 +505,6 @@ async function refreshUsage() {
 		}
 
 		log(`Step 2: Calling API to get quota data...`);
-		lastUserId = userId;
 		const usageData = await fetchUsageFromAPI(userId);
 
 		if (!usageData) {
@@ -519,7 +516,6 @@ async function refreshUsage() {
 		}
 
 		log("✓ Quota data retrieved successfully");
-		lastUsageData = usageData;
 		updateStatusBar(usageData);
 		log("========== Refresh completed ==========");
 	} catch (error) {
