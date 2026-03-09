@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Cursor API 测试脚本
  * 运行: node test-api.js
  */
@@ -6,12 +6,15 @@
 const https = require('https');
 const fs = require('fs');
 const path = require('path');
+const { execFile } = require('child_process');
 
-// 获取用户ID
+const MAX_READFILE_SIZE = 2 * 1024 * 1024 * 1024;
+
+// 获取用户 ID
 function getUserId() {
     const appData = process.env.APPDATA;
     const filePath = path.join(appData, 'Cursor', 'sentry', 'scope_v3.json');
-    
+
     if (fs.existsSync(filePath)) {
         const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
         if (data.scope?.user?.id?.includes('|')) {
@@ -21,33 +24,88 @@ function getUserId() {
     return null;
 }
 
-// 获取 AccessToken (使用 sql.js)
-async function getAccessToken() {
+function execFileAsync(command, args) {
+    return new Promise((resolve, reject) => {
+        execFile(command, args, { windowsHide: true, maxBuffer: 1024 * 1024 }, (error, stdout) => {
+            if (error) {
+                reject(error);
+                return;
+            }
+            const value = stdout.trim();
+            resolve(value.length > 0 ? value : null);
+        });
+    });
+}
+
+async function getAccessTokenViaSqlJs(dbPath) {
     const initSqlJs = require('sql.js');
+    const SQL = await initSqlJs();
+    const fileBuffer = fs.readFileSync(dbPath);
+    const db = new SQL.Database(fileBuffer);
+
+    try {
+        const result = db.exec("SELECT value FROM ItemTable WHERE key = 'cursorAuth/accessToken'");
+        return result.length > 0 ? result[0].values[0][0] : null;
+    } finally {
+        db.close();
+    }
+}
+
+async function getAccessTokenViaPython(dbPath) {
+    const commands = process.platform === 'win32' ? ['python', 'py', 'python3'] : ['python3', 'python'];
+    const script =
+        "import sqlite3, sys; conn = sqlite3.connect(sys.argv[1]); cur = conn.cursor(); " +
+        "cur.execute(\"SELECT value FROM ItemTable WHERE key = 'cursorAuth/accessToken' LIMIT 1\"); " +
+        "row = cur.fetchone(); print(row[0] if row and row[0] else ''); conn.close()";
+
+    for (const cmd of commands) {
+        try {
+            console.log(`尝试 fallback 命令: ${cmd}`);
+            const token = await execFileAsync(cmd, ['-c', script, dbPath]);
+            if (token) {
+                return token;
+            }
+        } catch (error) {
+            console.log(`fallback 命令失败 (${cmd}): ${error.message || error}`);
+        }
+    }
+
+    return null;
+}
+
+// 获取 AccessToken
+async function getAccessToken() {
     const dbPath = path.join(process.env.APPDATA, 'Cursor', 'User', 'globalStorage', 'state.vscdb');
-    
+
     if (!fs.existsSync(dbPath)) {
         console.log('数据库文件不存在:', dbPath);
         return null;
     }
 
-    const SQL = await initSqlJs();
-    const fileBuffer = fs.readFileSync(dbPath);
-    const db = new SQL.Database(fileBuffer);
-    
-    const result = db.exec("SELECT value FROM ItemTable WHERE key = 'cursorAuth/accessToken'");
-    db.close();
-    
-    return result.length > 0 ? result[0].values[0][0] : null;
+    const dbSize = fs.statSync(dbPath).size;
+    console.log(`数据库大小: ${dbSize} bytes`);
+
+    try {
+        if (dbSize >= MAX_READFILE_SIZE) {
+            console.log('数据库超过 2 GiB，使用 Python fallback');
+            return await getAccessTokenViaPython(dbPath);
+        }
+        return await getAccessTokenViaSqlJs(dbPath);
+    } catch (error) {
+        if (error && error.code === 'ERR_FS_FILE_TOO_LARGE') {
+            console.log('命中 ERR_FS_FILE_TOO_LARGE，改用 Python fallback');
+            return await getAccessTokenViaPython(dbPath);
+        }
+        throw error;
+    }
 }
 
 // 请求 API
 function fetchUsage(userId, token) {
-    // Cookie 格式: userId%3A%3Atoken (即 userId::token 的 URL 编码)
     const cookie = `WorkosCursorSessionToken=${userId}%3A%3A${token}`;
-    
+
     const options = {
-        hostname: 'cursor.com',  // 注意：必须用 cursor.com，不能用 www.cursor.com
+        hostname: 'cursor.com',
         path: `/api/usage?user=${userId}`,
         method: 'GET',
         headers: {
@@ -67,17 +125,16 @@ function fetchUsage(userId, token) {
             console.log(`状态码: ${res.statusCode}`);
             if (res.statusCode === 200) {
                 const json = JSON.parse(data);
-                console.log('✓ 成功！');
+                console.log('请求成功');
                 console.log(`  GPT-4 已用: ${json['gpt-4']?.numRequests}`);
                 console.log(`  GPT-4 上限: ${json['gpt-4']?.maxRequestUsage}`);
             } else {
-                console.log('✗ 失败:', data);
+                console.log('请求失败:', data);
             }
         });
     }).on('error', e => console.log('请求错误:', e.message));
 }
 
-// 主函数
 async function main() {
     const userId = getUserId();
     const token = await getAccessToken();
@@ -86,14 +143,17 @@ async function main() {
     console.log('Cursor API 测试');
     console.log('='.repeat(40));
     console.log(`User ID: ${userId}`);
-    console.log(`Token: ${token?.substring(0, 30)}...`);
+    console.log(`Token: ${token ? `${token.substring(0, 30)}...` : token}`);
     console.log('');
 
     if (userId && token) {
         fetchUsage(userId, token);
     } else {
-        console.log('✗ 无法获取 userId 或 token');
+        console.log('无法获取 userId 或 token');
     }
 }
 
-main();
+main().catch((error) => {
+    console.error('脚本执行失败:', error);
+    process.exitCode = 1;
+});

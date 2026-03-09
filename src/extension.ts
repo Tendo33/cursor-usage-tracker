@@ -1,11 +1,13 @@
-import * as vscode from "vscode";
+﻿import * as vscode from "vscode";
 import * as fs from "fs";
 import * as path from "path";
 import * as https from "https";
+import { execFile } from "child_process";
 import initSqlJs, { Database } from "sql.js";
 
 // Cached access token
 let cachedAccessToken: string | null = null;
+const MAX_READFILE_SIZE = 2 * 1024 * 1024 * 1024; // Node.js readFileSync hard limit (2 GiB)
 
 interface UsageData {
 	"gpt-4"?: {
@@ -97,7 +99,7 @@ async function getUserId(): Promise<string | null> {
 			log(`Trying path: ${storagePath}`);
 			const userId = await findUserIdInPath(storagePath);
 			if (userId) {
-				log(`✓ Successfully found user ID: ${userId}`);
+				log(`Successfully found user ID: ${userId}`);
 				return userId;
 			} else {
 				log(`  - User ID not found in this path`);
@@ -107,7 +109,7 @@ async function getUserId(): Promise<string | null> {
 		}
 	}
 
-	log(`✗ User ID not found in any path`);
+	log(`User ID not found in any path`);
 	return null;
 }
 
@@ -317,48 +319,116 @@ async function getAccessToken(forceRefresh: boolean = false): Promise<string | n
 	log(`Trying to read database: ${dbPath}`);
 
 	if (!fs.existsSync(dbPath)) {
-		log(`✗ Database file does not exist: ${dbPath}`);
+		log(`Database file does not exist: ${dbPath}`);
 		return null;
 	}
 
 	try {
-		// Initialize sql.js, specify WASM file location (same directory as bundled extension.js)
-		const SQL = await initSqlJs({
-			locateFile: (file: string) => path.join(__dirname, file),
-		});
+		const dbSize = fs.statSync(dbPath).size;
+		log(`  - Database size: ${dbSize} bytes`);
 
-		// Read database file
-		const fileBuffer = fs.readFileSync(dbPath);
-		const db: Database = new SQL.Database(fileBuffer);
+		let tokenValue: string | null = null;
 
-		// Query accessToken
-		const result = db.exec("SELECT value FROM ItemTable WHERE key = 'cursorAuth/accessToken'");
-
-		if (result.length > 0 && result[0].values.length > 0) {
-			const tokenValue = result[0].values[0][0] as string;
-			log(`✓ Successfully retrieved accessToken`);
-
-			// Cache token
-			cachedAccessToken = tokenValue;
-
-			db.close();
-			return tokenValue;
+		// readFileSync cannot open files >= 2 GiB in Node.js.
+		if (dbSize >= MAX_READFILE_SIZE) {
+			log(`  - Database exceeds 2 GiB; using fallback token reader`);
+			tokenValue = await getAccessTokenViaPython(dbPath);
 		} else {
-			log(`✗ accessToken not found`);
-
-			// Try to list all cursorAuth related keys
-			const allKeys = db.exec("SELECT key FROM ItemTable WHERE key LIKE '%cursorAuth%'");
-			if (allKeys.length > 0) {
-				log(`  - Found cursorAuth related keys: ${allKeys[0].values.map((v) => v[0]).join(", ")}`);
-			}
-
-			db.close();
-			return null;
+			tokenValue = await getAccessTokenViaSqlJs(dbPath);
 		}
+
+		if (tokenValue) {
+			log(`Successfully retrieved accessToken`);
+			cachedAccessToken = tokenValue;
+			return tokenValue;
+		}
+
+		log(`accessToken not found`);
+		return null;
 	} catch (error) {
-		log(`✗ Failed to read database: ${error}`);
+		// Safety net: if file grows after size check, retry with fallback.
+		if (isFileTooLargeError(error)) {
+			log(`  - sql.js hit 2 GiB read limit, retrying with fallback reader`);
+			const tokenValue = await getAccessTokenViaPython(dbPath);
+			if (tokenValue) {
+				log(`Successfully retrieved accessToken via fallback reader`);
+				cachedAccessToken = tokenValue;
+				return tokenValue;
+			}
+		}
+
+		log(`Failed to read database: ${error}`);
 		return null;
 	}
+}
+
+async function getAccessTokenViaSqlJs(dbPath: string): Promise<string | null> {
+	// Initialize sql.js, specify WASM file location (same directory as bundled extension.js)
+	const SQL = await initSqlJs({
+		locateFile: (file: string) => path.join(__dirname, file),
+	});
+
+	const fileBuffer = fs.readFileSync(dbPath);
+	const db: Database = new SQL.Database(fileBuffer);
+
+	try {
+		const result = db.exec("SELECT value FROM ItemTable WHERE key = 'cursorAuth/accessToken'");
+		if (result.length > 0 && result[0].values.length > 0) {
+			return result[0].values[0][0] as string;
+		}
+
+		const allKeys = db.exec("SELECT key FROM ItemTable WHERE key LIKE '%cursorAuth%'");
+		if (allKeys.length > 0) {
+			log(`  - Found cursorAuth related keys: ${allKeys[0].values.map((v) => v[0]).join(", ")}`);
+		}
+		return null;
+	} finally {
+		db.close();
+	}
+}
+
+async function getAccessTokenViaPython(dbPath: string): Promise<string | null> {
+	const pythonCommands = process.platform === "win32" ? ["python", "py", "python3"] : ["python3", "python"];
+	const pythonScript =
+		"import sqlite3, sys; conn = sqlite3.connect(sys.argv[1]); cur = conn.cursor(); " +
+		"cur.execute(\"SELECT value FROM ItemTable WHERE key = 'cursorAuth/accessToken' LIMIT 1\"); " +
+		"row = cur.fetchone(); print(row[0] if row and row[0] else ''); conn.close()";
+
+	for (const cmd of pythonCommands) {
+		try {
+			log(`  - Trying fallback command: ${cmd}`);
+			const token = await execFileAsync(cmd, ["-c", pythonScript, dbPath]);
+			if (token) {
+				return token;
+			}
+		} catch (error) {
+			log(`  - Fallback command failed (${cmd}): ${error}`);
+		}
+	}
+
+	log(`  - No available fallback command to read large SQLite file`);
+	return null;
+}
+
+function execFileAsync(command: string, args: string[]): Promise<string | null> {
+	return new Promise((resolve, reject) => {
+		execFile(command, args, { windowsHide: true, maxBuffer: 1024 * 1024 }, (error, stdout) => {
+			if (error) {
+				reject(error);
+				return;
+			}
+
+			const trimmed = stdout.trim();
+			resolve(trimmed.length > 0 ? trimmed : null);
+		});
+	});
+}
+
+function isFileTooLargeError(error: unknown): boolean {
+	if (!error || typeof error !== "object") {
+		return false;
+	}
+	return (error as NodeJS.ErrnoException).code === "ERR_FS_FILE_TOO_LARGE";
 }
 
 /**
@@ -378,7 +448,7 @@ async function fetchUsageFromAPI(userId: string, retryOnAuth: boolean = true): P
 	const makeRequest = (url: string, redirectCount: number = 0): Promise<UsageData | null> => {
 		return new Promise((resolve) => {
 			if (redirectCount > 5) {
-				log(`✗ Too many redirects, stopping request`);
+				log(`Too many redirects, stopping request`);
 				resolve(null);
 				return;
 			}
@@ -414,7 +484,7 @@ async function fetchUsageFromAPI(userId: string, retryOnAuth: boolean = true): P
 
 					// Handle 401 Unauthorized - retry with fresh token if allowed
 					if (res.statusCode === 401) {
-						log(`✗ Authentication failed (401), clearing cached token`);
+						log(`Authentication failed (401), clearing cached token`);
 						cachedAccessToken = null;
 
 						if (retryOnAuth) {
@@ -437,7 +507,7 @@ async function fetchUsageFromAPI(userId: string, retryOnAuth: boolean = true): P
 							const redirectUrl = location.startsWith("http") ? location : `https://www.cursor.com${location}`;
 							resolve(makeRequest(redirectUrl, redirectCount + 1));
 						} else {
-							log(`✗ Redirect without Location header`);
+							log(`Redirect without Location header`);
 							resolve(null);
 						}
 						return;
@@ -452,23 +522,23 @@ async function fetchUsageFromAPI(userId: string, retryOnAuth: boolean = true): P
 						try {
 							const parsed = JSON.parse(data);
 							if (parsed.error) {
-								log(`✗ API returned error: ${parsed.error}`);
+								log(`API returned error: ${parsed.error}`);
 								resolve(null);
 							} else {
-								log(`✓ API request successful`);
+								log(`API request successful`);
 								log(`  - GPT-4 requests: ${parsed["gpt-4"]?.numRequests || "N/A"}`);
 								log(`  - GPT-4 max requests: ${parsed["gpt-4"]?.maxRequestUsage || "N/A"}`);
 								resolve(parsed as UsageData);
 							}
 						} catch (error) {
-							log(`✗ JSON parsing failed: ${error}`);
+							log(`JSON parsing failed: ${error}`);
 							log(`  - Raw data: ${data.substring(0, 200)}...`);
 							resolve(null);
 						}
 					});
 				})
 				.on("error", (error) => {
-					log(`✗ Network request failed: ${error}`);
+					log(`Network request failed: ${error}`);
 					resolve(null);
 				});
 		});
@@ -497,7 +567,7 @@ async function refreshUsage() {
 		log("Step 1: Getting user ID...");
 		const userId = await getUserId();
 		if (!userId) {
-			log("✗ Failed to get user ID");
+			log("Failed to get user ID");
 			statusBarItem.text = "$(warning) No ID";
 			statusBarItem.tooltip = "Unable to automatically get User ID, click to view logs";
 			statusBarItem.command = "cursor-usage-tracker.showLogs";
@@ -508,18 +578,18 @@ async function refreshUsage() {
 		const usageData = await fetchUsageFromAPI(userId);
 
 		if (!usageData) {
-			log("✗ API request failed");
+			log("API request failed");
 			statusBarItem.text = "$(error) Failed";
 			statusBarItem.tooltip = "Unable to fetch data from Cursor API, click to view logs";
 			statusBarItem.command = "cursor-usage-tracker.showLogs";
 			return;
 		}
 
-		log("✓ Quota data retrieved successfully");
+		log("Quota data retrieved successfully");
 		updateStatusBar(usageData);
 		log("========== Refresh completed ==========");
 	} catch (error) {
-		log(`✗ Exception occurred during refresh: ${error}`);
+		log(`Exception occurred during refresh: ${error}`);
 		statusBarItem.text = "$(error) Error";
 	}
 }
@@ -536,16 +606,16 @@ function updateStatusBar(data: UsageData) {
 		let icon = "";
 		if (percentage < 40) {
 			// Green: used < 40% (low usage, good status)
-			icon = "🟢";
+			icon = "\u{1F7E2}";
 		} else if (percentage < 70) {
 			// Yellow: used 40-70% (moderate usage)
-			icon = "🟡";
+			icon = "\u{1F7E1}";
 		} else {
 			// Red: used >= 70% (high usage, need attention)
-			icon = "🔴";
+			icon = "\u{1F534}";
 		}
 
-		// Display format: 🟢 0/500 (used/total)
+		// Display format: icon + used/total, e.g. "🟢 0/500"
 		statusBarItem.text = `${icon} ${used}/${max}`;
 		statusBarItem.tooltip = createTooltip(data);
 
@@ -565,17 +635,17 @@ function createTooltip(data: UsageData): vscode.MarkdownString {
 	const gpt4 = data["gpt-4"];
 	if (gpt4) {
 		const used = gpt4.numRequests;
-		const max = gpt4.maxRequestUsage || "∞";
-		const percentage = typeof max === "number" ? Math.round((used / max) * 100) : 0;
+		const max = gpt4.maxRequestUsage ?? "N/A";
+		const percentage = typeof max === "number" && max > 0 ? Math.round((used / max) * 100) : 0;
 
-		md.appendMarkdown(`### 🤖 Cursor Quota\n`);
+		md.appendMarkdown(`### Cursor Quota\n`);
 		md.appendMarkdown(`**${used}**/${max} Used\n\n`);
 
 		// Progress bar simulation
 		const bars = 10;
 		const filled = Math.round((percentage / 100) * bars);
 		const empty = bars - filled;
-		const barStr = "█".repeat(filled) + "░".repeat(empty);
+		const barStr = "#".repeat(filled) + "-".repeat(empty);
 
 		md.appendMarkdown(`\`[${barStr}] ${percentage}%\`\n\n`);
 		md.appendMarkdown(`--- \n`);
@@ -590,7 +660,7 @@ function createTooltip(data: UsageData): vscode.MarkdownString {
 		const daysLeft = Math.ceil((nextReset.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
 
 		md.appendMarkdown(`\n---\n`);
-		md.appendMarkdown(`📅 Resets in **${daysLeft} days** (${nextReset.toLocaleDateString()})`);
+		md.appendMarkdown(`Resets in **${daysLeft} days** (${nextReset.toLocaleDateString()})`);
 	}
 
 	return md;
@@ -601,3 +671,4 @@ export function deactivate() {
 		clearInterval(refreshInterval);
 	}
 }
+

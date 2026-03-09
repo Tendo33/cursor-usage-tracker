@@ -2,7 +2,7 @@
   "name": "cursor-usage-tracker",
   "displayName": "Cursor Usage Tracker",
   "description": "在状态栏显示 Cursor 剩余配额",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "publisher": "SimonSun",
   "icon": "icon.png",
   "engines": {
@@ -21,7 +21,6 @@
         "command": "cursor-usage-tracker.refresh",
         "title": "刷新 Cursor 配额"
       },
-
       {
         "command": "cursor-usage-tracker.showLogs",
         "title": "查看 Cursor Usage Tracker 日志"
