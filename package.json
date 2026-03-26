@@ -4,7 +4,7 @@
   "description": "在状态栏显示 Cursor 剩余配额",
   "version": "1.0.2",
   "publisher": "SimonSun",
-  "icon": "icon.png",
+  "icon": "assets/icon.png",
   "engines": {
     "vscode": "^1.85.0"
   },
