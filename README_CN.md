@@ -8,7 +8,7 @@
 <p align="center">
   <a href="README.md"><img src="https://img.shields.io/badge/README-English-0F172A?style=for-the-badge" alt="English README"></a>
   <img src="https://img.shields.io/badge/Platform-Cursor%20%7C%20VS%20Code-2563EB?style=for-the-badge&logo=visualstudiocode&logoColor=white" alt="Platform">
-  <img src="https://img.shields.io/badge/Version-1.0.2-16A34A?style=for-the-badge" alt="Version">
+  <img src="https://img.shields.io/badge/Version-1.0.3-16A34A?style=for-the-badge" alt="Version">
   <img src="https://img.shields.io/badge/License-MIT-EAB308?style=for-the-badge" alt="License">
   <img src="https://img.shields.io/badge/SQLite-2GiB%2B%20Fallback-7C3AED?style=for-the-badge" alt="Large SQLite fallback">
 </p>
@@ -48,6 +48,7 @@
   - [项目结构](#项目结构)
   - [开发](#开发)
   - [更新记录](#更新记录)
+    - [1.0.3](#103)
     - [1.0.2](#102)
     - [1.0.1](#101)
   - [License](#license)
@@ -85,7 +86,7 @@ npm run compile
 npm run package
 ```
 
-打包完成后，项目根目录会生成类似 `cursor-usage-tracker-1.0.2.vsix` 的文件。
+打包完成后，项目根目录会生成类似 `cursor-usage-tracker-1.0.3.vsix` 的文件。
 
 然后在 Cursor 或 VS Code 中安装：
 
@@ -241,6 +242,12 @@ node test-api.js
 如果你想在扩展运行时之外单独验证用户 ID 查找、token 读取和原始接口请求，这个脚本会比较方便。
 
 ## 更新记录
+
+### 1.0.3
+
+- 为 Cursor 用量 API 的瞬时 TLS / 网络失败增加自动重试
+- 为请求增加超时控制，避免刷新长时间卡住
+- 补充可重试网络错误的回归测试
 
 ### 1.0.2
 

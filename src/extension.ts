@@ -8,6 +8,20 @@ import initSqlJs, { Database } from "sql.js";
 // Cached access token
 let cachedAccessToken: string | null = null;
 const MAX_READFILE_SIZE = 2 * 1024 * 1024 * 1024; // Node.js readFileSync hard limit (2 GiB)
+const API_REQUEST_TIMEOUT_MS = 15000;
+const API_MAX_REDIRECTS = 5;
+const API_MAX_NETWORK_RETRIES = 3;
+const API_RETRY_BASE_DELAY_MS = 1000;
+const RETRYABLE_NETWORK_ERROR_CODES = new Set([
+	"ECONNRESET",
+	"ETIMEDOUT",
+	"ECONNABORTED",
+	"EAI_AGAIN",
+	"ENETUNREACH",
+	"EHOSTUNREACH",
+	"UND_ERR_CONNECT_TIMEOUT",
+	"ERR_TLS_HANDSHAKE_TIMEOUT",
+]);
 
 interface UsageData {
 	"gpt-4"?: {
@@ -25,6 +39,13 @@ interface UsageData {
 		maxTokenUsage: number | null;
 	};
 	startOfMonth: string;
+}
+
+interface RetryAsyncOptions {
+	maxAttempts: number;
+	shouldRetry: (error: unknown) => boolean;
+	onRetry?: (error: unknown, attempt: number, delayMs: number) => void;
+	sleepFn?: (ms: number) => Promise<void>;
 }
 
 let statusBarItem: vscode.StatusBarItem;
@@ -431,6 +452,63 @@ function isFileTooLargeError(error: unknown): boolean {
 	return (error as NodeJS.ErrnoException).code === "ERR_FS_FILE_TOO_LARGE";
 }
 
+function sleep(ms: number): Promise<void> {
+	return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function getErrorCode(error: unknown): string | undefined {
+	if (!error || typeof error !== "object") {
+		return undefined;
+	}
+
+	const code = (error as NodeJS.ErrnoException).code;
+	return typeof code === "string" ? code : undefined;
+}
+
+function getErrorMessage(error: unknown): string {
+	if (error instanceof Error) {
+		return error.message;
+	}
+	return String(error);
+}
+
+function formatError(error: unknown): string {
+	const code = getErrorCode(error);
+	const message = getErrorMessage(error);
+	return code ? `${code}: ${message}` : message;
+}
+
+function isRetryableNetworkError(error: unknown): boolean {
+	const code = getErrorCode(error);
+	if (code && RETRYABLE_NETWORK_ERROR_CODES.has(code)) {
+		return true;
+	}
+
+	const message = getErrorMessage(error);
+	return /Client network socket disconnected before secure TLS connection was established/i.test(message) ||
+		/socket hang up/i.test(message);
+}
+
+async function retryAsync<T>(operation: (attempt: number) => Promise<T>, options: RetryAsyncOptions): Promise<T> {
+	const sleepFn = options.sleepFn ?? sleep;
+
+	for (let attempt = 1; attempt <= options.maxAttempts; attempt++) {
+		try {
+			return await operation(attempt);
+		} catch (error) {
+			if (attempt === options.maxAttempts || !options.shouldRetry(error)) {
+				throw error;
+			}
+
+			const delayMs = API_RETRY_BASE_DELAY_MS * attempt;
+			options.onRetry?.(error, attempt, delayMs);
+			await sleepFn(delayMs);
+		}
+	}
+
+	throw new Error("retryAsync exhausted without returning or throwing");
+}
+
 /**
  * Fetch usage data from API
  * Authenticate using WorkosCursorSessionToken Cookie
@@ -446,8 +524,8 @@ async function fetchUsageFromAPI(userId: string, retryOnAuth: boolean = true): P
 	const cookieValue = accessToken ? `${userId}%3A%3A${accessToken}` : null;
 
 	const makeRequest = (url: string, redirectCount: number = 0): Promise<UsageData | null> => {
-		return new Promise((resolve) => {
-			if (redirectCount > 5) {
+		return new Promise((resolve, reject) => {
+			if (redirectCount > API_MAX_REDIRECTS) {
 				log(`Too many redirects, stopping request`);
 				resolve(null);
 				return;
@@ -478,7 +556,7 @@ async function fetchUsageFromAPI(userId: string, retryOnAuth: boolean = true): P
 				log(`  - No authentication info, trying unauthenticated request`);
 			}
 
-			https
+			const request = https
 				.get(options, (res) => {
 					log(`API response status code: ${res.statusCode}`);
 
@@ -538,14 +616,34 @@ async function fetchUsageFromAPI(userId: string, retryOnAuth: boolean = true): P
 					});
 				})
 				.on("error", (error) => {
-					log(`Network request failed: ${error}`);
-					resolve(null);
+					reject(error);
 				});
+
+			request.setTimeout(API_REQUEST_TIMEOUT_MS, () => {
+				const timeoutError = new Error(`Request timed out after ${API_REQUEST_TIMEOUT_MS}ms`) as NodeJS.ErrnoException;
+				timeoutError.code = "ETIMEDOUT";
+				request.destroy(timeoutError);
+			});
 		});
 	};
 
 	// Note: Must use cursor.com instead of www.cursor.com, otherwise will get 308 redirect
-	return makeRequest(`https://cursor.com/api/usage?user=${userId}`);
+	try {
+		return await retryAsync(
+			() => makeRequest(`https://cursor.com/api/usage?user=${userId}`),
+			{
+				maxAttempts: API_MAX_NETWORK_RETRIES,
+				shouldRetry: isRetryableNetworkError,
+				onRetry: (error, attempt, delayMs) => {
+					log(`Transient network error on API request (attempt ${attempt}/${API_MAX_NETWORK_RETRIES}): ${formatError(error)}`);
+					log(`  - Retrying in ${delayMs}ms`);
+				},
+			}
+		);
+	} catch (error) {
+		log(`Network request failed: ${formatError(error)}`);
+		return null;
+	}
 }
 
 
@@ -671,4 +769,9 @@ export function deactivate() {
 		clearInterval(refreshInterval);
 	}
 }
+
+export const __test__ = {
+	isRetryableNetworkError,
+	retryAsync,
+};
 

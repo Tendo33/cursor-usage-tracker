@@ -8,7 +8,7 @@
 <p align="center">
   <a href="README_CN.md"><img src="https://img.shields.io/badge/README-%E4%B8%AD%E6%96%87-0F172A?style=for-the-badge" alt="Chinese README"></a>
   <img src="https://img.shields.io/badge/Platform-Cursor%20%7C%20VS%20Code-2563EB?style=for-the-badge&logo=visualstudiocode&logoColor=white" alt="Platform">
-  <img src="https://img.shields.io/badge/Version-1.0.2-16A34A?style=for-the-badge" alt="Version">
+  <img src="https://img.shields.io/badge/Version-1.0.3-16A34A?style=for-the-badge" alt="Version">
   <img src="https://img.shields.io/badge/License-MIT-EAB308?style=for-the-badge" alt="License">
   <img src="https://img.shields.io/badge/SQLite-2GiB%2B%20Fallback-7C3AED?style=for-the-badge" alt="Large SQLite fallback">
 </p>
@@ -48,6 +48,7 @@ This project is for people who use Cursor heavily and keep checking whether they
   - [Project structure](#project-structure)
   - [Development](#development)
   - [Changelog](#changelog)
+    - [1.0.3](#103)
     - [1.0.2](#102)
     - [1.0.1](#101)
   - [License](#license)
@@ -85,7 +86,7 @@ npm run compile
 npm run package
 ```
 
-This generates a file like `cursor-usage-tracker-1.0.2.vsix` in the project root.
+This generates a file like `cursor-usage-tracker-1.0.3.vsix` in the project root.
 
 Then install it in Cursor or VS Code:
 
@@ -241,6 +242,12 @@ node test-api.js
 It is useful when you want to inspect user ID discovery, token loading, and the raw API call outside the editor extension runtime.
 
 ## Changelog
+
+### 1.0.3
+
+- retry transient TLS/network failures when requesting the Cursor usage API
+- add request timeout handling to avoid hanging refresh attempts
+- add regression tests for retryable network errors
 
 ### 1.0.2
 
