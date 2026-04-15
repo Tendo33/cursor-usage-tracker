@@ -34,6 +34,26 @@ function loadExtensionForTests() {
 }
 
 if (process.env.NODE_TEST_CONTEXT) {
+    test('release workflow 会在 tag 推送后创建 GitHub Release 并上传 vsix', () => {
+        const workflowPath = path.join(__dirname, '.github', 'workflows', 'release.yml');
+        assert.equal(fs.existsSync(workflowPath), true);
+
+        const workflow = fs.readFileSync(workflowPath, 'utf8');
+        assert.match(workflow, /push:\s*[\r\n]+\s*tags:\s*[\r\n]+\s*-\s*'v\*'/);
+        assert.match(workflow, /permissions:\s*[\r\n]+\s*contents:\s*write/);
+        assert.match(workflow, /npm run package/);
+        assert.match(workflow, /gh release create/);
+        assert.match(workflow, /cursor-usage-tracker-\$\{\{ github\.ref_name \}\}\.vsix/);
+    });
+
+    test('.vscodeignore 会排除 .github，避免 workflow 被打进 VSIX', () => {
+        const ignorePath = path.join(__dirname, '.vscodeignore');
+        assert.equal(fs.existsSync(ignorePath), true);
+
+        const ignoreRules = fs.readFileSync(ignorePath, 'utf8');
+        assert.match(ignoreRules, /^\.github\/\*\*$/m);
+    });
+
     test('将 TLS 握手断连识别为可重试网络错误', () => {
         const extension = loadExtensionForTests();
         const error = new Error('Client network socket disconnected before secure TLS connection was established');
