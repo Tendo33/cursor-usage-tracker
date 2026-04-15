@@ -43,7 +43,8 @@ if (process.env.NODE_TEST_CONTEXT) {
         assert.match(workflow, /permissions:\s*[\r\n]+\s*contents:\s*write/);
         assert.match(workflow, /npm run package/);
         assert.match(workflow, /gh release create/);
-        assert.match(workflow, /cursor-usage-tracker-\$\{\{ github\.ref_name \}\}\.vsix/);
+        assert.match(workflow, /VERSION="\$\{GITHUB_REF_NAME#v\}"/);
+        assert.match(workflow, /VSIX_PATH="cursor-usage-tracker-\$\{VERSION\}\.vsix"/);
     });
 
     test('.vscodeignore 会排除 .github，避免 workflow 被打进 VSIX', () => {
