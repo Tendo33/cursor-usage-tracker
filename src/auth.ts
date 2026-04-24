@@ -124,7 +124,9 @@ async function searchDirectoryForUserId(dirPath: string, log: (m: string) => voi
         if (id) return id;
       }
     }
-  } catch {}
+  } catch (err) {
+    log(`  - failed to scan dir ${dirPath}: ${err}`);
+  }
   return null;
 }
 
@@ -173,7 +175,9 @@ async function getAccessTokenViaPython(dbPath: string): Promise<string | null> {
     try {
       const tok = await execFileAsync(cmd, ['-c', script, dbPath]);
       if (tok) return tok;
-    } catch {}
+    } catch {
+      // try next interpreter
+    }
   }
   return null;
 }
