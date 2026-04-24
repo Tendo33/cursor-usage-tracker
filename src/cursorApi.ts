@@ -383,6 +383,22 @@ export function mergeIntoSnapshot(
   };
 }
 
+export async function fetchAccountSnapshot(
+  userId: string,
+  token: string,
+  log: (m: string) => void = () => {},
+): Promise<AccountSnapshot> {
+  const [legacy, usage, stripe] = await Promise.all([
+    fetchLegacyUsage(userId, token),
+    fetchCurrentPeriodUsage(token),
+    fetchStripeStatus(userId, token),
+  ]);
+  if (!legacy.ok) log(`legacy failed: ${legacy.reason} - ${legacy.message}`);
+  if (!usage.ok)  log(`usage failed: ${usage.reason} - ${usage.message}`);
+  if (!stripe.ok) log(`stripe failed: ${stripe.reason} - ${stripe.message}`);
+  return mergeIntoSnapshot(legacy, usage, stripe);
+}
+
 export const __test__ = {
   fetchLegacyUsageWithBase,
   fetchCurrentPeriodUsageWithBase,
