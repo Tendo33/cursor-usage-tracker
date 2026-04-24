@@ -2,7 +2,7 @@
   "name": "cursor-usage-tracker",
   "displayName": "Cursor Usage Tracker",
   "description": "在状态栏显示 Cursor 剩余配额",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "publisher": "SimonSun",
   "icon": "assets/icon.png",
   "engines": {
@@ -38,6 +38,37 @@
           "type": "boolean",
           "default": true,
           "description": "是否在状态栏显示配额"
+        },
+        "cursorUsageTracker.statusBarFormat": {
+          "type": "string",
+          "enum": ["percent", "amount", "amount_with_reset", "amount_with_plan"],
+          "enumDescriptions": [
+            "仅百分比，例如 🟢 11%",
+            "金额或次数，例如 🟢 $42.30/$400 或 🟢 0/500 (默认)",
+            "金额/次数 + 周期重置倒计时，例如 🟢 $42.30/$400 ·7d",
+            "金额/次数 + 计划名，例如 🟢 Ultra $42.30/$400"
+          ],
+          "default": "amount",
+          "description": "状态栏显示格式（双轨制：自动按账号选金额或次数）"
+        },
+        "cursorUsageTracker.warningThreshold": {
+          "type": "number",
+          "default": 70,
+          "minimum": 0,
+          "maximum": 100,
+          "description": "红灯阈值（百分比），用量达到该值时显示红色警告"
+        },
+        "cursorUsageTracker.cautionThreshold": {
+          "type": "number",
+          "default": 40,
+          "minimum": 0,
+          "maximum": 100,
+          "description": "黄灯阈值（百分比），用量达到该值时显示黄色提示"
+        },
+        "cursorUsageTracker.showOverLimitToast": {
+          "type": "boolean",
+          "default": false,
+          "description": "超额时弹出系统通知（默认关，避免打扰）"
         }
       }
     }

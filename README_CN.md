@@ -8,7 +8,7 @@
 <p align="center">
   <a href="README.md"><img src="https://img.shields.io/badge/README-English-0F172A?style=for-the-badge" alt="English README"></a>
   <img src="https://img.shields.io/badge/Platform-Cursor%20%7C%20VS%20Code-2563EB?style=for-the-badge&logo=visualstudiocode&logoColor=white" alt="Platform">
-  <img src="https://img.shields.io/badge/Version-1.0.3-16A34A?style=for-the-badge" alt="Version">
+  <img src="https://img.shields.io/badge/Version-1.1.0-16A34A?style=for-the-badge" alt="Version">
   <img src="https://img.shields.io/badge/License-MIT-EAB308?style=for-the-badge" alt="License">
   <img src="https://img.shields.io/badge/SQLite-2GiB%2B%20Fallback-7C3AED?style=for-the-badge" alt="Large SQLite fallback">
 </p>
@@ -32,6 +32,8 @@
   - [截图预留](#截图预留)
   - [这个项目解决了什么问题](#这个项目解决了什么问题)
   - [功能亮点](#功能亮点)
+  - [支持的账号类型（双轨制）](#支持的账号类型双轨制)
+  - [状态栏格式](#状态栏格式)
   - [快速开始](#快速开始)
     - [方式一：通过 VSIX 安装](#方式一通过-vsix-安装)
     - [方式二：开发模式运行](#方式二开发模式运行)
@@ -48,6 +50,7 @@
   - [项目结构](#项目结构)
   - [开发](#开发)
   - [更新记录](#更新记录)
+    - [1.1.0](#110)
     - [1.0.3](#103)
     - [1.0.2](#102)
     - [1.0.1](#101)
@@ -73,6 +76,40 @@ Cursor 配额这件事，平时不看还好，一旦要用的时候往往已经�
 - 自动从 `state.vscdb` 读取 `accessToken`
 - 支持超大 SQLite 文件的自动 fallback
 - 配置简单，不依赖额外服务
+
+## 支持的账号类型（双轨制）
+
+本插件自动识别账号属于哪种 Cursor 计费模型并选对应展示：
+
+### 请求次数模型（老账号，500/2000 次/月）
+
+| 账号 | 显示示例 |
+|---|---|
+| Pro 老账号 | `🟢 0/500` |
+| Business 老账号 | `🟡 1200/2000` |
+
+### USD Credit 模型（新账号，2025 末迁移）
+
+| 账号 | 显示示例 |
+|---|---|
+| Free | `🔵 Free` |
+| Pro ($20/月) | `🟢 $0.00/$20` |
+| Pro+ ($60/月, $70 included) | `🟢 $0.00/$70` |
+| Ultra ($200/月, $400 included) | `🟢 $0.00/$400` |
+| Team 成员（个人视角） | `🟢 $0.00/$XX` |
+
+> 「老优先」策略：若老接口仍返回有效次数（`maxRequestUsage > 0`），优先按请求次数展示；否则切到 USD credit。老用户体验完全不变。
+
+> 数据来源为 Cursor 浏览器同款的内部接口，未官方公开，可能随版本变化。
+
+## 状态栏格式
+
+可在 settings 里通过 `cursorUsageTracker.statusBarFormat` 选 4 种模板：
+
+- `percent` — 仅百分比（如 `🟢 11%`，两种模型通用）
+- `amount`（默认）— 金额或次数（USD 账号 `🟢 $42.30/$400`，老账号 `🟢 0/500`）
+- `amount_with_reset` — 加重置倒计时（`🟢 $42.30/$400 ·7d`）
+- `amount_with_plan` — 加计划名（`🟢 Ultra $42.30/$400`）
 
 ## 快速开始
 
@@ -242,6 +279,15 @@ node test-api.js
 如果你想在扩展运行时之外单独验证用户 ID 查找、token 读取和原始接口请求，这个脚本会比较方便。
 
 ## 更新记录
+
+### 1.1.0
+
+- 新增双轨制：同时支持「请求次数」和「USD credit」两种 Cursor 计费模型，自动识别账号
+- 4 档显示模板（percent / amount / amount_with_reset / amount_with_plan）
+- 新增可配置阈值（warningThreshold / cautionThreshold）和超额 toast 开关
+- 三接口并行调用 + 401 自动重试 + partial 数据 `…` 后缀
+- 代码拆分为 `auth.ts` / `cursorApi.ts` / `render.ts` / `extension.ts` / `types.ts`
+- **老用户体验完全不变**（「老优先」策略保证 v1.0.x 行为）
 
 ### 1.0.3
 
