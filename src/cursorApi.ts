@@ -383,15 +383,50 @@ export function mergeIntoSnapshot(
   };
 }
 
+async function withNetworkRetry<T>(
+  channel: string,
+  fetchFn: () => Promise<FetchOutcome<T>>,
+  log: (m: string) => void,
+): Promise<FetchOutcome<T>> {
+  // 把 outcome.reason === 'network' 视为可重试错误（恢复 v1.0.3 行为：
+  // 瞬时 TLS / socket hang up / ECONNRESET 在单次 refresh 内自动重试）。
+  // 其余 reason（unauthorized / http / parse / timeout）一律视为终态，不重试。
+  const RETRYABLE_TAG = '__retryable_network__:';
+  try {
+    return await retryAsync(
+      async () => {
+        const outcome = await fetchFn();
+        if (!outcome.ok && outcome.reason === 'network') {
+          throw new Error(RETRYABLE_TAG + outcome.message);
+        }
+        return outcome;
+      },
+      {
+        maxAttempts: API_MAX_NETWORK_RETRIES,
+        shouldRetry: (e) => e instanceof Error && e.message.startsWith(RETRYABLE_TAG),
+        onRetry: (e, attempt, delay) => {
+          const msg = e instanceof Error ? e.message.slice(RETRYABLE_TAG.length) : String(e);
+          log(`${channel} retry ${attempt}/${API_MAX_NETWORK_RETRIES - 1} after ${delay}ms: ${msg}`);
+        },
+      },
+    );
+  } catch (e) {
+    const msg = e instanceof Error
+      ? (e.message.startsWith(RETRYABLE_TAG) ? e.message.slice(RETRYABLE_TAG.length) : e.message)
+      : String(e);
+    return { ok: false, reason: 'network', message: msg };
+  }
+}
+
 export async function fetchAccountSnapshot(
   userId: string,
   token: string,
   log: (m: string) => void = () => {},
 ): Promise<AccountSnapshot> {
   const [legacy, usage, stripe] = await Promise.all([
-    fetchLegacyUsage(userId, token),
-    fetchCurrentPeriodUsage(token),
-    fetchStripeStatus(userId, token),
+    withNetworkRetry('legacy', () => fetchLegacyUsage(userId, token), log),
+    withNetworkRetry('usage', () => fetchCurrentPeriodUsage(token), log),
+    withNetworkRetry('stripe', () => fetchStripeStatus(userId, token), log),
   ]);
   if (!legacy.ok) log(`legacy failed: ${legacy.reason} - ${legacy.message}`);
   if (!usage.ok)  log(`usage failed: ${usage.reason} - ${usage.message}`);
@@ -405,4 +440,5 @@ export const __test__ = {
   fetchStripeStatusWithBase,
   getJson,
   postJson,
+  withNetworkRetry,
 };
