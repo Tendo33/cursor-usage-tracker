@@ -59,6 +59,14 @@ const cases = [
   { name: 'USD amount_with_plan format',
     fixture: 'usd-ultra-mid-cycle.json', format: 'amount_with_plan',
     expectText: /^🟢 Ultra \$42\.30\/\$400$/ },
+
+  // followup: amount_with_reset 模板 — 用 ·\d+d 模式断言（不断言具体天数避免依赖 Date.now）
+  { name: 'USD amount_with_reset format → 含 ·Nd 倒计时',
+    fixture: 'usd-ultra-mid-cycle.json', format: 'amount_with_reset',
+    expectText: /^🟢 \$42\.30\/\$400 ·\d+d$/ },
+  { name: 'legacy amount_with_reset format → 含 ·Nd 倒计时',
+    fixture: 'legacy-pro-fresh.json', format: 'amount_with_reset',
+    expectText: /^🟢 0\/500 ·\d+d$/ },
 ];
 
 for (const c of cases) {
@@ -152,4 +160,80 @@ test('regression: 非法 billingCycleStart 不应产生 NaN cycleEnd / ·NaNd', 
     `cycleStart should be finite, got ${snapshot.creditUsage.cycleStart}`);
   assert.ok(Number.isFinite(snapshot.creditUsage.cycleEnd.getTime()),
     `cycleEnd should be finite, got ${snapshot.creditUsage.cycleEnd}`);
+});
+
+test('warning: payment_failed 触发条件 — stripe.lastPaymentFailed=true', () => {
+  const api = load('cursorApi');
+  const snapshot = api.mergeIntoSnapshot(
+    { ok: false, reason: 'http', message: '' },
+    { ok: true, data: {
+      billingCycleStart: '1776986902000', billingCycleEnd: '1779578902000',
+      planUsage: { limit: 2000, remaining: 1500, totalPercentUsed: 25 },
+    } },
+    { ok: true, data: {
+      membershipType: 'pro', individualMembershipType: 'pro',
+      subscriptionStatus: 'active', isTeamMember: false, isYearlyPlan: false,
+      customerBalance: 0, pendingCancellationDate: null,
+      lastPaymentFailed: true,
+    } },
+  );
+  assert.ok(snapshot.warnings.includes('payment_failed'),
+    `expected payment_failed, got: ${snapshot.warnings.join(',')}`);
+});
+
+test('warning: pending_cancellation 触发 + tooltip 字段 plan.pendingCancellationDate', () => {
+  const api = load('cursorApi');
+  const snapshot = api.mergeIntoSnapshot(
+    { ok: false, reason: 'http', message: '' },
+    { ok: true, data: {
+      billingCycleStart: '1776986902000', billingCycleEnd: '1779578902000',
+      planUsage: { limit: 2000, remaining: 1500, totalPercentUsed: 25 },
+    } },
+    { ok: true, data: {
+      membershipType: 'pro', individualMembershipType: 'pro',
+      subscriptionStatus: 'active', isTeamMember: false, isYearlyPlan: false,
+      customerBalance: 0, pendingCancellationDate: '2026-05-15',
+      lastPaymentFailed: false,
+    } },
+  );
+  assert.ok(snapshot.warnings.includes('pending_cancellation'));
+  assert.equal(snapshot.plan.pendingCancellationDate, '2026-05-15');
+});
+
+test('renderUnknown: billingModel=unknown → 蓝灯 + plan label，所有 format 都退化', () => {
+  const api = load('cursorApi');
+  const render = load('render');
+  const snapshot = api.mergeIntoSnapshot(
+    { ok: false, reason: 'http', message: '' },
+    { ok: false, reason: 'http', message: '' },
+    { ok: true, data: {
+      membershipType: 'pro', individualMembershipType: 'pro',
+      subscriptionStatus: 'active', isTeamMember: false, isYearlyPlan: false,
+      customerBalance: 0, pendingCancellationDate: null, lastPaymentFailed: false,
+    } },
+  );
+  assert.equal(snapshot.billingModel, 'unknown');
+  const t = { caution: 40, warning: 70 };
+  for (const fmt of ['percent', 'amount', 'amount_with_reset', 'amount_with_plan']) {
+    assert.match(
+      render.renderStatusBarText(snapshot, fmt, t),
+      /^🔵 Pro$/,
+      `format=${fmt} should fallback to '🔵 Pro'`,
+    );
+  }
+});
+
+test('prepaidBalanceCents: stripe.customerBalance 为负 → 取绝对值作为预付余额', () => {
+  const api = load('cursorApi');
+  const snapshot = api.mergeIntoSnapshot(
+    { ok: false, reason: 'http', message: '' },
+    { ok: false, reason: 'http', message: '' },
+    { ok: true, data: {
+      membershipType: 'ultra', individualMembershipType: 'ultra',
+      subscriptionStatus: 'active', isTeamMember: false, isYearlyPlan: false,
+      customerBalance: -5000,
+      pendingCancellationDate: null, lastPaymentFailed: false,
+    } },
+  );
+  assert.equal(snapshot.prepaidBalanceCents, 5000);
 });
