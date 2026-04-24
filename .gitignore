@@ -23,3 +23,6 @@ lerna-debug.log*
 .temp
 .tmp
 .history
+
+# git worktrees (isolated dev workspaces)
+.worktrees/
