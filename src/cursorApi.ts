@@ -201,9 +201,15 @@ export async function fetchCurrentPeriodUsage(token: string): Promise<FetchOutco
   return fetchCurrentPeriodUsageWithBase(token, PROD_USAGE_URL);
 }
 
-// 占位，由后续 task 实现
-export async function fetchStripeStatus(_userId: string, _token: string): Promise<FetchOutcome<StripeStatusRaw>> {
-  throw new Error('not implemented');
+async function fetchStripeStatusWithBase(userId: string, token: string, base: string): Promise<FetchOutcome<StripeStatusRaw>> {
+  const url = base === PROD_STRIPE_URL ? PROD_STRIPE_URL : `${base}/api/auth/stripe`;
+  return getJson<StripeStatusRaw>(url, {
+    Cookie: buildSessionCookie(userId, token),
+  });
+}
+
+export async function fetchStripeStatus(userId: string, token: string): Promise<FetchOutcome<StripeStatusRaw>> {
+  return fetchStripeStatusWithBase(userId, token, PROD_STRIPE_URL);
 }
 export function mergeIntoSnapshot(
   _legacy: FetchOutcome<LegacyUsageRaw>,
@@ -213,4 +219,10 @@ export function mergeIntoSnapshot(
   throw new Error('not implemented');
 }
 
-export const __test__ = { fetchLegacyUsageWithBase, fetchCurrentPeriodUsageWithBase, getJson, postJson };
+export const __test__ = {
+  fetchLegacyUsageWithBase,
+  fetchCurrentPeriodUsageWithBase,
+  fetchStripeStatusWithBase,
+  getJson,
+  postJson,
+};
