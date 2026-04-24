@@ -1,4 +1,5 @@
 import * as https from 'https';
+import * as http from 'http';
 import { buildSessionCookie } from './auth';
 import type {
   AccountSnapshot,
@@ -8,6 +9,9 @@ import type {
   RetryAsyncOptions,
   StripeStatusRaw,
 } from './types';
+
+const PROD_LEGACY_URL = 'https://cursor.com/api/usage';
+const PROD_STRIPE_URL = 'https://cursor.com/api/auth/stripe';
 
 export const API_REQUEST_TIMEOUT_MS = 15000;
 export const API_MAX_NETWORK_RETRIES = 3;
@@ -59,10 +63,76 @@ export async function retryAsync<T>(
   throw new Error('retryAsync exhausted without returning or throwing');
 }
 
-// 占位，由后续 task 实现
-export async function fetchLegacyUsage(_userId: string, _token: string): Promise<FetchOutcome<LegacyUsageRaw>> {
-  throw new Error('not implemented');
+async function getJson<T>(
+  url: string,
+  headers: Record<string, string>,
+): Promise<FetchOutcome<T>> {
+  return new Promise((resolve) => {
+    const u = new URL(url);
+    const isHttps = u.protocol === 'https:';
+    const lib = isHttps ? https : http;
+    const req = lib.request(
+      {
+        hostname: u.hostname,
+        port: u.port || (isHttps ? 443 : 80),
+        path: u.pathname + u.search,
+        method: 'GET',
+        headers: {
+          'User-Agent': 'cursor-usage-tracker/1.1',
+          Accept: 'application/json',
+          ...headers,
+        },
+      },
+      (res) => {
+        let chunks = '';
+        res.on('data', (c: Buffer) => (chunks += c.toString()));
+        res.on('end', () => {
+          const status: number = res.statusCode ?? 0;
+          if (status === 401 || status === 403) {
+            resolve({ ok: false, reason: 'unauthorized', message: `HTTP ${status}` });
+            return;
+          }
+          if (status < 200 || status >= 300) {
+            resolve({ ok: false, reason: 'http', message: `HTTP ${status}: ${chunks.slice(0, 200)}` });
+            return;
+          }
+          try {
+            resolve({ ok: true, data: JSON.parse(chunks) as T });
+          } catch (err) {
+            resolve({ ok: false, reason: 'parse', message: getErrorMessage(err) });
+          }
+        });
+      },
+    );
+    req.on('error', (err: unknown) => resolve({ ok: false, reason: 'network', message: getErrorMessage(err) }));
+    req.setTimeout(API_REQUEST_TIMEOUT_MS, () => {
+      const e = new Error(`Request timed out after ${API_REQUEST_TIMEOUT_MS}ms`) as NodeJS.ErrnoException;
+      e.code = 'ETIMEDOUT';
+      req.destroy(e);
+      resolve({ ok: false, reason: 'timeout', message: e.message });
+    });
+    req.end();
+  });
 }
+
+async function fetchLegacyUsageWithBase(
+  userId: string,
+  token: string,
+  base: string,
+): Promise<FetchOutcome<LegacyUsageRaw>> {
+  const url = base === PROD_LEGACY_URL
+    ? `${PROD_LEGACY_URL}?user=${userId}`
+    : `${base}/api/usage?user=${userId}`;
+  return getJson<LegacyUsageRaw>(url, {
+    Cookie: buildSessionCookie(userId, token),
+  });
+}
+
+export async function fetchLegacyUsage(userId: string, token: string): Promise<FetchOutcome<LegacyUsageRaw>> {
+  return fetchLegacyUsageWithBase(userId, token, PROD_LEGACY_URL);
+}
+
+// 占位，由后续 task 实现
 export async function fetchCurrentPeriodUsage(_token: string): Promise<FetchOutcome<CurrentPeriodUsageRaw>> {
   throw new Error('not implemented');
 }
@@ -76,3 +146,5 @@ export function mergeIntoSnapshot(
 ): AccountSnapshot {
   throw new Error('not implemented');
 }
+
+export const __test__ = { fetchLegacyUsageWithBase, getJson };
