@@ -116,3 +116,40 @@ test('detectBillingModel: 老优先 — 老接口和新接口都有时仍走 req
   assert.ok(snapshot.legacyRequestUsage);
   assert.equal(snapshot.legacyRequestUsage.max, 500);
 });
+
+test('regression: legacy cycleEnd 必须在 UTC 下精确 +1 月，不受本地时区影响', () => {
+  const api = load('cursorApi');
+  const snapshot = api.mergeIntoSnapshot(
+    { ok: true, data: {
+      'gpt-4': { numRequests: 10, numRequestsTotal: 10, numTokens: 0,
+                 maxRequestUsage: 500, maxTokenUsage: null },
+      'gpt-3.5-turbo': { numRequests: 0, numRequestsTotal: 0, numTokens: 0,
+                         maxRequestUsage: null, maxTokenUsage: null },
+      startOfMonth: '2026-04-01T00:00:00.000Z',
+    } },
+    { ok: false, reason: 'http', message: '' },
+    { ok: false, reason: 'http', message: '' },
+  );
+  const u = snapshot.legacyRequestUsage;
+  assert.ok(u);
+  assert.equal(u.cycleStart.toISOString(), '2026-04-01T00:00:00.000Z');
+  assert.equal(u.cycleEnd.toISOString(),   '2026-05-01T00:00:00.000Z');
+});
+
+test('regression: 非法 billingCycleStart 不应产生 NaN cycleEnd / ·NaNd', () => {
+  const api = load('cursorApi');
+  const snapshot = api.mergeIntoSnapshot(
+    { ok: false, reason: 'http', message: '' },
+    { ok: true, data: {
+      billingCycleStart: 'not-a-number',
+      billingCycleEnd: '',
+      planUsage: { limit: 1000, remaining: 500, totalPercentUsed: 50 },
+    } },
+    { ok: false, reason: 'http', message: '' },
+  );
+  assert.ok(snapshot.creditUsage);
+  assert.ok(Number.isFinite(snapshot.creditUsage.cycleStart.getTime()),
+    `cycleStart should be finite, got ${snapshot.creditUsage.cycleStart}`);
+  assert.ok(Number.isFinite(snapshot.creditUsage.cycleEnd.getTime()),
+    `cycleEnd should be finite, got ${snapshot.creditUsage.cycleEnd}`);
+});

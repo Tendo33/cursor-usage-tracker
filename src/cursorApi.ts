@@ -271,14 +271,28 @@ function normalizeStatus(s: string | undefined): SubscriptionStatus {
   }
 }
 
+function safeMs(s: string | undefined): number | undefined {
+  if (typeof s !== 'string' || s.length === 0) return undefined;
+  const n = Number(s);
+  return Number.isFinite(n) ? n : undefined;
+}
+
 function buildLegacyUsage(legacy: LegacyUsageRaw): LegacyRequestUsage {
   const gpt4 = legacy['gpt-4']!;
   const used = gpt4.numRequests ?? 0;
   const max = gpt4.maxRequestUsage ?? 0;
   const pct = max > 0 ? Math.min(100, (used / max) * 100) : 0;
   const cycleStart = new Date(legacy.startOfMonth);
-  const cycleEnd = new Date(cycleStart);
-  cycleEnd.setMonth(cycleEnd.getMonth() + 1);
+  // 注意：必须用 UTC 方法推导下个周期开始，否则在 UTC- 时区会因
+  // 本地日期回退一天 + setMonth 越界回滚而比预期多 1 天。
+  const cycleEnd = new Date(Date.UTC(
+    cycleStart.getUTCFullYear(),
+    cycleStart.getUTCMonth() + 1,
+    cycleStart.getUTCDate(),
+    cycleStart.getUTCHours(),
+    cycleStart.getUTCMinutes(),
+    cycleStart.getUTCSeconds(),
+  ));
   return { used, max, percentUsed: pct, cycleStart, cycleEnd };
 }
 
@@ -291,12 +305,17 @@ function buildCreditUsage(usage: CurrentPeriodUsageRaw): CreditUsage | undefined
   const percent = typeof usage.planUsage.totalPercentUsed === 'number' && Number.isFinite(usage.planUsage.totalPercentUsed)
     ? usage.planUsage.totalPercentUsed
     : (limit && limit > 0 ? Math.max(0, Math.min(100, (used / limit) * 100)) : 0);
+  // 防御异常 timestamp（缺失/空串/非数字）：宁可不展示日期，也不让 UI 出现 ·NaNd
+  const startMs = safeMs(usage.billingCycleStart);
+  const endMs = safeMs(usage.billingCycleEnd);
+  const cycleStart = startMs !== undefined ? new Date(startMs) : new Date(0);
+  const cycleEnd = endMs !== undefined ? new Date(endMs) : new Date(0);
   return {
     usedCents: used,
     limitCents: limit,
     percentUsed: percent,
-    cycleStart: new Date(parseInt(usage.billingCycleStart, 10)),
-    cycleEnd: new Date(parseInt(usage.billingCycleEnd, 10)),
+    cycleStart,
+    cycleEnd,
   };
 }
 

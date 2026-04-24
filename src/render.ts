@@ -25,7 +25,9 @@ function formatDollarsTrim(cents: number): string {
 }
 
 function daysUntil(date: Date): number {
-  return Math.max(0, Math.ceil((date.getTime() - Date.now()) / 86400000));
+  const t = date.getTime();
+  if (!Number.isFinite(t) || t <= 0) return 0;
+  return Math.max(0, Math.ceil((t - Date.now()) / 86400000));
 }
 
 function renderRequestCount(s: AccountSnapshot, format: StatusBarFormat, t: Thresholds): string {
