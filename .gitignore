@@ -29,3 +29,9 @@ lerna-debug.log*
 
 # tsc test build output
 out-tests/
+
+# esbuild output (built via npm run package:prod / vscode:prepublish)
+out/
+
+# vsce packaging artifacts
+*.vsix
