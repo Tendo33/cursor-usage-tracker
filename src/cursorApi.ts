@@ -3,11 +3,18 @@ import * as http from 'http';
 import { buildSessionCookie } from './auth';
 import type {
   AccountSnapshot,
+  BillingModel,
+  CreditUsage,
   CurrentPeriodUsageRaw,
   FetchOutcome,
+  LegacyRequestUsage,
   LegacyUsageRaw,
+  PlanInfo,
+  PlanTier,
   RetryAsyncOptions,
+  SnapshotWarning,
   StripeStatusRaw,
+  SubscriptionStatus,
 } from './types';
 
 const PROD_LEGACY_URL = 'https://cursor.com/api/usage';
@@ -211,12 +218,150 @@ async function fetchStripeStatusWithBase(userId: string, token: string, base: st
 export async function fetchStripeStatus(userId: string, token: string): Promise<FetchOutcome<StripeStatusRaw>> {
   return fetchStripeStatusWithBase(userId, token, PROD_STRIPE_URL);
 }
+export function detectBillingModel(
+  legacy: LegacyUsageRaw | null,
+  usage: CurrentPeriodUsageRaw | null,
+): BillingModel {
+  const legacyMax = legacy?.['gpt-4']?.maxRequestUsage;
+  const legacyUsed = legacy?.['gpt-4']?.numRequests;
+  if (typeof legacyMax === 'number' && legacyMax > 0
+      && typeof legacyUsed === 'number') {
+    return 'request_count';
+  }
+  if (usage) {
+    const limit = usage.planUsage?.limit;
+    const pct = usage.planUsage?.totalPercentUsed;
+    if ((typeof limit === 'number' && limit > 0)
+        || (typeof pct === 'number' && Number.isFinite(pct))) {
+      return 'usd_credit';
+    }
+  }
+  return 'unknown';
+}
+
+export function detectTier(stripe: StripeStatusRaw | null): PlanTier {
+  if (!stripe) return 'unknown';
+  if (stripe.isTeamMember) return 'team';
+  const m = (stripe.individualMembershipType ?? stripe.membershipType ?? '').toLowerCase();
+  if (m === 'ultra') return 'ultra';
+  if (m === 'pro_plus' || m === 'pro+') return 'pro_plus';
+  if (m === 'pro') return 'pro';
+  if (m === 'free' || m === '') return 'free';
+  return 'unknown';
+}
+
+export function planLabel(tier: PlanTier): string {
+  switch (tier) {
+    case 'free': return 'Free';
+    case 'pro': return 'Pro';
+    case 'pro_plus': return 'Pro+';
+    case 'ultra': return 'Ultra';
+    case 'team': return 'Team';
+    case 'unknown': return 'Cursor';
+  }
+}
+
+function normalizeStatus(s: string | undefined): SubscriptionStatus {
+  switch ((s ?? '').toLowerCase()) {
+    case 'active': return 'active';
+    case 'trialing': return 'trialing';
+    case 'cancelled': case 'canceled': return 'cancelled';
+    case 'past_due': return 'past_due';
+    default: return 'unknown';
+  }
+}
+
+function buildLegacyUsage(legacy: LegacyUsageRaw): LegacyRequestUsage {
+  const gpt4 = legacy['gpt-4']!;
+  const used = gpt4.numRequests ?? 0;
+  const max = gpt4.maxRequestUsage ?? 0;
+  const pct = max > 0 ? Math.min(100, (used / max) * 100) : 0;
+  const cycleStart = new Date(legacy.startOfMonth);
+  const cycleEnd = new Date(cycleStart);
+  cycleEnd.setMonth(cycleEnd.getMonth() + 1);
+  return { used, max, percentUsed: pct, cycleStart, cycleEnd };
+}
+
+function buildCreditUsage(usage: CurrentPeriodUsageRaw): CreditUsage | undefined {
+  const limit = typeof usage.planUsage.limit === 'number' && Number.isFinite(usage.planUsage.limit)
+    ? usage.planUsage.limit : undefined;
+  const remaining = typeof usage.planUsage.remaining === 'number'
+    ? usage.planUsage.remaining : undefined;
+  const used = (limit !== undefined && remaining !== undefined) ? limit - remaining : 0;
+  const percent = typeof usage.planUsage.totalPercentUsed === 'number' && Number.isFinite(usage.planUsage.totalPercentUsed)
+    ? usage.planUsage.totalPercentUsed
+    : (limit && limit > 0 ? Math.max(0, Math.min(100, (used / limit) * 100)) : 0);
+  return {
+    usedCents: used,
+    limitCents: limit,
+    percentUsed: percent,
+    cycleStart: new Date(parseInt(usage.billingCycleStart, 10)),
+    cycleEnd: new Date(parseInt(usage.billingCycleEnd, 10)),
+  };
+}
+
 export function mergeIntoSnapshot(
-  _legacy: FetchOutcome<LegacyUsageRaw>,
-  _usage: FetchOutcome<CurrentPeriodUsageRaw>,
-  _stripe: FetchOutcome<StripeStatusRaw>,
+  legacyOutcome: FetchOutcome<LegacyUsageRaw>,
+  usageOutcome: FetchOutcome<CurrentPeriodUsageRaw>,
+  stripeOutcome: FetchOutcome<StripeStatusRaw>,
 ): AccountSnapshot {
-  throw new Error('not implemented');
+  const legacy = legacyOutcome.ok ? legacyOutcome.data : null;
+  const usage = usageOutcome.ok ? usageOutcome.data : null;
+  const stripe = stripeOutcome.ok ? stripeOutcome.data : null;
+
+  const billingModel = detectBillingModel(legacy, usage);
+  const tier = detectTier(stripe);
+
+  const plan: PlanInfo = {
+    tier,
+    label: planLabel(tier),
+    isYearly: !!stripe?.isYearlyPlan,
+    subscriptionStatus: normalizeStatus(stripe?.subscriptionStatus),
+    pendingCancellationDate: stripe?.pendingCancellationDate ?? null,
+  };
+
+  let creditUsage: CreditUsage | undefined;
+  let legacyRequestUsage: LegacyRequestUsage | undefined;
+  if (billingModel === 'request_count' && legacy) {
+    legacyRequestUsage = buildLegacyUsage(legacy);
+  } else if (billingModel === 'usd_credit' && usage) {
+    creditUsage = buildCreditUsage(usage);
+  }
+
+  const prepaid = stripe && typeof stripe.customerBalance === 'number' && stripe.customerBalance < 0
+    ? Math.abs(stripe.customerBalance)
+    : 0;
+
+  const warnings: SnapshotWarning[] = [];
+  const anyUnauthorized = (!legacyOutcome.ok && legacyOutcome.reason === 'unauthorized')
+    || (!usageOutcome.ok && usageOutcome.reason === 'unauthorized')
+    || (!stripeOutcome.ok && stripeOutcome.reason === 'unauthorized');
+  if (anyUnauthorized) warnings.push('token_expired');
+
+  if (legacyRequestUsage && legacyRequestUsage.percentUsed >= 100) warnings.push('over_limit');
+  if (creditUsage && creditUsage.percentUsed >= 100) warnings.push('over_limit');
+  if (stripe?.lastPaymentFailed) warnings.push('payment_failed');
+  if (stripe?.pendingCancellationDate) warnings.push('pending_cancellation');
+  if (plan.subscriptionStatus === 'trialing') warnings.push('trialing');
+
+  const partial = {
+    legacy: (legacyOutcome.ok ? 'ok' : 'failed') as 'ok' | 'failed',
+    usage:  (usageOutcome.ok  ? 'ok' : 'failed') as 'ok' | 'failed',
+    stripe: (stripeOutcome.ok ? 'ok' : 'failed') as 'ok' | 'failed',
+  };
+  if (partial.legacy === 'failed' && partial.usage === 'failed') warnings.push('partial_data');
+  else if (partial.stripe === 'failed') warnings.push('partial_data');
+
+  return {
+    fetchedAt: Date.now(),
+    billingModel,
+    plan,
+    creditUsage,
+    legacyRequestUsage,
+    prepaidBalanceCents: prepaid,
+    warnings,
+    partial,
+  };
 }
 
 export const __test__ = {
