@@ -147,19 +147,34 @@ Then press `F5` in VS Code or Cursor to launch an Extension Development Host.
 
 After the extension starts, the status bar may show one of the following states:
 
+**Legacy accounts (request count model):**
+
 - `🟢 120/500`: low usage
 - `🟡 260/500`: medium usage
 - `🔴 410/500`: high usage
+
+**New accounts (USD credit model):**
+
+- `🟢 $42.30/$400`: Ultra user, low-mid usage
+- `🟡 $14.00/$20`: Pro user approaching caution
+- `🔴 $18.00/$20`: Pro user near warning
+- `🔵 Free`: Free tier (no fixed limit)
+
+**Common states:**
+
 - `$(sync~spin) Loading...`: fetching data
 - `$(warning) No ID`: user ID could not be found locally
-- `$(error) Failed`: the API request failed
+- `$(warning) Re-login`: session expired, please log into Cursor again
+- `$(warning) Network`: all APIs failed, check the logs
+- Trailing ` …`: some endpoints failed but other data is still rendered
 
 Hovering the item shows a compact summary with:
 
-- used requests
-- total request limit
-- token usage in millions
-- estimated days until reset
+- Plan name + subscription status (active / trialing / cancelled / past_due)
+- Used / limit / percent + a small progress bar
+- Current cycle start–end + days until reset
+- Prepaid balance (if any)
+- Warnings (over_limit / payment_failed / pending_cancellation / trialing)
 
 ## Configuration
 
@@ -167,13 +182,21 @@ Hovering the item shows a compact summary with:
 | --- | --- | --- | --- |
 | `cursorUsageTracker.refreshInterval` | `number` | `300` | Auto refresh interval in seconds |
 | `cursorUsageTracker.showInStatusBar` | `boolean` | `true` | Whether to show the indicator in the status bar |
+| `cursorUsageTracker.statusBarFormat` | `string` | `amount` | Status bar template, one of `percent` / `amount` / `amount_with_reset` / `amount_with_plan` |
+| `cursorUsageTracker.cautionThreshold` | `number` | `40` | Caution threshold in percent; usage at or above shows yellow |
+| `cursorUsageTracker.warningThreshold` | `number` | `70` | Warning threshold in percent; usage at or above shows red |
+| `cursorUsageTracker.showOverLimitToast` | `boolean` | `false` | Show a system toast when usage exceeds the limit (off by default) |
 
 Example:
 
 ```json
 {
   "cursorUsageTracker.refreshInterval": 180,
-  "cursorUsageTracker.showInStatusBar": true
+  "cursorUsageTracker.showInStatusBar": true,
+  "cursorUsageTracker.statusBarFormat": "amount_with_plan",
+  "cursorUsageTracker.cautionThreshold": 50,
+  "cursorUsageTracker.warningThreshold": 80,
+  "cursorUsageTracker.showOverLimitToast": true
 }
 ```
 
@@ -247,16 +270,26 @@ If none of them exists, install Python 3 and refresh again.
 
 ```text
 cursor-usage-tracker/
-├── README.md
-├── README_CN.md
+├── README.md / README_CN.md / CHANGELOG.md
 ├── src/
-│   ├── extension.ts
+│   ├── extension.ts        # vscode entry: status bar + config + scheduler
+│   ├── auth.ts             # userId / accessToken / cookie extraction
+│   ├── cursorApi.ts        # 3 API clients + retry + mergeIntoSnapshot
+│   ├── render.ts           # pure status-bar render (dual model × 4 templates)
+│   ├── types.ts            # AccountSnapshot etc. type definitions
 │   └── sql.js.d.ts
-├── out/
+├── tests/
+│   ├── auth.test.js
+│   ├── cursorApi.{legacy,fetch,stripe,retry}.test.js
+│   ├── render.test.js
+│   └── fixtures/           # USD + legacy account samples
+├── out/                    # esbuild output
+├── out-tests/              # tsc test output
 ├── esbuild.mjs
+├── tsconfig.json / tsconfig.test.json
 ├── package.json
-├── test-api.js
-└── icon.png
+├── test-api.js             # legacy /api/usage sanity script
+└── assets/
 ```
 
 ## Development
