@@ -26,3 +26,6 @@ lerna-debug.log*
 
 # git worktrees (isolated dev workspaces)
 .worktrees/
+
+# tsc test build output
+out-tests/
