@@ -23,3 +23,15 @@ lerna-debug.log*
 .temp
 .tmp
 .history
+
+# git worktrees (isolated dev workspaces)
+.worktrees/
+
+# tsc test build output
+out-tests/
+
+# esbuild output (built via npm run package:prod / vscode:prepublish)
+out/
+
+# vsce packaging artifacts
+*.vsix

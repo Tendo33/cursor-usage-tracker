@@ -1,0 +1,14 @@
+{
+  "legacy": null,
+  "usage": {
+    "billingCycleStart": "1776986902000",
+    "billingCycleEnd":   "1779578902000",
+    "planUsage": { "limit": 40000, "remaining": 35770, "totalPercentUsed": 10.575 }
+  },
+  "stripe": {
+    "membershipType": "ultra", "individualMembershipType": "ultra",
+    "subscriptionStatus": "active", "isTeamMember": false,
+    "isYearlyPlan": false, "customerBalance": 0,
+    "pendingCancellationDate": null, "lastPaymentFailed": false
+  }
+}

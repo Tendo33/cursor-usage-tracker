@@ -1,115 +1,17 @@
 ﻿/**
  * Cursor API 测试脚本
  * 运行: node test-api.js
+ *
+ * 这是老 /api/usage 接口的快速验证脚本，仅供调试用。
+ * 单元测试请运行: npm test （或 node --test tests/）
  */
 
 const https = require('https');
 const fs = require('fs');
 const path = require('path');
 const { execFile } = require('child_process');
-const assert = require('node:assert/strict');
-const test = require('node:test');
-const Module = require('module');
 
 const MAX_READFILE_SIZE = 2 * 1024 * 1024 * 1024;
-
-function loadExtensionForTests() {
-    const extensionPath = path.join(__dirname, 'out', 'extension.js');
-    const originalLoad = Module._load;
-
-    Module._load = function patchedLoad(request, parent, isMain) {
-        if (request === 'vscode') {
-            return {};
-        }
-        return originalLoad.call(this, request, parent, isMain);
-    };
-
-    delete require.cache[require.resolve(extensionPath)];
-
-    try {
-        return require(extensionPath);
-    } finally {
-        Module._load = originalLoad;
-    }
-}
-
-if (process.env.NODE_TEST_CONTEXT) {
-    test('release workflow 会在 tag 推送后创建 GitHub Release 并上传 vsix', () => {
-        const workflowPath = path.join(__dirname, '.github', 'workflows', 'release.yml');
-        assert.equal(fs.existsSync(workflowPath), true);
-
-        const workflow = fs.readFileSync(workflowPath, 'utf8');
-        assert.match(workflow, /push:\s*[\r\n]+\s*tags:\s*[\r\n]+\s*-\s*'v\*'/);
-        assert.match(workflow, /permissions:\s*[\r\n]+\s*contents:\s*write/);
-        assert.match(workflow, /npm run package/);
-        assert.match(workflow, /gh release create/);
-        assert.match(workflow, /VERSION="\$\{GITHUB_REF_NAME#v\}"/);
-        assert.match(workflow, /VSIX_PATH="cursor-usage-tracker-\$\{VERSION\}\.vsix"/);
-    });
-
-    test('.vscodeignore 会排除 .github，避免 workflow 被打进 VSIX', () => {
-        const ignorePath = path.join(__dirname, '.vscodeignore');
-        assert.equal(fs.existsSync(ignorePath), true);
-
-        const ignoreRules = fs.readFileSync(ignorePath, 'utf8');
-        assert.match(ignoreRules, /^\.github\/\*\*$/m);
-    });
-
-    test('将 TLS 握手断连识别为可重试网络错误', () => {
-        const extension = loadExtensionForTests();
-        const error = new Error('Client network socket disconnected before secure TLS connection was established');
-
-        assert.equal(extension.__test__.isRetryableNetworkError(error), true);
-    });
-
-    test('遇到瞬时网络错误时会重试直到成功', async () => {
-        const extension = loadExtensionForTests();
-        const delays = [];
-        let attempts = 0;
-
-        const result = await extension.__test__.retryAsync(async () => {
-            attempts += 1;
-
-            if (attempts < 3) {
-                const error = new Error('Client network socket disconnected before secure TLS connection was established');
-                error.code = 'ECONNRESET';
-                throw error;
-            }
-
-            return 'ok';
-        }, {
-            maxAttempts: 3,
-            shouldRetry: extension.__test__.isRetryableNetworkError,
-            sleepFn: async (delayMs) => {
-                delays.push(delayMs);
-            },
-        });
-
-        assert.equal(result, 'ok');
-        assert.equal(attempts, 3);
-        assert.deepEqual(delays, [1000, 2000]);
-    });
-
-    test('非瞬时错误不会误重试', async () => {
-        const extension = loadExtensionForTests();
-        const delays = [];
-        let attempts = 0;
-
-        await assert.rejects(async () => extension.__test__.retryAsync(async () => {
-            attempts += 1;
-            throw new Error('Authentication failed');
-        }, {
-            maxAttempts: 3,
-            shouldRetry: extension.__test__.isRetryableNetworkError,
-            sleepFn: async (delayMs) => {
-                delays.push(delayMs);
-            },
-        }), /Authentication failed/);
-
-        assert.equal(attempts, 1);
-        assert.deepEqual(delays, []);
-    });
-}
 
 // 获取用户 ID
 function getUserId() {
@@ -254,7 +156,7 @@ async function main() {
     }
 }
 
-if (require.main === module && !process.env.NODE_TEST_CONTEXT) {
+if (require.main === module) {
     main().catch((error) => {
         console.error('脚本执行失败:', error);
         process.exitCode = 1;
