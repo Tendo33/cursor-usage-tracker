@@ -1,10 +1,24 @@
 {
   "name": "cursor-usage-tracker",
   "displayName": "Cursor Usage Tracker",
-  "description": "在状态栏显示 Cursor 剩余配额",
+  "description": "Show your Cursor quota in the status bar (dual-track: legacy 500-requests + new USD credit, auto account detection).",
   "version": "1.1.0",
   "publisher": "SimonSun",
+  "license": "MIT",
   "icon": "assets/icon.png",
+  "homepage": "https://github.com/Tendo33/cursor-usage-tracker#readme",
+  "bugs": {
+    "url": "https://github.com/Tendo33/cursor-usage-tracker/issues"
+  },
+  "qna": "marketplace",
+  "keywords": [
+    "cursor",
+    "usage",
+    "quota",
+    "credit",
+    "status-bar",
+    "billing"
+  ],
   "engines": {
     "vscode": "^1.85.0"
   },

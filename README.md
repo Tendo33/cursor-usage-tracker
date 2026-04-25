@@ -288,7 +288,6 @@ cursor-usage-tracker/
 ├── esbuild.mjs
 ├── tsconfig.json / tsconfig.test.json
 ├── package.json
-├── test-api.js             # legacy /api/usage sanity script
 └── assets/
 ```
 
@@ -298,18 +297,11 @@ Useful commands:
 
 ```bash
 npm install
-npm run compile
-npm run watch
-npm run package
+npm run compile         # build extension via esbuild
+npm run watch           # rebuild on change
+npm test                # compile + run unit tests (38 tests)
+npm run package         # produce .vsix
 ```
-
-There is also a local helper script:
-
-```bash
-node test-api.js
-```
-
-It is useful when you want to inspect user ID discovery, token loading, and the raw API call outside the editor extension runtime.
 
 ## Changelog
 

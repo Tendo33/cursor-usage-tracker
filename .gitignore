@@ -1,4 +1,4 @@
-# Nestjs specific
+# Build outputs and dependencies
 /dist
 /node_modules
 /build
@@ -35,3 +35,6 @@ out/
 
 # vsce packaging artifacts
 *.vsix
+
+# internal brainstorming docs (kept locally, not for the repo)
+docs/superpowers/

@@ -288,7 +288,6 @@ cursor-usage-tracker/
 ├── esbuild.mjs
 ├── tsconfig.json / tsconfig.test.json
 ├── package.json
-├── test-api.js             # 老 /api/usage 接口的快速 sanity 脚本
 └── assets/
 ```
 
@@ -298,18 +297,11 @@ cursor-usage-tracker/
 
 ```bash
 npm install
-npm run compile
-npm run watch
-npm run package
+npm run compile         # 用 esbuild 构建扩展
+npm run watch           # 监听变更自动重建
+npm test                # 编译并运行单元测试（38 个）
+npm run package         # 生成 .vsix
 ```
-
-项目里还带了一个本地测试脚本：
-
-```bash
-node test-api.js
-```
-
-如果你想在扩展运行时之外单独验证用户 ID 查找、token 读取和原始接口请求，这个脚本会比较方便。
 
 ## 更新记录
 

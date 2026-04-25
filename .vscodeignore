@@ -19,7 +19,6 @@ esbuild.mjs
 tests/**
 out-tests/**
 tsconfig.test.json
-test-api.js
-docs/**
 .worktrees/**
 *.vsix
+
