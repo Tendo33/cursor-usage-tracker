@@ -33,4 +33,4 @@ jobs:
         run: npm run compile:tests
 
       - name: Run unit tests
-        run: node --test tests/**/*.test.js
+        run: node --test tests/*.test.js
