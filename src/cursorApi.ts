@@ -305,6 +305,14 @@ function buildCreditUsage(usage: CurrentPeriodUsageRaw): CreditUsage | undefined
   const percent = typeof usage.planUsage.totalPercentUsed === 'number' && Number.isFinite(usage.planUsage.totalPercentUsed)
     ? usage.planUsage.totalPercentUsed
     : (limit && limit > 0 ? Math.max(0, Math.min(100, (used / limit) * 100)) : 0);
+  const autoPercent = typeof usage.planUsage.autoPercentUsed === 'number'
+    && Number.isFinite(usage.planUsage.autoPercentUsed)
+    ? usage.planUsage.autoPercentUsed
+    : undefined;
+  const apiPercent = typeof usage.planUsage.apiPercentUsed === 'number'
+    && Number.isFinite(usage.planUsage.apiPercentUsed)
+    ? usage.planUsage.apiPercentUsed
+    : undefined;
   // 防御异常 timestamp（缺失/空串/非数字）：宁可不展示日期，也不让 UI 出现 ·NaNd
   const startMs = safeMs(usage.billingCycleStart);
   const endMs = safeMs(usage.billingCycleEnd);
@@ -314,6 +322,8 @@ function buildCreditUsage(usage: CurrentPeriodUsageRaw): CreditUsage | undefined
     usedCents: used,
     limitCents: limit,
     percentUsed: percent,
+    autoPercentUsed: autoPercent,
+    apiPercentUsed: apiPercent,
     cycleStart,
     cycleEnd,
   };

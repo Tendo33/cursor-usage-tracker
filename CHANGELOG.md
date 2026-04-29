@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.1.1 — 2026-04-29
+
+### 修复
+
+- USD credit tooltip 新增分路占比展示：`API xx% · Auto xx%`
+- 保留并透传 Cursor `planUsage.autoPercentUsed` / `planUsage.apiPercentUsed`
+- 补充测试，确保 total / api / auto 占比字段被正确写入 snapshot
+
 ## 1.1.0 — 2026-04-24
 
 ### 新增

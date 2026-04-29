@@ -171,10 +171,15 @@ function buildTooltip(s: AccountSnapshot): vscode.MarkdownString {
     const used = (u.usedCents / 100).toFixed(2);
     const limit = u.limitCents != null ? `$${(u.limitCents / 100)}` : '\u2014';
     const pct = Math.round(u.percentUsed);
+    const apiPct = u.apiPercentUsed != null ? `${Math.round(u.apiPercentUsed)}%` : '\u2014';
+    const autoPct = u.autoPercentUsed != null ? `${Math.round(u.autoPercentUsed)}%` : '\u2014';
     const bars = 10;
     const filled = Math.min(bars, Math.max(0, Math.round((pct / 100) * bars)));
     const bar = '#'.repeat(filled) + '-'.repeat(bars - filled);
     md.appendMarkdown(`**Usage:** $${used} / ${limit} (${pct}%)\n\n`);
+    if (u.apiPercentUsed != null || u.autoPercentUsed != null) {
+      md.appendMarkdown(`**Breakdown:** API ${apiPct} · Auto ${autoPct}\n\n`);
+    }
     md.appendMarkdown(`\`[${bar}] ${pct}%\`\n\n`);
     md.appendMarkdown(`**Cycle:** ${u.cycleStart.toLocaleDateString()} \u2192 ${u.cycleEnd.toLocaleDateString()}\n`);
     const days = Math.max(0, Math.ceil((u.cycleEnd.getTime() - Date.now()) / 86400000));

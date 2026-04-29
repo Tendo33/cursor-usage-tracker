@@ -24,6 +24,8 @@ export interface CreditUsage {
   usedCents: number;
   limitCents?: number;
   percentUsed: number;
+  autoPercentUsed?: number;
+  apiPercentUsed?: number;
   cycleStart: Date;
   cycleEnd: Date;
 }
