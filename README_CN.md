@@ -8,7 +8,7 @@
 <p align="center">
   <a href="README.md"><img src="https://img.shields.io/badge/README-English-0F172A?style=for-the-badge" alt="English README"></a>
   <img src="https://img.shields.io/badge/Platform-Cursor%20%7C%20VS%20Code-2563EB?style=for-the-badge&logo=visualstudiocode&logoColor=white" alt="Platform">
-  <img src="https://img.shields.io/badge/Version-1.1.3-16A34A?style=for-the-badge" alt="Version">
+  <img src="https://img.shields.io/badge/Version-1.1.4-16A34A?style=for-the-badge" alt="Version">
   <img src="https://img.shields.io/badge/License-MIT-EAB308?style=for-the-badge" alt="License">
   <img src="https://img.shields.io/badge/SQLite-2GiB%2B%20Fallback-7C3AED?style=for-the-badge" alt="Large SQLite fallback">
 </p>
@@ -50,6 +50,7 @@
   - [项目结构](#项目结构)
   - [开发](#开发)
   - [更新记录](#更新记录)
+    - [1.1.4](#114)
     - [1.1.3](#113)
     - [1.1.2](#112)
     - [1.1.1](#111)
@@ -179,9 +180,8 @@ npm run compile
 鼠标悬停后会显示：
 
 - 计划名 + 订阅状态（active / trialing / cancelled / past_due）
-- **USD credit：** 若有固定额度，先一行 **Included pool**（`$已用 / $上限`，**total%**），再三组 ASCII 条：**Total**（`totalPercentUsed`）、**Auto + Composer**（`autoPercentUsed`）、**API**（`apiPercentUsed`）；某分路缺失时该行条图为 `—`
-- **老请求次数模型：** 已用 / 上限 / 百分比 + 一条进度条
-- 当前周期起止 + 距离重置天数
+- **USD credit：** 等宽 `text` 代码块内展示 **Included pool**（`$已用 / $上限`，**total%**），以及 **Total / Auto + Composer / API**（标题左对齐填充 + 24 格 ASCII 条）；分路缺失时条末为 `—`。**Renews：** 仅周期结束日期（不显示起止区间与「还剩几天」）
+- **老请求次数模型：** 已用 / 上限 / 百分比 + 一条进度条；**Renews：** 仅周期结束日
 - 预付余额（如果有）
 - 警告列表（超额 / 付款失败 / 即将取消 / 试用中等）
 
@@ -313,6 +313,11 @@ npm run package         # 生成 .vsix
 ```
 
 ## 更新记录
+
+### 1.1.4
+
+- **变更：** 悬停去掉 `Billing model`；**Renews** 仅显示周期结束日；USD 用量用等宽 `text` 块 + **24 格**条与标题填充对齐；Legacy 悬停条宽与 **Renews** 行为对齐。
+- **文档：** 中英文 README 与上述一致。
 
 ### 1.1.3
 

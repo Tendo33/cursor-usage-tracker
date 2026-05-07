@@ -1,7 +1,7 @@
 ﻿import * as vscode from 'vscode';
 import { getUserId, getAccessToken, clearCachedAccessToken } from './auth';
 import { fetchAccountSnapshot } from './cursorApi';
-import { asciiUsageBarLine, renderStatusBarText, type StatusBarFormat, type Thresholds } from './render';
+import { asciiUsageBarLine, asciiUsageBarPlain, renderStatusBarText, type StatusBarFormat, type Thresholds } from './render';
 import type { AccountSnapshot } from './types';
 
 let statusBarItem: vscode.StatusBarItem;
@@ -158,33 +158,26 @@ function buildTooltip(s: AccountSnapshot): vscode.MarkdownString {
   if (s.billingModel === 'request_count' && s.legacyRequestUsage) {
     const u = s.legacyRequestUsage;
     const pct = Math.round(u.percentUsed);
-    const bars = 10;
-    const filled = Math.min(bars, Math.max(0, Math.round((pct / 100) * bars)));
-    const bar = '#'.repeat(filled) + '-'.repeat(bars - filled);
     md.appendMarkdown(`**Used:** ${u.used} / ${u.max} (${pct}%)\n\n`);
-    md.appendMarkdown(`\`[${bar}] ${pct}%\`\n\n`);
-    md.appendMarkdown(`**Cycle:** ${u.cycleStart.toLocaleDateString()} \u2192 ${u.cycleEnd.toLocaleDateString()}\n`);
-    const days = Math.max(0, Math.ceil((u.cycleEnd.getTime() - Date.now()) / 86400000));
-    md.appendMarkdown(`Resets in **${days} days**\n\n`);
+    md.appendMarkdown(`${asciiUsageBarLine(u.percentUsed)}\n\n`);
+    md.appendMarkdown(`**Renews:** ${u.cycleEnd.toLocaleDateString()}\n\n`);
   } else if (s.billingModel === 'usd_credit' && s.creditUsage) {
     const u = s.creditUsage;
     const limit = u.limitCents != null ? `$${(u.limitCents / 100)}` : '\u2014';
     const totalPct = Math.round(u.percentUsed);
-    const autoPct = u.autoPercentUsed != null ? Math.round(u.autoPercentUsed) : null;
-    const apiPct = u.apiPercentUsed != null ? Math.round(u.apiPercentUsed) : null;
     const usedTotal = (u.usedCents / 100).toFixed(2);
+    const labelW = 20;
+    const pad = (t: string) => (t.length >= labelW ? t : t + ' '.repeat(labelW - t.length));
+    const row = (title: string, pct: number | undefined) =>
+      `${pad(title)}\n${asciiUsageBarPlain(pct)}`;
+    const lines: string[] = [];
     if (u.limitCents != null && u.limitCents > 0) {
-      md.appendMarkdown(`**Included pool:** $${usedTotal} / ${limit} (total **${totalPct}%**)\n\n`);
+      lines.push(`Included pool  $${usedTotal} / ${limit}  (total ${totalPct}%)`, '');
     }
-    md.appendMarkdown(`**Total** · ${totalPct}%\n\n`);
-    md.appendMarkdown(`${asciiUsageBarLine(u.percentUsed)}\n\n`);
-    md.appendMarkdown(`**Auto + Composer**${autoPct != null ? ` · ${autoPct}%` : ''}\n\n`);
-    md.appendMarkdown(`${asciiUsageBarLine(u.autoPercentUsed)}\n\n`);
-    md.appendMarkdown(`**API**${apiPct != null ? ` · ${apiPct}%` : ''}\n\n`);
-    md.appendMarkdown(`${asciiUsageBarLine(u.apiPercentUsed)}\n\n`);
-    md.appendMarkdown(`**Cycle:** ${u.cycleStart.toLocaleDateString()} \u2192 ${u.cycleEnd.toLocaleDateString()}\n`);
-    const days = Math.max(0, Math.ceil((u.cycleEnd.getTime() - Date.now()) / 86400000));
-    md.appendMarkdown(`Resets in **${days} days**\n\n`);
+    lines.push(row('Total', u.percentUsed), '', row('Auto + Composer', u.autoPercentUsed), '', row('API', u.apiPercentUsed));
+    md.appendMarkdown('```text\n');
+    md.appendMarkdown(lines.join('\n'));
+    md.appendMarkdown(`\n\`\`\`\n\n**Renews:** ${u.cycleEnd.toLocaleDateString()}\n\n`);
   }
 
   if (s.prepaidBalanceCents > 0) {
@@ -198,7 +191,6 @@ function buildTooltip(s: AccountSnapshot): vscode.MarkdownString {
     }
   }
 
-  md.appendMarkdown(`\n---\n*Billing model: \`${s.billingModel}\`*`);
   return md;
 }
 

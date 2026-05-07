@@ -8,7 +8,7 @@
 <p align="center">
   <a href="README_CN.md"><img src="https://img.shields.io/badge/README-%E4%B8%AD%E6%96%87-0F172A?style=for-the-badge" alt="Chinese README"></a>
   <img src="https://img.shields.io/badge/Platform-Cursor%20%7C%20VS%20Code-2563EB?style=for-the-badge&logo=visualstudiocode&logoColor=white" alt="Platform">
-  <img src="https://img.shields.io/badge/Version-1.1.3-16A34A?style=for-the-badge" alt="Version">
+  <img src="https://img.shields.io/badge/Version-1.1.4-16A34A?style=for-the-badge" alt="Version">
   <img src="https://img.shields.io/badge/License-MIT-EAB308?style=for-the-badge" alt="License">
   <img src="https://img.shields.io/badge/SQLite-2GiB%2B%20Fallback-7C3AED?style=for-the-badge" alt="Large SQLite fallback">
 </p>
@@ -50,6 +50,7 @@ This project is for people who use Cursor heavily and keep checking whether they
   - [Project structure](#project-structure)
   - [Development](#development)
   - [Changelog](#changelog)
+    - [1.1.4](#114)
     - [1.1.3](#113)
     - [1.1.2](#112)
     - [1.1.1](#111)
@@ -179,9 +180,8 @@ After the extension starts, the status bar may show one of the following states:
 Hovering the item shows a compact summary with:
 
 - Plan name + subscription status (active / trialing / cancelled / past_due)
-- **USD credit:** **Included pool** line (`$used / $cap`, **total %**) when a cap exists, then three ASCII bar lines: **Total** (`totalPercentUsed`), **Auto + Composer** (`autoPercentUsed`), **API** (`apiPercentUsed`). Missing split fields render as `—` in the bar line.
-- **Legacy request count:** used / max / percent + one progress bar
-- Current cycle start–end + days until reset
+- **USD credit:** monospace `text` block with **Included pool** (`$used / $cap`, **total %**) when a cap exists, then **Total / Auto + Composer / API** (padded titles + 24-char ASCII bars). Missing split fields show `—` on the bar line. **Renews:** cycle end date only (no range or day countdown).
+- **Legacy request count:** used / max / percent + one progress bar; **Renews:** cycle end date only
 - Prepaid balance (if any)
 - Warnings (over_limit / payment_failed / pending_cancellation / trialing)
 
@@ -313,6 +313,11 @@ npm run package         # produce .vsix
 ```
 
 ## Changelog
+
+### 1.1.4
+
+- **Change:** Tooltip polish—remove billing-model footer; **Renews** shows cycle end date only; USD usage in a monospace `text` block with **24-char** bars and padded row labels; legacy tooltip uses the same bar width and **Renews** line.
+- **Docs:** README / README_CN updated for the new hover layout.
 
 ### 1.1.3
 

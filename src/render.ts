@@ -30,21 +30,31 @@ function daysUntil(date: Date): number {
   return Math.max(0, Math.ceil((t - Date.now()) / 86400000));
 }
 
-const ASCII_BAR_LEN = 10;
+/** Tooltip 内 ASCII 条宽度（字符格） */
+export const TOOLTIP_ASCII_BAR_SEGMENTS = 24;
 
-/** Markdown 一行：ASCII 条形图 + 百分比（供 tooltip 与展示一致） */
-export function asciiUsageBarLine(percent: number | undefined): string {
+/** 纯文本条形 `[###---] 30%`（用于等宽 code 块内排版） */
+export function asciiUsageBarPlain(
+  percent: number | undefined,
+  segments: number = TOOLTIP_ASCII_BAR_SEGMENTS,
+): string {
+  const w = Math.max(4, Math.min(40, Math.floor(segments)));
   if (percent == null || !Number.isFinite(percent)) {
-    return `\`[${'-'.repeat(ASCII_BAR_LEN)}] —\``;
+    return `[${'-'.repeat(w)}] —`;
   }
   const label = `${Math.round(percent)}%`;
   const forFill = Math.min(100, Math.max(0, percent));
-  const filled = Math.min(
-    ASCII_BAR_LEN,
-    Math.max(0, Math.round((forFill / 100) * ASCII_BAR_LEN)),
-  );
-  const bar = '#'.repeat(filled) + '-'.repeat(ASCII_BAR_LEN - filled);
-  return `\`[${bar}] ${label}\``;
+  const filled = Math.min(w, Math.max(0, Math.round((forFill / 100) * w)));
+  const bar = '#'.repeat(filled) + '-'.repeat(w - filled);
+  return `[${bar}] ${label}`;
+}
+
+/** Markdown 一行：内联代码包裹的条形（老接口 tooltip 等） */
+export function asciiUsageBarLine(
+  percent: number | undefined,
+  segments: number = TOOLTIP_ASCII_BAR_SEGMENTS,
+): string {
+  return `\`${asciiUsageBarPlain(percent, segments)}\``;
 }
 
 /**

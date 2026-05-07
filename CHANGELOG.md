@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.1.4 — 2026-05-08
+
+### 变更
+
+- **悬停卡片**：移除底部 `Billing model` 行；周期改为 **`Renews:`** 仅展示**周期结束日**（去掉起止区间与「还剩几天」）
+- **USD 用量块**：Markdown 等宽 fenced `text` 代码块内展示 Included pool 与 Total / Auto / API；条形默认 **24 格**；标题列左填充对齐
+- **Legacy 悬停**：进度条与 USD 一致使用加长条形；周期同 **Renews** 单行
+
+### 文档
+
+- README / README_CN：与上述悬停行为一致
+
 ## 1.1.3 — 2026-05-07
 
 ### 变更
