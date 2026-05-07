@@ -8,7 +8,7 @@
 <p align="center">
   <a href="README.md"><img src="https://img.shields.io/badge/README-English-0F172A?style=for-the-badge" alt="English README"></a>
   <img src="https://img.shields.io/badge/Platform-Cursor%20%7C%20VS%20Code-2563EB?style=for-the-badge&logo=visualstudiocode&logoColor=white" alt="Platform">
-  <img src="https://img.shields.io/badge/Version-1.1.0-16A34A?style=for-the-badge" alt="Version">
+  <img src="https://img.shields.io/badge/Version-1.1.3-16A34A?style=for-the-badge" alt="Version">
   <img src="https://img.shields.io/badge/License-MIT-EAB308?style=for-the-badge" alt="License">
   <img src="https://img.shields.io/badge/SQLite-2GiB%2B%20Fallback-7C3AED?style=for-the-badge" alt="Large SQLite fallback">
 </p>
@@ -23,7 +23,7 @@
 这个项目是给重度 Cursor 用户准备的。很多人并不是不关心配额，而是总要等到快用完了才意识到问题来了。这个扩展把最关键的数字放回编辑器状态栏里：比如 `🟢 120/500`。你把鼠标悬停上去，还能看到请求数、Token 使用量和预计重置时间。
 
 > [!IMPORTANT]
-> 这不是官方 Cursor 扩展。它的做法是读取你本机上的 Cursor 本地数据，再请求 `https://cursor.com/api/usage` 获取配额信息。
+> 这不是官方 Cursor 扩展。它会读取本机 Cursor 数据，并请求用量相关接口（老接口 `GET https://cursor.com/api/usage`、新用量 `POST https://api2.cursor.sh/.../GetCurrentPeriodUsage`，以及 `GET https://cursor.com/api/auth/stripe` 获取计划信息）。
 
 ## 目录
 
@@ -50,6 +50,9 @@
   - [项目结构](#项目结构)
   - [开发](#开发)
   - [更新记录](#更新记录)
+    - [1.1.3](#113)
+    - [1.1.2](#112)
+    - [1.1.1](#111)
     - [1.1.0](#110)
     - [1.0.3](#103)
     - [1.0.2](#102)
@@ -70,7 +73,7 @@ Cursor 配额这件事，平时不看还好，一旦要用的时候往往已经�
 
 - 状态栏实时显示请求使用情况
 - 通过颜色区分低、中、高使用率
-- 悬停即可查看请求数、Token 和重置时间
+- 悬停查看用量摘要、周期与重置时间；USD 账号展示 Total / Auto / API 条形图
 - 默认每 5 分钟自动刷新
 - 自动从本地 Cursor 存储中查找用户 ID
 - 自动从 `state.vscdb` 读取 `accessToken`
@@ -90,15 +93,17 @@ Cursor 配额这件事，平时不看还好，一旦要用的时候往往已经�
 
 ### USD Credit 模型（新账号，2025 末迁移）
 
-| 账号 | 显示示例 |
+| 账号 | 状态栏 `amount` 典型示例 |
 |---|---|
 | Free | `🔵 Free` |
-| Pro ($20/月) | `🟢 $0.00/$20` |
+| Pro ($20/月) | `🟢 $0.00/$20`（无 API 分路字段时与以前一致，按 **total**） |
 | Pro+ ($60/月, $70 included) | `🟢 $0.00/$70` |
-| Ultra ($200/月, $400 included) | `🟢 $0.00/$400` |
+| Ultra ($200/月, $400 included) | 若接口返回 **API 占比**：例如 API **86%** 时可能显示 `🔴 $344.00/$400`（交通灯按 **API%**）。若无 `apiPercentUsed`，仍按 **total**（如 `🟢 $42.30/$400`） |
 | Team 成员（个人视角） | `🟢 $0.00/$XX` |
 
 > 「老优先」策略：若老接口仍返回有效次数（`maxRequestUsage > 0`），优先按请求次数展示；否则切到 USD credit。老用户体验完全不变。
+
+> 状态栏上的 **API 金额** 在存在 `apiPercentUsed` 时为：`included 额度 limit × (API% / 100)`，分母仍是同一档 **Included** 上限；这是与官网「API 占比」对齐的**线性折算**，若与账单细项有微小差异，以 Cursor 网页为准。
 
 > 数据来源为 Cursor 浏览器同款的内部接口，未官方公开，可能随版本变化。
 
@@ -106,10 +111,12 @@ Cursor 配额这件事，平时不看还好，一旦要用的时候往往已经�
 
 可在 settings 里通过 `cursorUsageTracker.statusBarFormat` 选 4 种模板：
 
-- `percent` — 仅百分比（如 `🟢 11%`，两种模型通用）
-- `amount`（默认）— 金额或次数（USD 账号 `🟢 $42.30/$400`，老账号 `🟢 0/500`）
-- `amount_with_reset` — 加重置倒计时（`🟢 $42.30/$400 ·7d`）
-- `amount_with_plan` — 加计划名（`🟢 Ultra $42.30/$400`）
+- `percent` — 仅百分比。USD：有 **`apiPercentUsed`** 时默认显示 **API%**，否则 **total%**（如 `🟢 11%` 或 `🔴 86%`）
+- `amount`（默认）— 金额或次数。USD：有 API 分路时分子为 **按 API% 折算到同一 included 额度上的金额**，否则为 **total 已用金额**；老账号仍为 `🟢 0/500`
+- `amount_with_reset` — 同 `amount` 并加重置倒计时（如 `🟢 $42.30/$400 ·7d`）
+- `amount_with_plan` — 同 `amount` 并加计划名（如 `🟢 Ultra $42.30/$400`）
+
+黄灯 / 红灯阈值（`cautionThreshold` / `warningThreshold`）作用于**状态栏正在用的那一档百分比**（有 API 分路时为 **API%**，否则为 **total%**）。
 
 ## 快速开始
 
@@ -155,9 +162,10 @@ npm run compile
 
 **新账号（USD credit 模型）：**
 
-- `🟢 $42.30/$400`：Ultra 用户中低使用
-- `🟡 $14.00/$20`：Pro 用户接近黄灯
-- `🔴 $18.00/$20`：Pro 用户接近红灯
+- `🟢 $42.30/$400`：仅有 **total** 分路数据时的 Ultra（等与旧版一致）
+- `🔴 $344.00/$400`：Ultra 且 Cursor 返回 **API** 分路（例如 API 86%，若超过你配置的 `warningThreshold` 则为红灯）
+- `🟡 $14.00/$20`：Pro 接近黄灯（无 API 分路时按 total）
+- `🔴 $18.00/$20`：Pro 接近红灯
 - `🔵 Free`：Free 用户（无固定 limit）
 
 **通用状态：**
@@ -171,7 +179,8 @@ npm run compile
 鼠标悬停后会显示：
 
 - 计划名 + 订阅状态（active / trialing / cancelled / past_due）
-- 已用 / 上限 / 百分比 + 简易进度条
+- **USD credit：** 若有固定额度，先一行 **Included pool**（`$已用 / $上限`，**total%**），再三组 ASCII 条：**Total**（`totalPercentUsed`）、**Auto + Composer**（`autoPercentUsed`）、**API**（`apiPercentUsed`）；某分路缺失时该行条图为 `—`
+- **老请求次数模型：** 已用 / 上限 / 百分比 + 一条进度条
 - 当前周期起止 + 距离重置天数
 - 预付余额（如果有）
 - 警告列表（超额 / 付款失败 / 即将取消 / 试用中等）
@@ -202,11 +211,11 @@ npm run compile
 
 ## 工作原理
 
-这个扩展做的事情其实很朴素，主要分三步：
+这个扩展做的事情其实很朴素：
 
 1. 从本地 Cursor 存储里找出用户 ID，优先检查新的 `sentry` 路径。
 2. 从 Cursor 的 `state.vscdb` 中读取 `cursorAuth/accessToken`。
-3. 带着这两项信息去请求用量接口，再把结果渲染到状态栏。
+3. **并行**请求老用量、当前周期用量（含 USD / limit / API–Auto 分路）与 Stripe 会员信息，合并为一份快照后渲染状态栏与悬停卡片。
 
 请求形式如下：
 
@@ -299,11 +308,24 @@ cursor-usage-tracker/
 npm install
 npm run compile         # 用 esbuild 构建扩展
 npm run watch           # 监听变更自动重建
-npm test                # 编译并运行单元测试（38 个）
+npm test                # 编译并运行单元测试（40 个）
 npm run package         # 生成 .vsix
 ```
 
 ## 更新记录
+
+### 1.1.3
+
+- **变更：** 存在 `apiPercentUsed` 时状态栏**默认以 API 分路**为主；悬停卡片含 **Included pool** 与 **Total / Auto / API** 三组条形图；设置项说明已同步。
+- **文档：** 更新中英文 README（接口说明、阈值含义、悬停结构等）。
+
+### 1.1.2
+
+- **修复：** Ultra 等账号若接口不再返回 `planUsage.remaining`，用 `limit` 与 `totalPercentUsed`（及可选 `planUsage.used`）推算已用金额，避免出现 `$0.00` 与非零 total% 不一致。
+
+### 1.1.1
+
+- USD 悬停展示 API / Auto 分路占比（来自 Cursor 字段）。
 
 ### 1.1.0
 

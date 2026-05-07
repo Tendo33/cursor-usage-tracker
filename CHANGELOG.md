@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.1.3 — 2026-05-07
+
+### 变更
+
+- **USD 状态栏**：当接口返回 `planUsage.apiPercentUsed` 时，交通灯与 `percent` / `amount*` 模板默认以 **API 分路** 为准（金额为 `limit × API%` 折算到同一 included 额度分母上；无该字段时仍用 **total**）
+- **USD 悬停卡片**：**Included pool**（total 金额与 total%）+ **Total / Auto + Composer / API** 三组 ASCII 条形图；缺失分路占比时对应条图为 `—`
+- 设置项 `statusBarFormat` 的 enum 说明与行为对齐
+
+### 文档
+
+- 更新 `README.md` / `README_CN.md`：三接口说明、API 优先与阈值含义、悬停结构、测试数量
+
 ## 1.1.2 — 2026-05-07
 
 ### 修复

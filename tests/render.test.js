@@ -214,9 +214,10 @@ test('usd_credit: 无 remaining 时由 totalPercentUsed 反推已用金额（Ult
   assert.equal(snapshot.creditUsage.usedCents, 12000);
   assert.equal(snapshot.creditUsage.percentUsed, 30);
   const t = { caution: 40, warning: 70 };
+  // 有 apiPercentUsed 时状态栏默认走 API：86% → 红灯 + $344/$400
   assert.match(
     render.renderStatusBarText(snapshot, 'amount', t),
-    /^🟢 \$120\.00\/\$400$/,
+    /^🔴 \$344\.00\/\$400$/,
   );
 });
 
