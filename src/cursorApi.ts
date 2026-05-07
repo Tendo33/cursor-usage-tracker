@@ -297,21 +297,38 @@ function buildLegacyUsage(legacy: LegacyUsageRaw): LegacyRequestUsage {
 }
 
 function buildCreditUsage(usage: CurrentPeriodUsageRaw): CreditUsage | undefined {
-  const limit = typeof usage.planUsage.limit === 'number' && Number.isFinite(usage.planUsage.limit)
-    ? usage.planUsage.limit : undefined;
-  const remaining = typeof usage.planUsage.remaining === 'number'
-    ? usage.planUsage.remaining : undefined;
-  const used = (limit !== undefined && remaining !== undefined) ? limit - remaining : 0;
-  const percent = typeof usage.planUsage.totalPercentUsed === 'number' && Number.isFinite(usage.planUsage.totalPercentUsed)
-    ? usage.planUsage.totalPercentUsed
-    : (limit && limit > 0 ? Math.max(0, Math.min(100, (used / limit) * 100)) : 0);
-  const autoPercent = typeof usage.planUsage.autoPercentUsed === 'number'
-    && Number.isFinite(usage.planUsage.autoPercentUsed)
-    ? usage.planUsage.autoPercentUsed
+  const pu = usage.planUsage;
+  const limit = typeof pu.limit === 'number' && Number.isFinite(pu.limit)
+    ? pu.limit : undefined;
+  const remaining = typeof pu.remaining === 'number' && Number.isFinite(pu.remaining)
+    ? pu.remaining : undefined;
+  const explicitUsed = typeof pu.used === 'number' && Number.isFinite(pu.used)
+    ? pu.used : undefined;
+  const pctFromApi = typeof pu.totalPercentUsed === 'number' && Number.isFinite(pu.totalPercentUsed)
+    ? pu.totalPercentUsed
     : undefined;
-  const apiPercent = typeof usage.planUsage.apiPercentUsed === 'number'
-    && Number.isFinite(usage.planUsage.apiPercentUsed)
-    ? usage.planUsage.apiPercentUsed
+
+  // 已用量：优先服务端 used；否则 limit−remaining；若 Ultra 等套餐不再下发 remaining，
+  // 仅用 limit 与 totalPercentUsed 反推金额，避免 $0.00 与 30% 同时出现。
+  let usedCents = 0;
+  if (explicitUsed !== undefined) {
+    usedCents = explicitUsed;
+  } else if (limit !== undefined && remaining !== undefined) {
+    usedCents = limit - remaining;
+  } else if (limit !== undefined && limit > 0 && pctFromApi !== undefined) {
+    usedCents = Math.round((limit * pctFromApi) / 100);
+  }
+
+  const percent = pctFromApi !== undefined
+    ? pctFromApi
+    : (limit && limit > 0 ? Math.max(0, Math.min(100, (usedCents / limit) * 100)) : 0);
+  const autoPercent = typeof pu.autoPercentUsed === 'number'
+    && Number.isFinite(pu.autoPercentUsed)
+    ? pu.autoPercentUsed
+    : undefined;
+  const apiPercent = typeof pu.apiPercentUsed === 'number'
+    && Number.isFinite(pu.apiPercentUsed)
+    ? pu.apiPercentUsed
     : undefined;
   // 防御异常 timestamp（缺失/空串/非数字）：宁可不展示日期，也不让 UI 出现 ·NaNd
   const startMs = safeMs(usage.billingCycleStart);
@@ -319,7 +336,7 @@ function buildCreditUsage(usage: CurrentPeriodUsageRaw): CreditUsage | undefined
   const cycleStart = startMs !== undefined ? new Date(startMs) : new Date(0);
   const cycleEnd = endMs !== undefined ? new Date(endMs) : new Date(0);
   return {
-    usedCents: used,
+    usedCents: usedCents,
     limitCents: limit,
     percentUsed: percent,
     autoPercentUsed: autoPercent,

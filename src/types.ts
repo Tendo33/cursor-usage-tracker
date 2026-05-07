@@ -77,6 +77,8 @@ export interface CurrentPeriodUsageRaw {
   planUsage: {
     limit?: number;
     remaining?: number;
+    /** 若服务端直接给出已用量（分），优先于 limit-remaining */
+    used?: number;
     totalPercentUsed?: number;
     autoPercentUsed?: number;
     apiPercentUsed?: number;

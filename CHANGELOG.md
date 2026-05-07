@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.2 — 2026-05-07
+
+### 修复
+
+- **USD credit**：当 `GetCurrentPeriodUsage` 不再返回 `planUsage.remaining`（常见于 Ultra）时，用 `limit` 与 `totalPercentUsed` 反推已用金额，避免出现 `$0.00 / $400` 与百分比不一致
+- 支持可选字段 `planUsage.used`（分），若服务端提供则优先采用
+
 ## 1.1.1 — 2026-04-29
 
 ### 修复
