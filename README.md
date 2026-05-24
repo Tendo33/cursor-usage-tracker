@@ -8,7 +8,7 @@
 <p align="center">
   <a href="README_CN.md"><img src="https://img.shields.io/badge/README-%E4%B8%AD%E6%96%87-0F172A?style=for-the-badge" alt="Chinese README"></a>
   <img src="https://img.shields.io/badge/Platform-Cursor%20%7C%20VS%20Code-2563EB?style=for-the-badge&logo=visualstudiocode&logoColor=white" alt="Platform">
-  <img src="https://img.shields.io/badge/Version-1.1.0-16A34A?style=for-the-badge" alt="Version">
+  <img src="https://img.shields.io/badge/Version-1.1.4-16A34A?style=for-the-badge" alt="Version">
   <img src="https://img.shields.io/badge/License-MIT-EAB308?style=for-the-badge" alt="License">
   <img src="https://img.shields.io/badge/SQLite-2GiB%2B%20Fallback-7C3AED?style=for-the-badge" alt="Large SQLite fallback">
 </p>
@@ -23,7 +23,7 @@
 This project is for people who use Cursor heavily and keep checking whether they still have room in the month. Instead of opening logs, guessing, or waiting until requests start failing, you get a simple status bar indicator such as `🟢 120/500`, plus a hover card with requests, token usage, and the next reset date.
 
 > [!IMPORTANT]
-> This extension is not an official Cursor integration. It reads local Cursor data on your machine, then requests usage data from `https://cursor.com/api/usage`.
+> This extension is not an official Cursor integration. It reads local Cursor data on your machine, then requests usage from Cursor endpoints (legacy `GET https://cursor.com/api/usage`, newer `POST https://api2.cursor.sh/.../GetCurrentPeriodUsage`, plus `GET https://cursor.com/api/auth/stripe` for plan metadata).
 
 ## Contents
 
@@ -50,6 +50,10 @@ This project is for people who use Cursor heavily and keep checking whether they
   - [Project structure](#project-structure)
   - [Development](#development)
   - [Changelog](#changelog)
+    - [1.1.4](#114)
+    - [1.1.3](#113)
+    - [1.1.2](#112)
+    - [1.1.1](#111)
     - [1.1.0](#110)
     - [1.0.3](#103)
     - [1.0.2](#102)
@@ -70,7 +74,7 @@ It is also built for the less pleasant edge case that shows up on long-lived mac
 ## Highlights
 
 - Status bar usage indicator with traffic-light levels
-- Hover tooltip with requests, token usage, and reset time
+- Hover tooltip with usage breakdown, reset time, and (for USD) Total / Auto / API bar lines
 - Automatic refresh every 5 minutes by default
 - Local user ID discovery across Windows, macOS, and Linux paths
 - Automatic access token lookup from Cursor's SQLite storage
@@ -90,15 +94,17 @@ This extension automatically detects which Cursor billing model your account is 
 
 ### USD Credit Model (new accounts, migrated late 2025)
 
-| Plan | Example |
+| Plan | Example (status bar `amount`, typical) |
 |---|---|
 | Free | `🔵 Free` |
-| Pro ($20/mo) | `🟢 $0.00/$20` |
+| Pro ($20/mo) | `🟢 $0.00/$20` (total; no API split in payload → same as before) |
 | Pro+ ($60/mo, $70 included) | `🟢 $0.00/$70` |
-| Ultra ($200/mo, $400 included) | `🟢 $0.00/$400` |
+| Ultra ($200/mo, $400 included) | With **API split** from Cursor: e.g. `🔴 $344.00/$400` when API usage is **86%** (traffic light uses **API %**). Without `apiPercentUsed`, falls back to **total** (e.g. `🟢 $42.30/$400` at ~11% total). |
 | Team member (personal view) | `🟢 $0.00/$XX` |
 
 > "Legacy-first" strategy: if the legacy API still returns valid request counts (`maxRequestUsage > 0`), the extension prefers the request-count display; otherwise it falls back to USD credit. Existing users see zero behavior change.
+
+> **API dollar amount** on the status bar is `included_limit × (apiPercentUsed / 100)` when Cursor sends `apiPercentUsed`. It is a **linear attribution to the same included cap** as the denominator, not a separate invoice line—use the dashboard for billing detail if numbers diverge slightly.
 
 > Data comes from the same internal endpoints as the Cursor web dashboard. They are unofficial and subject to change.
 
@@ -106,10 +112,12 @@ This extension automatically detects which Cursor billing model your account is 
 
 Configure `cursorUsageTracker.statusBarFormat` (4 templates):
 
-- `percent` — percentage only (e.g. `🟢 11%`, works for both models)
-- `amount` (default) — dollar amount or request count (USD accounts `🟢 $42.30/$400`, legacy `🟢 0/500`)
-- `amount_with_reset` — adds reset countdown (`🟢 $42.30/$400 ·7d`)
-- `amount_with_plan` — adds plan name (`🟢 Ultra $42.30/$400`)
+- `percent` — percentage only. USD: **API %** when `apiPercentUsed` exists, otherwise **total %** (e.g. `🟢 11%` or `🔴 86%`)
+- `amount` (default) — dollar amount or request count. USD: **API-attributed dollars / same included cap** when API split exists; otherwise **total used / cap** (e.g. `🟢 $42.30/$400`, legacy `🟢 0/500`)
+- `amount_with_reset` — same as `amount` plus reset countdown (`🟢 $42.30/$400 ·7d`)
+- `amount_with_plan` — same as `amount` plus plan name (`🟢 Ultra $42.30/$400`)
+
+Traffic-light thresholds (`cautionThreshold` / `warningThreshold`) apply to the **same percentage** shown in the status bar (API % when API split is present, else total %).
 
 ## Quick start
 
@@ -155,8 +163,9 @@ After the extension starts, the status bar may show one of the following states:
 
 **New accounts (USD credit model):**
 
-- `🟢 $42.30/$400`: Ultra user, low-mid usage
-- `🟡 $14.00/$20`: Pro user approaching caution
+- `🟢 $42.30/$400`: Ultra (or similar) when only **total** breakdown is available—same style as before
+- `🔴 $344.00/$400`: Ultra when Cursor sends **API** usage (e.g. 86% of the included pool—red if above your `warningThreshold`)
+- `🟡 $14.00/$20`: Pro user approaching caution (total-based if no API split)
 - `🔴 $18.00/$20`: Pro user near warning
 - `🔵 Free`: Free tier (no fixed limit)
 
@@ -171,8 +180,8 @@ After the extension starts, the status bar may show one of the following states:
 Hovering the item shows a compact summary with:
 
 - Plan name + subscription status (active / trialing / cancelled / past_due)
-- Used / limit / percent + a small progress bar
-- Current cycle start–end + days until reset
+- **USD credit:** monospace `text` block with **Included pool** (`$used / $cap`, **total %**) when a cap exists, then **Total / Auto + Composer / API** (padded titles + 24-char ASCII bars). Missing split fields show `—` on the bar line. **Renews:** cycle end date only (no range or day countdown).
+- **Legacy request count:** used / max / percent + one progress bar; **Renews:** cycle end date only
 - Prepaid balance (if any)
 - Warnings (over_limit / payment_failed / pending_cancellation / trialing)
 
@@ -202,11 +211,11 @@ Example:
 
 ## How it works
 
-The extension does three practical things:
+The extension does these practical things:
 
 1. It looks for your Cursor user ID in local storage files, with the newer `sentry` paths checked first.
 2. It reads `cursorAuth/accessToken` from Cursor's `state.vscdb`.
-3. It calls the usage endpoint and renders the result in the status bar.
+3. It calls **legacy usage**, **current-period usage** (USD / limits / API–Auto split), and **Stripe membership** in parallel, then merges into one snapshot for the status bar and tooltip.
 
 Request shape:
 
@@ -299,11 +308,29 @@ Useful commands:
 npm install
 npm run compile         # build extension via esbuild
 npm run watch           # rebuild on change
-npm test                # compile + run unit tests (38 tests)
+npm test                # compile + run unit tests (40 tests)
 npm run package         # produce .vsix
 ```
 
 ## Changelog
+
+### 1.1.4
+
+- **Change:** Tooltip polish—remove billing-model footer; **Renews** shows cycle end date only; USD usage in a monospace `text` block with **24-char** bars and padded row labels; legacy tooltip uses the same bar width and **Renews** line.
+- **Docs:** README / README_CN updated for the new hover layout.
+
+### 1.1.3
+
+- **Change:** When `apiPercentUsed` is present, the status bar **defaults to the API rail** (percent, attributed dollars, traffic light). Tooltip adds **Included pool** plus **Total / Auto + Composer / API** ASCII bars; settings enum descriptions updated.
+- **Docs:** README / README_CN aligned with behavior (endpoints, thresholds, hover layout).
+
+### 1.1.2
+
+- **Fix:** USD accounts where `planUsage.remaining` is missing (common on Ultra)—derive used cents from `limit` and `totalPercentUsed` (and honor optional `planUsage.used` when present) so the status bar never shows `$0.00` with a non-zero total percent.
+
+### 1.1.1
+
+- USD tooltip shows API vs Auto breakdown percentages from Cursor.
 
 ### 1.1.0
 

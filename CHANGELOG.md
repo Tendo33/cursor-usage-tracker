@@ -1,5 +1,44 @@
 # Changelog
 
+## 1.1.4 — 2026-05-08
+
+### 变更
+
+- **悬停卡片**：移除底部 `Billing model` 行；周期改为 **`Renews:`** 仅展示**周期结束日**（去掉起止区间与「还剩几天」）
+- **USD 用量块**：Markdown 等宽 fenced `text` 代码块内展示 Included pool 与 Total / Auto / API；条形默认 **24 格**；标题列左填充对齐
+- **Legacy 悬停**：进度条与 USD 一致使用加长条形；周期同 **Renews** 单行
+
+### 文档
+
+- README / README_CN：与上述悬停行为一致
+
+## 1.1.3 — 2026-05-07
+
+### 变更
+
+- **USD 状态栏**：当接口返回 `planUsage.apiPercentUsed` 时，交通灯与 `percent` / `amount*` 模板默认以 **API 分路** 为准（金额为 `limit × API%` 折算到同一 included 额度分母上；无该字段时仍用 **total**）
+- **USD 悬停卡片**：**Included pool**（total 金额与 total%）+ **Total / Auto + Composer / API** 三组 ASCII 条形图；缺失分路占比时对应条图为 `—`
+- 设置项 `statusBarFormat` 的 enum 说明与行为对齐
+
+### 文档
+
+- 更新 `README.md` / `README_CN.md`：三接口说明、API 优先与阈值含义、悬停结构、测试数量
+
+## 1.1.2 — 2026-05-07
+
+### 修复
+
+- **USD credit**：当 `GetCurrentPeriodUsage` 不再返回 `planUsage.remaining`（常见于 Ultra）时，用 `limit` 与 `totalPercentUsed` 反推已用金额，避免出现 `$0.00 / $400` 与百分比不一致
+- 支持可选字段 `planUsage.used`（分），若服务端提供则优先采用
+
+## 1.1.1 — 2026-04-29
+
+### 修复
+
+- USD credit tooltip 新增分路占比展示：`API xx% · Auto xx%`
+- 保留并透传 Cursor `planUsage.autoPercentUsed` / `planUsage.apiPercentUsed`
+- 补充测试，确保 total / api / auto 占比字段被正确写入 snapshot
+
 ## 1.1.0 — 2026-04-24
 
 ### 新增

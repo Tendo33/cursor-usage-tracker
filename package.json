@@ -2,7 +2,7 @@
   "name": "cursor-usage-tracker",
   "displayName": "Cursor Usage Tracker",
   "description": "Show your Cursor quota in the status bar (dual-track: legacy 500-requests + new USD credit, auto account detection).",
-  "version": "1.1.0",
+  "version": "1.1.4",
   "publisher": "SimonSun",
   "license": "MIT",
   "icon": "assets/icon.png",
@@ -55,12 +55,17 @@
         },
         "cursorUsageTracker.statusBarFormat": {
           "type": "string",
-          "enum": ["percent", "amount", "amount_with_reset", "amount_with_plan"],
+          "enum": [
+            "percent",
+            "amount",
+            "amount_with_reset",
+            "amount_with_plan"
+          ],
           "enumDescriptions": [
-            "仅百分比，例如 🟢 11%",
-            "金额或次数，例如 🟢 $42.30/$400 或 🟢 0/500 (默认)",
-            "金额/次数 + 周期重置倒计时，例如 🟢 $42.30/$400 ·7d",
-            "金额/次数 + 计划名，例如 🟢 Ultra $42.30/$400"
+            "仅百分比；USD 含 API 分路时默认显示 API%，否则 total%",
+            "金额或次数；USD 含 API 分路时默认 API 折算金额/额度，否则总额。例 🟢 $344/$400 或 🟢 0/500",
+            "同上 + 周期重置倒计时，例如 🟢 $344/$400 ·7d",
+            "同上 + 计划名，例如 🟢 Ultra $344/$400"
           ],
           "default": "amount",
           "description": "状态栏显示格式（双轨制：自动按账号选金额或次数）"

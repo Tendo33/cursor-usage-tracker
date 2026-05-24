@@ -162,6 +162,65 @@ test('regression: 非法 billingCycleStart 不应产生 NaN cycleEnd / ·NaNd', 
     `cycleEnd should be finite, got ${snapshot.creditUsage.cycleEnd}`);
 });
 
+test('usd_credit: 保留 Cursor 返回的 API/Auto 分路占比', () => {
+  const api = load('cursorApi');
+  const snapshot = api.mergeIntoSnapshot(
+    { ok: false, reason: 'http', message: '' },
+    { ok: true, data: {
+      billingCycleStart: '1776986902000',
+      billingCycleEnd: '1779578902000',
+      planUsage: {
+        limit: 40000,
+        remaining: 5179,
+        totalPercentUsed: 23,
+        autoPercentUsed: 1,
+        apiPercentUsed: 69,
+      },
+    } },
+    { ok: true, data: {
+      membershipType: 'ultra', individualMembershipType: 'ultra',
+      subscriptionStatus: 'active', isTeamMember: false, isYearlyPlan: false,
+      customerBalance: 0, pendingCancellationDate: null, lastPaymentFailed: false,
+    } },
+  );
+  assert.ok(snapshot.creditUsage);
+  assert.equal(snapshot.creditUsage.percentUsed, 23);
+  assert.equal(snapshot.creditUsage.autoPercentUsed, 1);
+  assert.equal(snapshot.creditUsage.apiPercentUsed, 69);
+});
+
+test('usd_credit: 无 remaining 时由 totalPercentUsed 反推已用金额（Ultra 等接口缺省）', () => {
+  const api = load('cursorApi');
+  const render = load('render');
+  const snapshot = api.mergeIntoSnapshot(
+    { ok: false, reason: 'http', message: '' },
+    { ok: true, data: {
+      billingCycleStart: '1776986902000',
+      billingCycleEnd: '1779578902000',
+      planUsage: {
+        limit: 40000,
+        totalPercentUsed: 30,
+        autoPercentUsed: 2,
+        apiPercentUsed: 86,
+      },
+    } },
+    { ok: true, data: {
+      membershipType: 'ultra', individualMembershipType: 'ultra',
+      subscriptionStatus: 'active', isTeamMember: false, isYearlyPlan: false,
+      customerBalance: 0, pendingCancellationDate: null, lastPaymentFailed: false,
+    } },
+  );
+  assert.ok(snapshot.creditUsage);
+  assert.equal(snapshot.creditUsage.usedCents, 12000);
+  assert.equal(snapshot.creditUsage.percentUsed, 30);
+  const t = { caution: 40, warning: 70 };
+  // 有 apiPercentUsed 时状态栏默认走 API：86% → 红灯 + $344/$400
+  assert.match(
+    render.renderStatusBarText(snapshot, 'amount', t),
+    /^🔴 \$344\.00\/\$400$/,
+  );
+});
+
 test('warning: payment_failed 触发条件 — stripe.lastPaymentFailed=true', () => {
   const api = load('cursorApi');
   const snapshot = api.mergeIntoSnapshot(

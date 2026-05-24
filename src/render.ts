@@ -30,6 +30,59 @@ function daysUntil(date: Date): number {
   return Math.max(0, Math.ceil((t - Date.now()) / 86400000));
 }
 
+/** Tooltip 内 ASCII 条宽度（字符格） */
+export const TOOLTIP_ASCII_BAR_SEGMENTS = 24;
+
+/** 纯文本条形 `[###---] 30%`（用于等宽 code 块内排版） */
+export function asciiUsageBarPlain(
+  percent: number | undefined,
+  segments: number = TOOLTIP_ASCII_BAR_SEGMENTS,
+): string {
+  const w = Math.max(4, Math.min(40, Math.floor(segments)));
+  if (percent == null || !Number.isFinite(percent)) {
+    return `[${'-'.repeat(w)}] —`;
+  }
+  const label = `${Math.round(percent)}%`;
+  const forFill = Math.min(100, Math.max(0, percent));
+  const filled = Math.min(w, Math.max(0, Math.round((forFill / 100) * w)));
+  const bar = '#'.repeat(filled) + '-'.repeat(w - filled);
+  return `[${bar}] ${label}`;
+}
+
+/** Markdown 一行：内联代码包裹的条形（老接口 tooltip 等） */
+export function asciiUsageBarLine(
+  percent: number | undefined,
+  segments: number = TOOLTIP_ASCII_BAR_SEGMENTS,
+): string {
+  return `\`${asciiUsageBarPlain(percent, segments)}\``;
+}
+
+/**
+ * USD 状态栏主指标：若 Cursor 返回 API 分路占比，则默认按 API（占比 + 折算金额）展示；
+ * 否则退回 total（与旧版一致）。
+ */
+function usdStatusBarPrimary(u: NonNullable<AccountSnapshot['creditUsage']>): {
+  trafficPercent: number | undefined;
+  usedDisplayCents: number;
+  statusPercentLabel: number;
+} {
+  const limit = u.limitCents;
+  const hasLimit = typeof limit === 'number' && limit > 0;
+  const api = u.apiPercentUsed;
+  if (hasLimit && typeof api === 'number' && Number.isFinite(api)) {
+    return {
+      trafficPercent: api,
+      usedDisplayCents: Math.round((limit * api) / 100),
+      statusPercentLabel: Math.round(api),
+    };
+  }
+  return {
+    trafficPercent: hasLimit ? u.percentUsed : undefined,
+    usedDisplayCents: u.usedCents,
+    statusPercentLabel: Math.round(u.percentUsed),
+  };
+}
+
 function renderRequestCount(s: AccountSnapshot, format: StatusBarFormat, t: Thresholds): string {
   const u = s.legacyRequestUsage!;
   const icon = trafficLight(u.percentUsed, t);
@@ -45,25 +98,30 @@ function renderUsdCredit(s: AccountSnapshot, format: StatusBarFormat, t: Thresho
   const u = s.creditUsage;
   const limit = u?.limitCents;
   const hasLimit = typeof limit === 'number' && limit > 0;
-  const icon = trafficLight(hasLimit ? u?.percentUsed : undefined, t);
+  const primary = u && hasLimit ? usdStatusBarPrimary(u) : null;
+  const icon = trafficLight(primary?.trafficPercent, t);
   const fallbackText = `${icon} ${s.plan.label}`;
   switch (format) {
     case 'percent': {
       if (!hasLimit || u == null) return fallbackText;
-      return `${icon} ${Math.round(u.percentUsed)}%`;
+      return `${icon} ${primary!.statusPercentLabel}%`;
     }
     case 'amount': {
-      if (u && hasLimit) return `${icon} ${formatDollars(u.usedCents)}/${formatDollarsTrim(limit!)}`;
+      if (u && hasLimit && primary) {
+        return `${icon} ${formatDollars(primary.usedDisplayCents)}/${formatDollarsTrim(limit!)}`;
+      }
       return fallbackText;
     }
     case 'amount_with_reset': {
-      if (u && hasLimit) {
-        return `${icon} ${formatDollars(u.usedCents)}/${formatDollarsTrim(limit!)} \u00B7${daysUntil(u.cycleEnd)}d`;
+      if (u && hasLimit && primary) {
+        return `${icon} ${formatDollars(primary.usedDisplayCents)}/${formatDollarsTrim(limit!)} \u00B7${daysUntil(u.cycleEnd)}d`;
       }
       return fallbackText;
     }
     case 'amount_with_plan': {
-      if (u && hasLimit) return `${icon} ${s.plan.label} ${formatDollars(u.usedCents)}/${formatDollarsTrim(limit!)}`;
+      if (u && hasLimit && primary) {
+        return `${icon} ${s.plan.label} ${formatDollars(primary.usedDisplayCents)}/${formatDollarsTrim(limit!)}`;
+      }
       return fallbackText;
     }
   }
