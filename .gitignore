@@ -1,4 +1,4 @@
-# Nestjs specific
+# Build outputs and dependencies
 /dist
 /node_modules
 /build
@@ -23,3 +23,18 @@ lerna-debug.log*
 .temp
 .tmp
 .history
+
+# git worktrees (isolated dev workspaces)
+.worktrees/
+
+# tsc test build output
+out-tests/
+
+# esbuild output (built via npm run package:prod / vscode:prepublish)
+out/
+
+# vsce packaging artifacts
+*.vsix
+
+# internal brainstorming docs (kept locally, not for the repo)
+docs/superpowers/

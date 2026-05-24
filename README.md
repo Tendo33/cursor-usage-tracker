@@ -8,7 +8,7 @@
 <p align="center">
   <a href="README_CN.md"><img src="https://img.shields.io/badge/README-%E4%B8%AD%E6%96%87-0F172A?style=for-the-badge" alt="Chinese README"></a>
   <img src="https://img.shields.io/badge/Platform-Cursor%20%7C%20VS%20Code-2563EB?style=for-the-badge&logo=visualstudiocode&logoColor=white" alt="Platform">
-  <img src="https://img.shields.io/badge/Version-1.0.3-16A34A?style=for-the-badge" alt="Version">
+  <img src="https://img.shields.io/badge/Version-1.1.0-16A34A?style=for-the-badge" alt="Version">
   <img src="https://img.shields.io/badge/License-MIT-EAB308?style=for-the-badge" alt="License">
   <img src="https://img.shields.io/badge/SQLite-2GiB%2B%20Fallback-7C3AED?style=for-the-badge" alt="Large SQLite fallback">
 </p>
@@ -32,6 +32,8 @@ This project is for people who use Cursor heavily and keep checking whether they
   - [Screenshots](#screenshots)
   - [Why this exists](#why-this-exists)
   - [Highlights](#highlights)
+  - [Supported Plans (Dual Track)](#supported-plans-dual-track)
+  - [Status Bar Formats](#status-bar-formats)
   - [Quick start](#quick-start)
     - [Option 1: install from VSIX](#option-1-install-from-vsix)
     - [Option 2: run in development mode](#option-2-run-in-development-mode)
@@ -48,6 +50,7 @@ This project is for people who use Cursor heavily and keep checking whether they
   - [Project structure](#project-structure)
   - [Development](#development)
   - [Changelog](#changelog)
+    - [1.1.0](#110)
     - [1.0.3](#103)
     - [1.0.2](#102)
     - [1.0.1](#101)
@@ -73,6 +76,40 @@ It is also built for the less pleasant edge case that shows up on long-lived mac
 - Automatic access token lookup from Cursor's SQLite storage
 - Large database fallback for `state.vscdb >= 2 GiB`
 - Simple settings, no extra service or dashboard required
+
+## Supported Plans (Dual Track)
+
+This extension automatically detects which Cursor billing model your account is on and displays accordingly:
+
+### Request Count Model (legacy, 500/2000 req/month)
+
+| Plan | Example |
+|---|---|
+| Legacy Pro | `🟢 0/500` |
+| Legacy Business | `🟡 1200/2000` |
+
+### USD Credit Model (new accounts, migrated late 2025)
+
+| Plan | Example |
+|---|---|
+| Free | `🔵 Free` |
+| Pro ($20/mo) | `🟢 $0.00/$20` |
+| Pro+ ($60/mo, $70 included) | `🟢 $0.00/$70` |
+| Ultra ($200/mo, $400 included) | `🟢 $0.00/$400` |
+| Team member (personal view) | `🟢 $0.00/$XX` |
+
+> "Legacy-first" strategy: if the legacy API still returns valid request counts (`maxRequestUsage > 0`), the extension prefers the request-count display; otherwise it falls back to USD credit. Existing users see zero behavior change.
+
+> Data comes from the same internal endpoints as the Cursor web dashboard. They are unofficial and subject to change.
+
+## Status Bar Formats
+
+Configure `cursorUsageTracker.statusBarFormat` (4 templates):
+
+- `percent` — percentage only (e.g. `🟢 11%`, works for both models)
+- `amount` (default) — dollar amount or request count (USD accounts `🟢 $42.30/$400`, legacy `🟢 0/500`)
+- `amount_with_reset` — adds reset countdown (`🟢 $42.30/$400 ·7d`)
+- `amount_with_plan` — adds plan name (`🟢 Ultra $42.30/$400`)
 
 ## Quick start
 
@@ -110,19 +147,34 @@ Then press `F5` in VS Code or Cursor to launch an Extension Development Host.
 
 After the extension starts, the status bar may show one of the following states:
 
+**Legacy accounts (request count model):**
+
 - `🟢 120/500`: low usage
 - `🟡 260/500`: medium usage
 - `🔴 410/500`: high usage
+
+**New accounts (USD credit model):**
+
+- `🟢 $42.30/$400`: Ultra user, low-mid usage
+- `🟡 $14.00/$20`: Pro user approaching caution
+- `🔴 $18.00/$20`: Pro user near warning
+- `🔵 Free`: Free tier (no fixed limit)
+
+**Common states:**
+
 - `$(sync~spin) Loading...`: fetching data
 - `$(warning) No ID`: user ID could not be found locally
-- `$(error) Failed`: the API request failed
+- `$(warning) Re-login`: session expired, please log into Cursor again
+- `$(warning) Network`: all APIs failed, check the logs
+- Trailing ` …`: some endpoints failed but other data is still rendered
 
 Hovering the item shows a compact summary with:
 
-- used requests
-- total request limit
-- token usage in millions
-- estimated days until reset
+- Plan name + subscription status (active / trialing / cancelled / past_due)
+- Used / limit / percent + a small progress bar
+- Current cycle start–end + days until reset
+- Prepaid balance (if any)
+- Warnings (over_limit / payment_failed / pending_cancellation / trialing)
 
 ## Configuration
 
@@ -130,13 +182,21 @@ Hovering the item shows a compact summary with:
 | --- | --- | --- | --- |
 | `cursorUsageTracker.refreshInterval` | `number` | `300` | Auto refresh interval in seconds |
 | `cursorUsageTracker.showInStatusBar` | `boolean` | `true` | Whether to show the indicator in the status bar |
+| `cursorUsageTracker.statusBarFormat` | `string` | `amount` | Status bar template, one of `percent` / `amount` / `amount_with_reset` / `amount_with_plan` |
+| `cursorUsageTracker.cautionThreshold` | `number` | `40` | Caution threshold in percent; usage at or above shows yellow |
+| `cursorUsageTracker.warningThreshold` | `number` | `70` | Warning threshold in percent; usage at or above shows red |
+| `cursorUsageTracker.showOverLimitToast` | `boolean` | `false` | Show a system toast when usage exceeds the limit (off by default) |
 
 Example:
 
 ```json
 {
   "cursorUsageTracker.refreshInterval": 180,
-  "cursorUsageTracker.showInStatusBar": true
+  "cursorUsageTracker.showInStatusBar": true,
+  "cursorUsageTracker.statusBarFormat": "amount_with_plan",
+  "cursorUsageTracker.cautionThreshold": 50,
+  "cursorUsageTracker.warningThreshold": 80,
+  "cursorUsageTracker.showOverLimitToast": true
 }
 ```
 
@@ -210,16 +270,25 @@ If none of them exists, install Python 3 and refresh again.
 
 ```text
 cursor-usage-tracker/
-├── README.md
-├── README_CN.md
+├── README.md / README_CN.md / CHANGELOG.md
 ├── src/
-│   ├── extension.ts
+│   ├── extension.ts        # vscode entry: status bar + config + scheduler
+│   ├── auth.ts             # userId / accessToken / cookie extraction
+│   ├── cursorApi.ts        # 3 API clients + retry + mergeIntoSnapshot
+│   ├── render.ts           # pure status-bar render (dual model × 4 templates)
+│   ├── types.ts            # AccountSnapshot etc. type definitions
 │   └── sql.js.d.ts
-├── out/
+├── tests/
+│   ├── auth.test.js
+│   ├── cursorApi.{legacy,fetch,stripe,retry}.test.js
+│   ├── render.test.js
+│   └── fixtures/           # USD + legacy account samples
+├── out/                    # esbuild output
+├── out-tests/              # tsc test output
 ├── esbuild.mjs
+├── tsconfig.json / tsconfig.test.json
 ├── package.json
-├── test-api.js
-└── icon.png
+└── assets/
 ```
 
 ## Development
@@ -228,20 +297,22 @@ Useful commands:
 
 ```bash
 npm install
-npm run compile
-npm run watch
-npm run package
+npm run compile         # build extension via esbuild
+npm run watch           # rebuild on change
+npm test                # compile + run unit tests (38 tests)
+npm run package         # produce .vsix
 ```
-
-There is also a local helper script:
-
-```bash
-node test-api.js
-```
-
-It is useful when you want to inspect user ID discovery, token loading, and the raw API call outside the editor extension runtime.
 
 ## Changelog
+
+### 1.1.0
+
+- Dual-track support: handles both the legacy "request count" model and the new "USD credit" model, with automatic account detection
+- Four status bar templates (percent / amount / amount_with_reset / amount_with_plan)
+- Configurable thresholds (warningThreshold / cautionThreshold) and an opt-in over-limit toast
+- Three endpoints called in parallel + automatic 401 retry + `…` suffix for partial data
+- Code split into `auth.ts` / `cursorApi.ts` / `render.ts` / `extension.ts` / `types.ts`
+- **No behavior change for existing users**: the "legacy-first" strategy preserves the v1.0.x experience
 
 ### 1.0.3
 
