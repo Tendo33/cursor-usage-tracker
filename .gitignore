@@ -38,3 +38,6 @@ out/
 
 # internal brainstorming docs (kept locally, not for the repo)
 docs/superpowers/
+
+# macOS
+.DS_Store
