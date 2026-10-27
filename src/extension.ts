@@ -62,7 +62,28 @@ function readConfig() {
   };
 }
 
-async function refreshUsage() {
+let refreshInFlight: Promise<void> | null = null;
+
+/**
+ * Single-flight wrapper: the timer, config changes and the manual command can
+ * all trigger a refresh. Without this, overlapping runs could finish out of
+ * order (an older, slower response overwriting a newer one), and any thrown
+ * error became an unhandled rejection that left the bar stuck on "Loading...".
+ */
+function refreshUsage(): Promise<void> {
+  if (refreshInFlight) return refreshInFlight;
+  refreshInFlight = doRefreshUsage()
+    .catch((err) => {
+      log(`Refresh failed: ${err instanceof Error ? err.message : String(err)}`);
+      setErrorState('Error', 'Refresh failed, click for logs');
+    })
+    .finally(() => {
+      refreshInFlight = null;
+    });
+  return refreshInFlight;
+}
+
+async function doRefreshUsage() {
   log('========== Starting refresh ==========');
   const config = readConfig();
   if (!config.showInStatusBar) {
