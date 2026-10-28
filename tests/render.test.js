@@ -296,3 +296,19 @@ test('prepaidBalanceCents: stripe.customerBalance 为负 → 取绝对值作为�
   );
   assert.equal(snapshot.prepaidBalanceCents, 5000);
 });
+
+test('normalizeRefreshSeconds enforces a 30s minimum', () => {
+  const render = load('render');
+  assert.equal(render.normalizeRefreshSeconds(0), 30);
+  assert.equal(render.normalizeRefreshSeconds(-5), 30);
+  assert.equal(render.normalizeRefreshSeconds(Number.NaN), 300);
+  assert.equal(render.normalizeRefreshSeconds(undefined), 300);
+  assert.equal(render.normalizeRefreshSeconds(120), 120);
+});
+
+test('normalizeThresholds clamps and orders caution <= warning', () => {
+  const render = load('render');
+  assert.deepEqual(render.normalizeThresholds(40, 70), { caution: 40, warning: 70 });
+  assert.deepEqual(render.normalizeThresholds(80, 50), { caution: 50, warning: 80 });
+  assert.deepEqual(render.normalizeThresholds(-10, 150), { caution: 0, warning: 100 });
+});

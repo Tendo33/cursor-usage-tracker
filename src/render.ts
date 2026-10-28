@@ -142,3 +142,20 @@ export function renderStatusBarText(
     case 'unknown':       return renderUnknown(snapshot, format, thresholds);
   }
 }
+
+/** Minimum auto-refresh interval in seconds, to avoid hammering Cursor's API. */
+export const MIN_REFRESH_SECONDS = 30;
+
+export function normalizeRefreshSeconds(value: unknown, fallback = 300): number {
+  const n = typeof value === 'number' && Number.isFinite(value) ? value : fallback;
+  return Math.max(MIN_REFRESH_SECONDS, Math.round(n));
+}
+
+/** Clamp thresholds to 0-100 and make sure caution <= warning. */
+export function normalizeThresholds(caution: unknown, warning: unknown): Thresholds {
+  const clamp = (v: unknown, d: number) =>
+    Math.min(100, Math.max(0, typeof v === 'number' && Number.isFinite(v) ? v : d));
+  const c = clamp(caution, 40);
+  const w = clamp(warning, 70);
+  return c <= w ? { caution: c, warning: w } : { caution: w, warning: c };
+}
