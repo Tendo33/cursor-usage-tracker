@@ -1,7 +1,14 @@
 ﻿import * as vscode from 'vscode';
 import { getUserId, getAccessToken, clearCachedAccessToken } from './auth';
 import { fetchAccountSnapshot } from './cursorApi';
-import { asciiUsageBarLine, asciiUsageBarPlain, renderStatusBarText, type StatusBarFormat, type Thresholds } from './render';
+import {
+  asciiUsageBarLine,
+  asciiUsageBarPlain,
+  normalizeRefreshSeconds,
+  normalizeThresholds,
+  renderStatusBarText,
+  type StatusBarFormat,
+} from './render';
 import type { AccountSnapshot } from './types';
 
 let statusBarItem: vscode.StatusBarItem;
@@ -23,12 +30,15 @@ export function activate(context: vscode.ExtensionContext) {
   refreshUsage();
   setupAutoRefresh();
 
-  vscode.workspace.onDidChangeConfiguration((e) => {
-    if (e.affectsConfiguration('cursorUsageTracker')) {
-      setupAutoRefresh();
-      refreshUsage();
-    }
-  });
+  context.subscriptions.push(
+    vscode.workspace.onDidChangeConfiguration((e) => {
+      if (e.affectsConfiguration('cursorUsageTracker')) {
+        setupAutoRefresh();
+        refreshUsage();
+      }
+    }),
+    { dispose: () => { if (refreshInterval) clearInterval(refreshInterval); } },
+  );
 }
 
 function ensureOutputChannel(): vscode.OutputChannel {
@@ -45,7 +55,7 @@ function log(message: string) {
 function setupAutoRefresh() {
   if (refreshInterval) clearInterval(refreshInterval);
   const cfg = vscode.workspace.getConfiguration('cursorUsageTracker');
-  const interval = cfg.get<number>('refreshInterval', 300) * 1000;
+  const interval = normalizeRefreshSeconds(cfg.get<number>('refreshInterval', 300)) * 1000;
   refreshInterval = setInterval(() => refreshUsage(), interval);
 }
 
@@ -54,10 +64,10 @@ function readConfig() {
   return {
     showInStatusBar: cfg.get<boolean>('showInStatusBar', true),
     format: cfg.get<StatusBarFormat>('statusBarFormat', 'amount'),
-    thresholds: {
-      caution: cfg.get<number>('cautionThreshold', 40),
-      warning: cfg.get<number>('warningThreshold', 70),
-    } as Thresholds,
+    thresholds: normalizeThresholds(
+      cfg.get<number>('cautionThreshold', 40),
+      cfg.get<number>('warningThreshold', 70),
+    ),
     showOverLimitToast: cfg.get<boolean>('showOverLimitToast', false),
   };
 }
@@ -90,7 +100,10 @@ async function doRefreshUsage() {
     statusBarItem.hide();
     return;
   }
-  statusBarItem.text = '$(sync~spin) Loading...';
+  // Only show the spinner on the very first load; afterwards keep the last value visible
+  if (!lastGood) {
+    statusBarItem.text = '$(sync~spin) Loading...';
+  }
   statusBarItem.show();
 
   const userId = await getUserId(log);
@@ -120,11 +133,32 @@ async function doRefreshUsage() {
   log(`========== Refresh completed (model=${snapshot.billingModel}, plan=${snapshot.plan.tier}) ==========`);
 }
 
+const OWN_COMMANDS = ['cursor-usage-tracker.refresh', 'cursor-usage-tracker.showLogs'];
+
+let lastGood: { text: string; snapshot: AccountSnapshot; at: Date } | null = null;
+
 function setErrorState(text: string, tip: string) {
-  statusBarItem.text = `$(warning) ${text}`;
-  statusBarItem.tooltip = tip;
-  statusBarItem.command = 'cursor-usage-tracker.showLogs';
+  if (lastGood) {
+    // Keep the last good numbers instead of wiping them out on a transient failure
+    statusBarItem.text = `${lastGood.text} $(warning)`;
+    statusBarItem.tooltip = buildTooltip(lastGood.snapshot, lastGood.at, `${text}: ${tip}`);
+  } else {
+    statusBarItem.text = `$(warning) ${text}`;
+    statusBarItem.tooltip = tooltipWithActions(new vscode.MarkdownString(`${tip}\n\n`));
+  }
+  statusBarItem.command = 'cursor-usage-tracker.refresh';
   statusBarItem.show();
+}
+
+function tooltipWithActions(md: vscode.MarkdownString): vscode.MarkdownString {
+  md.isTrusted = { enabledCommands: OWN_COMMANDS };
+  md.supportThemeIcons = true;
+  md.appendMarkdown(
+    '[$(refresh) Refresh](command:cursor-usage-tracker.refresh) \u00B7 '
+    + '[$(output) Logs](command:cursor-usage-tracker.showLogs) \u00B7 '
+    + '[$(link-external) Dashboard](https://cursor.com/dashboard)',
+  );
+  return md;
 }
 
 let lastOverLimitToastFor: number | null = null;
@@ -149,9 +183,11 @@ function applySnapshot(snapshot: AccountSnapshot, config: ReturnType<typeof read
   if (someFailed && snapshot.billingModel !== 'unknown') {
     text += ' \u2026';
   }
+  const now = new Date();
+  lastGood = { text, snapshot, at: now };
   statusBarItem.text = text;
-  statusBarItem.tooltip = buildTooltip(snapshot);
-  statusBarItem.command = 'cursor-usage-tracker.showLogs';
+  statusBarItem.tooltip = buildTooltip(snapshot, now);
+  statusBarItem.command = 'cursor-usage-tracker.refresh';
   statusBarItem.backgroundColor = undefined;
   statusBarItem.show();
 
@@ -168,10 +204,8 @@ function applySnapshot(snapshot: AccountSnapshot, config: ReturnType<typeof read
   }
 }
 
-function buildTooltip(s: AccountSnapshot): vscode.MarkdownString {
+function buildTooltip(s: AccountSnapshot, updatedAt: Date, refreshError?: string): vscode.MarkdownString {
   const md = new vscode.MarkdownString();
-  md.isTrusted = true;
-  md.supportThemeIcons = true;
 
   const planLine = s.plan.isYearly ? `${s.plan.label} (Yearly)` : s.plan.label;
   md.appendMarkdown(`### ${planLine} \u00B7 ${s.plan.subscriptionStatus}\n\n`);
@@ -212,7 +246,12 @@ function buildTooltip(s: AccountSnapshot): vscode.MarkdownString {
     }
   }
 
-  return md;
+  md.appendMarkdown(`---\n_Updated ${updatedAt.toLocaleTimeString()}_`);
+  if (refreshError) {
+    md.appendMarkdown(` \u00B7 $(warning) Last refresh failed: ${escapeMd(refreshError)}`);
+  }
+  md.appendMarkdown('\n\n');
+  return tooltipWithActions(md);
 }
 
 function describeWarning(w: AccountSnapshot['warnings'][number], s: AccountSnapshot): string {
@@ -224,6 +263,10 @@ function describeWarning(w: AccountSnapshot['warnings'][number], s: AccountSnaps
     case 'trialing': return 'Trial period active';
     case 'partial_data': return 'Some data unavailable, will retry on next refresh';
   }
+}
+
+function escapeMd(text: string): string {
+  return text.replace(/[\\`*_[\]()<>#|]/g, '\\$&');
 }
 
 export function deactivate() {
