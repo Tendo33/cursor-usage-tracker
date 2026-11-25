@@ -16,7 +16,7 @@
 
 <sub>中文 · [English](README.md)</sub>
 
-<img src="assets/main-status-bar.png" alt="状态栏显示 49/500 与进度条，悬停卡片里有 Token 用量和重置日期" width="300">
+<img src="docs/screenshots/main-status-bar.png" alt="状态栏显示 49/500 与进度条，悬停卡片里有 Token 用量和重置日期" width="300">
 
 </div>
 
@@ -289,7 +289,9 @@ cursor-usage-tracker/
 ├── esbuild.mjs
 ├── tsconfig.json / tsconfig.test.json
 ├── package.json
-└── assets/
+├── assets/                 # extension icon (referenced by package.json)
+└── docs/
+    └── screenshots/        # README screenshots
 ```
 
 ## 开发

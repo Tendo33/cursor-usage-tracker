@@ -16,7 +16,7 @@ Read the number at a glance, hover for the breakdown, and stop guessing how clos
 
 <sub>[中文](README_en.md) · English</sub>
 
-<img src="assets/main-status-bar.png" alt="The status bar showing 49/500 used with a progress bar, and the hover card with tokens and the reset date" width="300">
+<img src="docs/screenshots/main-status-bar.png" alt="The status bar showing 49/500 used with a progress bar, and the hover card with tokens and the reset date" width="300">
 
 </div>
 
@@ -289,7 +289,9 @@ cursor-usage-tracker/
 ├── esbuild.mjs
 ├── tsconfig.json / tsconfig.test.json
 ├── package.json
-└── assets/
+├── assets/                 # extension icon (referenced by package.json)
+└── docs/
+    └── screenshots/        # README screenshots
 ```
 
 ## Development
