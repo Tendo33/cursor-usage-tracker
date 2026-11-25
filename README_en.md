@@ -1,68 +1,31 @@
+<div align="center">
+
 # Cursor Usage Tracker
 
-<p align="center">
-  <strong>一个在状态栏直接显示 Cursor 配额使用情况的 VS Code / Cursor 扩展。</strong><br>
-  不用再靠猜，也不用翻日志；已用多少、还剩多少，一眼就能看到。
-</p>
+**在状态栏直接看到 Cursor 配额还剩多少。**
 
-<p align="center">
-  <a href="README.md"><img src="https://img.shields.io/badge/README-English-0F172A?style=for-the-badge" alt="English README"></a>
-  <img src="https://img.shields.io/badge/Platform-Cursor%20%7C%20VS%20Code-2563EB?style=for-the-badge&logo=visualstudiocode&logoColor=white" alt="Platform">
-  <img src="https://img.shields.io/badge/Version-1.1.4-16A34A?style=for-the-badge" alt="Version">
-  <img src="https://img.shields.io/badge/License-MIT-EAB308?style=for-the-badge" alt="License">
-  <img src="https://img.shields.io/badge/SQLite-2GiB%2B%20Fallback-7C3AED?style=for-the-badge" alt="Large SQLite fallback">
-</p>
+不用再靠猜，也不用翻日志；已用多少、还剩多少，一眼就能看到。
 
-<p align="center">
-  <a href="#快速开始"><img src="https://img.shields.io/badge/快速开始-5分钟-2563EB?style=flat-square" alt="Quick Start"></a>
-  <a href="#截图预留"><img src="https://img.shields.io/badge/截图-已预留-16A34A?style=flat-square" alt="Screenshots"></a>
-  <a href="#工作原理"><img src="https://img.shields.io/badge/工作原理-讲清楚-0F766E?style=flat-square" alt="How It Works"></a>
-  <a href="#常见问题"><img src="https://img.shields.io/badge/排障-已包含-F97316?style=flat-square" alt="Troubleshooting"></a>
-</p>
+[![Version](https://img.shields.io/badge/Version-1.1.4-16A34A?style=flat-square)](package.json)
+[![Platform](https://img.shields.io/badge/Cursor_%7C_VS_Code-1.85%2B-2563EB?style=flat-square&logo=visualstudiocode&logoColor=white)](package.json)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)](src)
+[![SQLite](https://img.shields.io/badge/sql.js-2GiB%2B_降级-7C3AED?style=flat-square&logo=sqlite&logoColor=white)](src)
+[![License](https://img.shields.io/badge/License-MIT-2EA043?style=flat-square)](LICENSE)
+
+[快速开始](#快速开始) · [工作原理](#工作原理) · [配置项](#配置项) · [排障](#常见问题)
+
+<sub>中文 · [English](README.md)</sub>
+
+<img src="assets/main-status-bar.png" alt="状态栏显示 49/500 与进度条，悬停卡片里有 Token 用量和重置日期" width="300">
+
+</div>
+
+---
 
 这个项目是给重度 Cursor 用户准备的。很多人并不是不关心配额，而是总要等到快用完了才意识到问题来了。这个扩展把最关键的数字放回编辑器状态栏里：比如 `🟢 120/500`。你把鼠标悬停上去，还能看到请求数、Token 使用量和预计重置时间。
 
 > [!IMPORTANT]
 > 这不是官方 Cursor 扩展。它会读取本机 Cursor 数据，并请求用量相关接口（老接口 `GET https://cursor.com/api/usage`、新用量 `POST https://api2.cursor.sh/.../GetCurrentPeriodUsage`，以及 `GET https://cursor.com/api/auth/stripe` 获取计划信息）。
-
-## 目录
-
-- [Cursor Usage Tracker](#cursor-usage-tracker)
-  - [目录](#目录)
-  - [截图预留](#截图预留)
-  - [这个项目解决了什么问题](#这个项目解决了什么问题)
-  - [功能亮点](#功能亮点)
-  - [支持的账号类型（双轨制）](#支持的账号类型双轨制)
-  - [状态栏格式](#状态栏格式)
-  - [快速开始](#快速开始)
-    - [方式一：通过 VSIX 安装](#方式一通过-vsix-安装)
-    - [方式二：开发模式运行](#方式二开发模式运行)
-  - [你会看到什么](#你会看到什么)
-  - [配置项](#配置项)
-  - [工作原理](#工作原理)
-  - [存储路径](#存储路径)
-    - [用户 ID 查找路径](#用户-id-查找路径)
-    - [Access Token 查找路径](#access-token-查找路径)
-  - [常见问题](#常见问题)
-    - [状态栏显示 `No ID`](#状态栏显示-no-id)
-    - [状态栏显示 `Failed`](#状态栏显示-failed)
-    - [大数据库 fallback 没生效](#大数据库-fallback-没生效)
-  - [项目结构](#项目结构)
-  - [开发](#开发)
-  - [更新记录](#更新记录)
-    - [1.1.4](#114)
-    - [1.1.3](#113)
-    - [1.1.2](#112)
-    - [1.1.1](#111)
-    - [1.1.0](#110)
-    - [1.0.3](#103)
-    - [1.0.2](#102)
-    - [1.0.1](#101)
-  - [License](#license)
-
-## 截图预留
-
-![Main status bar view](assets/main-status-bar.png)
 
 ## 这个项目解决了什么问题
 
@@ -72,14 +35,13 @@ Cursor 配额这件事，平时不看还好，一旦要用的时候往往已经�
 
 ## 功能亮点
 
-- 状态栏实时显示请求使用情况
-- 通过颜色区分低、中、高使用率
+- 状态栏实时显示用量，并用红黄绿区分高中低
 - 悬停查看用量摘要、周期与重置时间；USD 账号展示 Total / Auto / API 条形图
 - 默认每 5 分钟自动刷新
-- 自动从本地 Cursor 存储中查找用户 ID
+- 在 Windows、macOS、Linux 各自的路径上自动查找用户 ID
 - 自动从 `state.vscdb` 读取 `accessToken`
-- 支持超大 SQLite 文件的自动 fallback
-- 配置简单，不依赖额外服务
+- `state.vscdb` 达到 2 GiB 以上时自动降级到 Python
+- 配置简单，不依赖额外服务或看板
 
 ## 支持的账号类型（双轨制）
 
@@ -216,6 +178,36 @@ npm run compile
 1. 从本地 Cursor 存储里找出用户 ID，优先检查新的 `sentry` 路径。
 2. 从 Cursor 的 `state.vscdb` 中读取 `cursorAuth/accessToken`。
 3. **并行**请求老用量、当前周期用量（含 USD / limit / API–Auto 分路）与 Stripe 会员信息，合并为一份快照后渲染状态栏与悬停卡片。
+
+整个过程都在你自己机器上：扩展读取本地 Cursor 会话，向 Cursor 要数字，再渲染成一份快照。链路上没有我们自己的服务端。
+
+```mermaid
+flowchart LR
+    A[扩展激活<br/>onStartupFinished] --> B{sentry 里有<br/>用户 ID?}
+    B -->|有| C[从 sentry/*.json<br/>读取用户 ID]
+    B -->|没有| D[退回 storage.json]
+    C --> E[(从 state.vscdb<br/>读取 accessToken)]
+    D --> E
+    E --> F{数据库超过 2 GiB?}
+    F -->|否| G[内存里用 sql.js]
+    F -->|是| H[降级到 Python sqlite3]
+    G --> I[并行请求 Cursor 接口<br/>legacy + period + stripe]
+    H --> I
+    I --> J[合并成一份快照<br/>计划、已用、上限、重置]
+    J --> K[状态栏<br/>🟢 49/500]
+    J --> L[悬停卡片<br/>明细与重置日期]
+
+    classDef client fill:#3B82F6,stroke:#2563EB,color:#fff,stroke-width:2px
+    classDef service fill:#10B981,stroke:#059669,color:#fff,stroke-width:2px
+    classDef data fill:#8B5CF6,stroke:#7C3AED,color:#fff,stroke-width:2px
+    classDef choice fill:#F59E0B,stroke:#D97706,color:#fff,stroke-width:2px
+    classDef external fill:#F43F5E,stroke:#E11D48,color:#fff,stroke-width:2px
+
+    class A,K,L client
+    class C,D,E,G,H,J service
+    class F choice
+    class I external
+```
 
 请求形式如下：
 

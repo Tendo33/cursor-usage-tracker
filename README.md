@@ -1,69 +1,31 @@
+<div align="center">
+
 # Cursor Usage Tracker
 
-<p align="center">
-  <strong>A small VS Code / Cursor extension that shows your Cursor request usage in the status bar.</strong><br>
-  Read your quota at a glance, hover for details, and stop guessing how close you are to the monthly limit.
-</p>
+**See how much of your Cursor quota is left, right in the status bar.**
 
-<p align="center">
-  <a href="README_CN.md"><img src="https://img.shields.io/badge/README-%E4%B8%AD%E6%96%87-0F172A?style=for-the-badge" alt="Chinese README"></a>
-  <img src="https://img.shields.io/badge/Platform-Cursor%20%7C%20VS%20Code-2563EB?style=for-the-badge&logo=visualstudiocode&logoColor=white" alt="Platform">
-  <img src="https://img.shields.io/badge/Version-1.1.4-16A34A?style=for-the-badge" alt="Version">
-  <img src="https://img.shields.io/badge/License-MIT-EAB308?style=for-the-badge" alt="License">
-  <img src="https://img.shields.io/badge/SQLite-2GiB%2B%20Fallback-7C3AED?style=for-the-badge" alt="Large SQLite fallback">
-</p>
+Read the number at a glance, hover for the breakdown, and stop guessing how close you are to the monthly limit.
 
-<p align="center">
-  <a href="#quick-start"><img src="https://img.shields.io/badge/Quick_Start-5_Minutes-2563EB?style=flat-square" alt="Quick Start"></a>
-  <a href="#screenshots"><img src="https://img.shields.io/badge/Screenshots-Reserved-16A34A?style=flat-square" alt="Screenshots"></a>
-  <a href="#how-it-works"><img src="https://img.shields.io/badge/How_It_Works-Transparent-0F766E?style=flat-square" alt="How It Works"></a>
-  <a href="#troubleshooting"><img src="https://img.shields.io/badge/Troubleshooting-Included-F97316?style=flat-square" alt="Troubleshooting"></a>
-</p>
+[![Version](https://img.shields.io/badge/Version-1.1.4-16A34A?style=flat-square)](package.json)
+[![Platform](https://img.shields.io/badge/Cursor_%7C_VS_Code-1.85%2B-2563EB?style=flat-square&logo=visualstudiocode&logoColor=white)](package.json)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)](src)
+[![SQLite](https://img.shields.io/badge/sql.js-2GiB%2B_fallback-7C3AED?style=flat-square&logo=sqlite&logoColor=white)](src)
+[![License](https://img.shields.io/badge/License-MIT-2EA043?style=flat-square)](LICENSE)
 
-This project is for people who use Cursor heavily and keep checking whether they still have room in the month. Instead of opening logs, guessing, or waiting until requests start failing, you get a simple status bar indicator such as `🟢 120/500`, plus a hover card with requests, token usage, and the next reset date.
+[Quick start](#quick-start) · [How it works](#how-it-works) · [Configuration](#configuration) · [Troubleshooting](#troubleshooting)
+
+<sub>[中文](README_en.md) · English</sub>
+
+<img src="assets/main-status-bar.png" alt="The status bar showing 49/500 used with a progress bar, and the hover card with tokens and the reset date" width="300">
+
+</div>
+
+---
+
+This project is for people who use Cursor heavily and keep checking whether they still have room in the month. Instead of opening logs, guessing, or waiting until requests start failing, you get a status bar indicator such as `🟢 120/500`, plus a hover card with requests, token usage, and the next reset date.
 
 > [!IMPORTANT]
 > This extension is not an official Cursor integration. It reads local Cursor data on your machine, then requests usage from Cursor endpoints (legacy `GET https://cursor.com/api/usage`, newer `POST https://api2.cursor.sh/.../GetCurrentPeriodUsage`, plus `GET https://cursor.com/api/auth/stripe` for plan metadata).
-
-## Contents
-
-- [Cursor Usage Tracker](#cursor-usage-tracker)
-  - [Contents](#contents)
-  - [Screenshots](#screenshots)
-  - [Why this exists](#why-this-exists)
-  - [Highlights](#highlights)
-  - [Supported Plans (Dual Track)](#supported-plans-dual-track)
-  - [Status Bar Formats](#status-bar-formats)
-  - [Quick start](#quick-start)
-    - [Option 1: install from VSIX](#option-1-install-from-vsix)
-    - [Option 2: run in development mode](#option-2-run-in-development-mode)
-  - [What you will see](#what-you-will-see)
-  - [Configuration](#configuration)
-  - [How it works](#how-it-works)
-  - [Storage paths](#storage-paths)
-    - [User ID lookup](#user-id-lookup)
-    - [Access token lookup](#access-token-lookup)
-  - [Troubleshooting](#troubleshooting)
-    - [It shows `No ID`](#it-shows-no-id)
-    - [It shows `Failed`](#it-shows-failed)
-    - [Large database fallback does not work](#large-database-fallback-does-not-work)
-  - [Project structure](#project-structure)
-  - [Development](#development)
-  - [Changelog](#changelog)
-    - [1.1.4](#114)
-    - [1.1.3](#113)
-    - [1.1.2](#112)
-    - [1.1.1](#111)
-    - [1.1.0](#110)
-    - [1.0.3](#103)
-    - [1.0.2](#102)
-    - [1.0.1](#101)
-  - [License](#license)
-
-## Screenshots
-
-![Main status bar view](assets/main-status-bar.png)
-
 
 ## Why this exists
 
@@ -131,7 +93,7 @@ npm run compile
 npm run package
 ```
 
-This generates a file like `cursor-usage-tracker-1.0.3.vsix` in the project root.
+This generates a file like `cursor-usage-tracker-1.1.4.vsix` in the project root.
 
 Then install it in Cursor or VS Code:
 
@@ -211,11 +173,41 @@ Example:
 
 ## How it works
 
-The extension does these practical things:
+The extension does three things:
 
-1. It looks for your Cursor user ID in local storage files, with the newer `sentry` paths checked first.
+1. It finds your Cursor user ID in local storage, checking the newer `sentry` paths first.
 2. It reads `cursorAuth/accessToken` from Cursor's `state.vscdb`.
-3. It calls **legacy usage**, **current-period usage** (USD / limits / API–Auto split), and **Stripe membership** in parallel, then merges into one snapshot for the status bar and tooltip.
+3. It requests legacy usage, current-period usage (USD / limits / API–Auto split) and Stripe membership **in parallel**, then merges them into one snapshot for the status bar and the hover card.
+
+Everything happens on your machine: the extension reads your local Cursor session, asks Cursor for the numbers, and renders one snapshot. There is no server of ours in the path.
+
+```mermaid
+flowchart LR
+    A[Extension activates<br/>onStartupFinished] --> B{sentry path has<br/>the user ID?}
+    B -->|yes| C[Read user ID<br/>from sentry/*.json]
+    B -->|no| D[Fall back to<br/>storage.json]
+    C --> E[(Read accessToken<br/>from state.vscdb)]
+    D --> E
+    E --> F{Database over 2 GiB?}
+    F -->|no| G[sql.js in memory]
+    F -->|yes| H[Python sqlite3<br/>fallback]
+    G --> I[Cursor endpoints in parallel<br/>legacy usage + period usage + stripe]
+    H --> I
+    I --> J[Merge into one snapshot<br/>plan, used, cap, reset]
+    J --> K[Status bar<br/>🟢 49/500]
+    J --> L[Hover card<br/>breakdown + reset date]
+
+    classDef client fill:#3B82F6,stroke:#2563EB,color:#fff,stroke-width:2px
+    classDef service fill:#10B981,stroke:#059669,color:#fff,stroke-width:2px
+    classDef data fill:#8B5CF6,stroke:#7C3AED,color:#fff,stroke-width:2px
+    classDef choice fill:#F59E0B,stroke:#D97706,color:#fff,stroke-width:2px
+    classDef external fill:#F43F5E,stroke:#E11D48,color:#fff,stroke-width:2px
+
+    class A,K,L client
+    class C,D,E,G,H,J service
+    class F choice
+    class I external
+```
 
 Request shape:
 
